@@ -8,6 +8,15 @@ import { HeroCanvas } from "@/components/home/HeroCanvas";
 import { OrchestrationVisual } from "@/components/home/OrchestrationVisual";
 import { ChatSeedButton } from "@/components/chat/ChatSeedButton";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import {
+  IconProduct,
+  IconVenture,
+  IconCreative,
+  IconFinance,
+  IconOperations,
+  IconInfinity,
+  IconBolt,
+} from "@/components/ui/Icons";
 
 export default async function HomePage({
   params,
@@ -32,7 +41,7 @@ export default async function HomePage({
                 {t("scene1.eyebrow")}
               </Eyebrow>
               <h1
-                className="sv-grad-text sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
+                className="sv-grad-green sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
                 style={{ ["--i" as string]: 1 }}
               >
                 {t("scene1.headline")}
@@ -43,6 +52,17 @@ export default async function HomePage({
               >
                 {t("scene1.subline")}
               </p>
+              <div
+                className="sv-reveal mt-8 flex flex-wrap gap-2.5"
+                style={{ ["--i" as string]: 4 }}
+              >
+                {(t.raw("scene1.badges") as string[]).map((b) => (
+                  <span key={b} className="sv-badge">
+                    <span className="h-1.5 w-1.5 rounded-full bg-sv-green" aria-hidden />
+                    {b}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* No reveal transform on this wrapper: a lingering transform would
@@ -127,10 +147,7 @@ export default async function HomePage({
             <h2 className="mt-6 sv-grad-text text-sv-display-l">{t("scene5.headline")}</h2>
             <p className="mt-6 text-sv-body-l text-sv-text-2">{t("scene5.body")}</p>
           </div>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {(t.raw("scene5.body") as string) && null}
-            <ExpanseTiles />
-          </div>
+          <ExpanseTiles />
           <div className="mt-10">
             <ChatSeedButton variant="secondary">{t("scene5.action")}</ChatSeedButton>
           </div>
@@ -251,34 +268,57 @@ export default async function HomePage({
   );
 }
 
-// Scene 5 illustrative tiles — example entry points, never a finite catalog.
+// Scene 5 illustrative bento — example entry points, never a finite catalog.
 async function ExpanseTiles() {
   const t = await getTranslations("home.scene5");
-  void t;
-  const tiles = [
-    "A product",
-    "A venture",
-    "A campaign",
-    "A finance model",
-    "An operation",
-    "Whatever you bring",
+  const tiles = t.raw("tiles") as { title: string; note: string }[];
+  const icons = [
+    IconProduct,
+    IconVenture,
+    IconCreative,
+    IconFinance,
+    IconOperations,
+    IconInfinity,
+  ];
+  // Bento spans: tile 0 and the final "whatever you bring" tile run wide.
+  const span = [
+    "lg:col-span-2",
+    "",
+    "",
+    "",
+    "",
+    "lg:col-span-3",
   ];
   return (
-    <>
-      {tiles.map((tile, i) => (
-        <div
-          key={i}
-          style={{ ["--i" as string]: i } as React.CSSProperties}
-          className="sv-card sv-rise-strong group relative overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
-        >
-          <span className="sv-scan-line" aria-hidden />
-          <p className="sv-label-sm sv-label">{`EXAMPLE / 0${i + 1}`}</p>
-          <p className="mt-4 font-display text-sv-h3 text-sv-text transition-colors duration-200 group-hover:text-sv-green">
-            {tile}
-          </p>
-        </div>
-      ))}
-    </>
+    <div className="mt-12 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {tiles.map((tile, i) => {
+        const Icon = icons[i] ?? IconBolt;
+        const last = i === tiles.length - 1;
+        return (
+          <div
+            key={i}
+            style={{ ["--i" as string]: i } as React.CSSProperties}
+            className={`sv-card sv-rise-strong group relative flex min-h-[180px] flex-col overflow-hidden rounded-sv-lg border p-7 ${span[i] ?? ""} ${
+              last
+                ? "border-sv-green-line bg-[radial-gradient(120%_140%_at_0%_0%,rgba(192,250,32,0.10),transparent_60%)] bg-sv-surface-2"
+                : "border-sv-line bg-sv-surface-2"
+            }`}
+          >
+            <span className="sv-scan-line" aria-hidden />
+            <div className="flex items-center justify-between">
+              <span className="sv-chip" aria-hidden>
+                <Icon size={22} />
+              </span>
+              <span className="sv-label sv-label-sm">{`/ 0${i + 1}`}</span>
+            </div>
+            <p className="mt-auto pt-8 font-display text-sv-h3 text-sv-text transition-colors duration-200 group-hover:text-sv-green">
+              {tile.title}
+            </p>
+            <p className="mt-2 text-sv-small text-sv-text-3">{tile.note}</p>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
