@@ -15,18 +15,27 @@ export async function OrchestrationVisual() {
   return (
     <div className="relative w-full">
       <svg viewBox="0 0 420 190" className="w-full" role="img" aria-label={t("nodeOutput")}>
-        {/* converging lines */}
+        {/* converging lines — static base + a flowing green overlay */}
         {nodes.map((n, i) => (
-          <path
-            key={i}
-            d={`M120 ${n.y} C 200 ${n.y}, 220 95, 300 95`}
-            fill="none"
-            stroke="var(--color-sv-line-strong)"
-            strokeWidth="1"
-          />
+          <g key={i}>
+            <path
+              d={`M120 ${n.y} C 200 ${n.y}, 220 95, 300 95`}
+              fill="none"
+              stroke="var(--color-sv-line-strong)"
+              strokeWidth="1"
+            />
+            <path
+              d={`M120 ${n.y} C 200 ${n.y}, 220 95, 300 95`}
+              fill="none"
+              stroke="var(--color-sv-green-line)"
+              strokeWidth="1.5"
+              className="sv-flow"
+              style={{ animationDelay: `${i * 0.18}s` }}
+            />
+          </g>
         ))}
         {/* output line */}
-        <path d="M300 95 H392" stroke="var(--color-sv-green)" strokeWidth="1.5" />
+        <path d="M300 95 H392" stroke="var(--color-sv-green)" strokeWidth="2" className="sv-flow" />
 
         {/* input nodes */}
         {nodes.map((n, i) => (
@@ -44,8 +53,8 @@ export async function OrchestrationVisual() {
         ))}
 
         {/* convergence point — Stryvia */}
+        <circle cx="300" cy="95" r="13" fill="none" stroke="var(--color-sv-green-line)" strokeWidth="1" className="sv-pulse-node" />
         <circle cx="300" cy="95" r="7" fill="var(--color-sv-green)" />
-        <circle cx="300" cy="95" r="13" fill="none" stroke="var(--color-sv-green-line)" strokeWidth="1" />
       </svg>
 
       {/* labels overlaid in mono so they switch font correctly */}

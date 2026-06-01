@@ -12,10 +12,10 @@ export function ScrollReveal() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const SEL = ".sv-reveal:not(.is-visible), .sv-rise-strong:not(.is-visible)";
+
     if (typeof IntersectionObserver === "undefined") {
-      document
-        .querySelectorAll<HTMLElement>(".sv-reveal:not(.is-visible)")
-        .forEach((el) => el.classList.add("is-visible"));
+      document.querySelectorAll<HTMLElement>(SEL).forEach((el) => el.classList.add("is-visible"));
       return;
     }
 
@@ -32,9 +32,7 @@ export function ScrollReveal() {
     );
 
     const register = (root: ParentNode) =>
-      root
-        .querySelectorAll<HTMLElement>(".sv-reveal:not(.is-visible)")
-        .forEach((el) => io.observe(el));
+      root.querySelectorAll<HTMLElement>(SEL).forEach((el) => io.observe(el));
 
     register(document);
 
@@ -45,7 +43,7 @@ export function ScrollReveal() {
           if (node.nodeType !== 1) return;
           const el = node as HTMLElement;
           if (
-            el.classList?.contains("sv-reveal") &&
+            (el.classList?.contains("sv-reveal") || el.classList?.contains("sv-rise-strong")) &&
             !el.classList.contains("is-visible")
           ) {
             io.observe(el);

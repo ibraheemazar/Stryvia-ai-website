@@ -40,7 +40,7 @@ export function SeedTiles({
           key={i}
           type="button"
           onClick={() => start(tile)}
-          className="group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 text-start transition-colors duration-200 hover:border-sv-green-line"
+          className="sv-card group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 text-start"
         >
           <span className="sv-scan-line" aria-hidden />
           <Bracket />
