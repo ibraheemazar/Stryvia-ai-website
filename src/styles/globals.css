@@ -95,10 +95,11 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
     color-scheme: dark;
+    background-color: var(--color-sv-base);
   }
 
   body {
-    background-color: var(--color-sv-base);
+    background-color: transparent;
     color: var(--color-sv-text);
     font-family: var(--font-body);
     font-size: var(--text-sv-body);
@@ -441,11 +442,21 @@
   position: relative;
   transition: transform var(--sv-dur) var(--sv-ease), border-color var(--sv-dur) var(--sv-ease), box-shadow var(--sv-dur) var(--sv-ease);
 }
+/* Gradient hairline edge — faint at rest, lit on hover (premium depth). */
+.sv-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(150deg, rgba(192,250,32,0.30), rgba(244,246,244,0.05) 40%, transparent 72%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.5; transition: opacity var(--sv-dur) var(--sv-ease);
+  pointer-events: none;
+}
 .sv-card:hover {
   transform: translateY(-3px);
   border-color: var(--color-sv-green-line) !important;
   box-shadow: 0 18px 40px -24px rgba(0,0,0,0.8), 0 0 36px -10px var(--color-sv-green-soft);
 }
+.sv-card:hover::after { opacity: 1; }
 
 /* Flowing energy along the orchestration lines. */
 .sv-flow {
@@ -479,4 +490,71 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+/* ===========================================================================
+   PREMIUM LAYER — depth, color, gradient. Richer while staying dark-first.
+   =========================================================================== */
+
+/* Aurora: soft drifting color glows that give the dark field real depth. */
+.sv-aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.sv-aurora span {
+  position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.22;
+  will-change: transform;
+}
+.sv-aurora .a1 { width: 52vw; height: 52vw; top: -16%; inset-inline-start: -10%;
+  background: radial-gradient(circle, #c0fa20, transparent 62%); animation: sv-aur1 20s ease-in-out infinite; }
+.sv-aurora .a2 { width: 46vw; height: 46vw; bottom: -22%; inset-inline-end: -8%;
+  background: radial-gradient(circle, #34e2b0, transparent 62%); opacity: 0.16; animation: sv-aur2 26s ease-in-out infinite; }
+.sv-aurora .a3 { width: 38vw; height: 38vw; top: 38%; inset-inline-start: 46%;
+  background: radial-gradient(circle, #1f8f6a, transparent 60%); opacity: 0.14; animation: sv-aur3 30s ease-in-out infinite; }
+@keyframes sv-aur1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(6%,8%) scale(1.12)} }
+@keyframes sv-aur2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-7%,-6%) scale(1.1)} }
+@keyframes sv-aur3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-5%,7%) scale(1.15)} }
+
+/* Green→white gradient text for headline accents. */
+.sv-grad-green {
+  background: linear-gradient(104deg, #ffffff 0%, #ffffff 42%, #c0fa20 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.sv-grad-green-full {
+  background: linear-gradient(104deg, #eaffd0 0%, #c0fa20 60%, #7ef0a0 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* Gradient hairline border on cards/panels (premium edge). */
+.sv-grad-border { position: relative; }
+.sv-grad-border::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(150deg, rgba(192,250,32,0.45), rgba(244,246,244,0.06) 38%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glow on primary actions. */
+.sv-btn-glow { box-shadow: 0 8px 30px -10px rgba(192,250,32,0.5); }
+.sv-btn-glow:hover { box-shadow: 0 10px 38px -8px rgba(192,250,32,0.7); }
+
+/* Icon chip. */
+.sv-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--color-sv-green-soft); color: var(--color-sv-green);
+  border: 1px solid var(--color-sv-green-line);
+}
+
+/* Pill badge. */
+.sv-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--color-sv-line); background: rgba(244,246,244,0.02);
+  font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--color-sv-text-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-aurora span { animation: none !important; }
 }

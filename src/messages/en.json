@@ -47,6 +47,7 @@
       "eyebrow": "THE INTELLIGENCE YOU BUILD WITH",
       "headline": "The thing you could never build without a team. Build it now.",
       "subline": "Bring a problem. Direct the work. The intelligence does the heavy lifting, and what comes out is yours.",
+      "badges": ["You own the result", "No lock-in", "Trilingual", "Built in the region"],
       "scrollCue": "SCROLL"
     },
     "scene3": {
@@ -69,6 +70,14 @@
       "eyebrow": "WHAT BECOMES POSSIBLE",
       "headline": "Whatever you bring, it gets built.",
       "body": "From a product to a venture to a campaign to a finance model to an operation. Different problems, one intelligence.",
+      "tiles": [
+        { "title": "A product", "note": "From idea to something real and shippable." },
+        { "title": "A venture", "note": "The whole business, scoped and stood up." },
+        { "title": "A campaign", "note": "Concept to assets, ready to run." },
+        { "title": "A finance model", "note": "Numbers that hold up to scrutiny." },
+        { "title": "An operation", "note": "The manual work, designed away." },
+        { "title": "Whatever you bring", "note": "Not a menu. Bring the problem — it gets built." }
+      ],
       "action": "Tell it what you want to build"
     },
     "scene6": {

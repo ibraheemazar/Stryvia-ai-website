@@ -113,6 +113,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
             <ChatProvider>
               <ScrollReveal />
               {/* Atmosphere layers (A.6) sit behind everything, non-interactive */}
+              <div className="sv-aurora" aria-hidden="true">
+                <span className="a1" />
+                <span className="a2" />
+                <span className="a3" />
+              </div>
               <div className="sv-vignette" aria-hidden="true" />
               <div className="sv-grain" aria-hidden="true" />
 

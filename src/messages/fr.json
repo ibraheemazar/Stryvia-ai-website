@@ -47,6 +47,7 @@
       "eyebrow": "L'INTELLIGENCE AVEC LAQUELLE VOUS BÂTISSEZ",
       "headline": "Ce que vous n'auriez jamais pu bâtir sans une équipe. Bâtissez-le maintenant.",
       "subline": "Apportez un problème. Dirigez le travail. L'intelligence fait le gros œuvre, et ce qui en sort est à vous.",
+      "badges": ["Le résultat vous appartient", "Sans verrouillage", "Trilingue", "Bâtie dans la région"],
       "scrollCue": "DÉFILER"
     },
     "scene3": {
@@ -69,6 +70,14 @@
       "eyebrow": "CE QUI DEVIENT POSSIBLE",
       "headline": "Quoi que vous apportiez, ça se construit.",
       "body": "D'un produit à une entreprise, à une campagne, à un modèle financier, à une opération. Des problèmes différents, une seule intelligence.",
+      "tiles": [
+        { "title": "Un produit", "note": "De l'idée à quelque chose de réel et livrable." },
+        { "title": "Une entreprise", "note": "Toute l'activité, cadrée et mise sur pied." },
+        { "title": "Une campagne", "note": "Du concept aux assets, prête à lancer." },
+        { "title": "Un modèle financier", "note": "Des chiffres qui résistent à l'examen." },
+        { "title": "Une opération", "note": "Le travail manuel, conçu pour disparaître." },
+        { "title": "Quoi que vous apportiez", "note": "Pas un menu. Apportez le problème — ça se construit." }
+      ],
       "action": "Dites-lui ce que vous voulez bâtir"
     },
     "scene6": {

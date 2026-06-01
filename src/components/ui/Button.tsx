@@ -13,8 +13,8 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-sv-green text-sv-ink hover:shadow-[var(--sv-focus-ring)] hover:-translate-y-px " +
-    "active:translate-y-0 active:bg-sv-green-press disabled:bg-sv-surface-3 disabled:text-sv-text-3",
+    "sv-btn-glow bg-sv-green text-sv-ink hover:-translate-y-px " +
+    "active:translate-y-0 active:bg-sv-green-press disabled:bg-sv-surface-3 disabled:text-sv-text-3 disabled:shadow-none",
   secondary:
     "border border-sv-line-strong text-sv-text hover:border-sv-green-line hover:text-sv-green " +
     "active:bg-sv-surface-3 overflow-hidden group",
