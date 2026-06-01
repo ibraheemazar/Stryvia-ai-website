@@ -10,7 +10,7 @@ export function ScenarioCard({
   labels: { shape: string; ownership: string };
 }) {
   return (
-    <div className="group relative h-full overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 transition-colors duration-200 hover:border-sv-green-line">
+    <div className="sv-card group relative h-full overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6">
       <span className="sv-scan-line" aria-hidden />
       <Bracket />
       <h3 className="font-display text-sv-h3 text-sv-text">{scenario.title}</h3>

@@ -12,5 +12,5 @@ export function HeroChat() {
     setPageContext("");
   }, [setPageContext]);
 
-  return <ChatPanel variant="hero" />;
+  return <ChatPanel variant="hero" className="sv-glow" />;
 }

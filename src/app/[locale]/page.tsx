@@ -21,14 +21,16 @@ export default async function HomePage({
     <>
       {/* ===== Scene 1–2: opening frame + the live Chat ===== */}
       <section className="relative overflow-hidden pt-28 pb-[clamp(64px,10vw,140px)]">
-        <Container>
+        <div className="sv-field" aria-hidden />
+        <div className="sv-beam" aria-hidden />
+        <Container className="relative z-10">
           <div className="grid items-center gap-12 lg:grid-cols-[7fr_5fr] lg:gap-16">
             <div className="max-w-2xl">
-              <Eyebrow className="sv-reveal" code="/ 01">
+              <Eyebrow className="sv-reveal" code="/ 01" live>
                 {t("scene1.eyebrow")}
               </Eyebrow>
               <h1
-                className="sv-reveal mt-6 text-sv-display-xl leading-[0.98]"
+                className="sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
                 style={{ ["--i" as string]: 1 }}
               >
                 {t("scene1.headline")}
@@ -51,9 +53,9 @@ export default async function HomePage({
           </div>
         </Container>
 
-        <Container className="mt-16">
+        <Container className="relative z-10 mt-16">
           <div className="flex items-center gap-4">
-            <span className="sv-label">{t("scene1.scrollCue")}</span>
+            <span className="sv-label sv-label--live">{t("scene1.scrollCue")}</span>
             <span className="h-px flex-1 bg-sv-line" />
             <span className="sv-label">/ 01 — 10</span>
           </div>
@@ -251,11 +253,14 @@ async function ExpanseTiles() {
       {tiles.map((tile, i) => (
         <div
           key={i}
-          className="group relative overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 transition-colors duration-200 hover:border-sv-green-line"
+          style={{ ["--i" as string]: i } as React.CSSProperties}
+          className="sv-card sv-rise-strong group relative overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
         >
           <span className="sv-scan-line" aria-hidden />
           <p className="sv-label-sm sv-label">{`EXAMPLE / 0${i + 1}`}</p>
-          <p className="mt-4 font-display text-sv-h3 text-sv-text">{tile}</p>
+          <p className="mt-4 font-display text-sv-h3 text-sv-text transition-colors duration-200 group-hover:text-sv-green">
+            {tile}
+          </p>
         </div>
       ))}
     </>
