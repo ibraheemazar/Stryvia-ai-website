@@ -6,6 +6,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Bracket } from "@/components/ui/Bracket";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { ScenarioCard } from "@/components/content/ScenarioCard";
+import { ViewTracker } from "@/components/analytics/ViewTracker";
 import { routing } from "@/i18n/routing";
 import { CAPABILITY_SLUGS, type Capability, type Scenario } from "@/lib/content";
 
@@ -46,6 +47,7 @@ export default async function CapabilityPage({
 
   return (
     <>
+      <ViewTracker event="capability_viewed" properties={{ slug }} />
       <PageHero
         eyebrow={`${t("eyebrow")} / ${cap.name.toUpperCase()}`}
         code="/ CAPABILITY"

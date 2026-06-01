@@ -5,6 +5,7 @@ import {
   INDUSTRY_SLUGS,
   AUDIENCE_SLUGS,
   ARTICLE_SLUGS,
+  SCENARIO_SLUGS,
 } from "@/lib/content";
 
 // Bilingual sitemap with hreflang alternates per path (Spec §8 technical SEO).
@@ -24,6 +25,7 @@ const PATHS = [
   "/solution-finder",
   "/estimate",
   "/examples",
+  ...SCENARIO_SLUGS.map((s) => `/examples/${s}`),
   "/problems",
   "/outcomes",
   "/resources",
