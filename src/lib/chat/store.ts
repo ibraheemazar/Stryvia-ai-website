@@ -1,6 +1,6 @@
 import "server-only";
 import { getServiceSupabase } from "@/lib/supabase";
-import type { ChatMessage } from "./types";
+import type { ChatMessage, Attribution } from "./types";
 
 // Persistence for the Chat (Decisions §5). Every conversation is stored,
 // converted or not, with its full transcript, language, the page it started on,
@@ -13,6 +13,7 @@ type UpsertConversationArgs = {
   pageContext?: string;
   status?: "active" | "scoped" | "converted" | "escalated" | "abandoned";
   messages: ChatMessage[];
+  attribution?: Attribution;
 };
 
 export async function persistConversation(
@@ -21,7 +22,7 @@ export async function persistConversation(
   const supabase = getServiceSupabase();
   if (!supabase) return;
 
-  const { conversationId, locale, pageContext, status, messages } = args;
+  const { conversationId, locale, pageContext, status, messages, attribution } = args;
   const now = new Date().toISOString();
 
   try {
@@ -32,6 +33,11 @@ export async function persistConversation(
         page_context: pageContext ?? null,
         status: status ?? "active",
         updated_at: now,
+        ...(attribution?.utm_source ? { utm_source: attribution.utm_source } : {}),
+        ...(attribution?.utm_medium ? { utm_medium: attribution.utm_medium } : {}),
+        ...(attribution?.utm_campaign ? { utm_campaign: attribution.utm_campaign } : {}),
+        ...(attribution?.referrer ? { referrer: attribution.referrer } : {}),
+        ...(attribution?.landing_path ? { landing_path: attribution.landing_path } : {}),
       },
       { onConflict: "id", ignoreDuplicates: false },
     );

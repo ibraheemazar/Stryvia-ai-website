@@ -27,12 +27,8 @@ type Insights = {
 
 export function AdminDashboard({
   token,
-  email,
-  onSignOut,
 }: {
   token: string;
-  email: string | null;
-  onSignOut: () => void;
 }) {
   const [view, setView] = useState<"inbox" | "all">("inbox");
   const [insights, setInsights] = useState<Insights | null>(null);
@@ -81,24 +77,7 @@ export function AdminDashboard({
     : [];
 
   return (
-    <div className="min-h-dvh bg-sv-base text-sv-text">
-      {/* top bar */}
-      <header className="flex items-center justify-between border-b border-sv-line px-6 py-4">
-        <div className="flex items-center gap-3">
-          <span className="sv-live-dot" />
-          <span className="sv-label sv-label--live">STRYVIA ADMIN</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sv-small text-sv-text-3">{email}</span>
-          <button
-            onClick={onSignOut}
-            className="text-sv-small text-sv-text-2 transition-colors hover:text-sv-text"
-          >
-            Sign out
-          </button>
-        </div>
-      </header>
-
+    <>
       <div className="mx-auto max-w-[1320px] px-6 py-8">
         {/* Insights */}
         {insights && (
@@ -222,7 +201,7 @@ export function AdminDashboard({
           onLeadUpdated={load}
         />
       )}
-    </div>
+    </>
   );
 }
 

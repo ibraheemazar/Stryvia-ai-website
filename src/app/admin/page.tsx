@@ -4,7 +4,7 @@ import { useCallbackRef } from "@/app/admin/use-callback-ref";
 import { useEffect, useState, useCallback } from "react";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
 import { AdminLogin } from "@/app/admin/AdminLogin";
-import { AdminDashboard } from "@/app/admin/AdminDashboard";
+import { AdminShell } from "@/app/admin/AdminShell";
 
 // Admin entry: gate on a Supabase session, then render the dashboard. The
 // dashboard calls the auth-gated /api/admin routes with the access token.
@@ -65,5 +65,5 @@ export default function AdminPage() {
 
   if (!token) return <AdminLogin />;
 
-  return <AdminDashboard token={token} email={email} onSignOut={signOut} />;
+  return <AdminShell token={token} email={email} onSignOut={signOut} />;
 }

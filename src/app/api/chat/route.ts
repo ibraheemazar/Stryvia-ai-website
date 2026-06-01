@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
   const locale = ["en", "ar", "fr"].includes(body.locale) ? body.locale : "en";
   const pageContext = body.pageContext?.slice(0, 400);
   const conversationId = body.conversationId || crypto.randomUUID();
+  const attribution = body.attribution;
   const system = buildSystemPrompt(locale, pageContext);
 
   const encoder = new TextEncoder();
@@ -134,6 +135,7 @@ export async function POST(req: NextRequest) {
           pageContext,
           status,
           messages: finalMessages,
+          attribution,
         });
         if (signal === "human") {
           await markConversationStatus(conversationId, "escalated");
