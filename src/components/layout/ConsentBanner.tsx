@@ -58,7 +58,7 @@ export function ConsentBanner() {
           </button>
           <button
             onClick={() => choose("granted")}
-            className="rounded-sv-sm bg-sv-green px-3.5 py-1.5 text-sv-small font-medium text-sv-ink"
+            className="rounded-sv-sm bg-sv-green px-3.5 py-1.5 text-sv-small font-medium text-sv-on-accent"
           >
             {t("accept")}
           </button>

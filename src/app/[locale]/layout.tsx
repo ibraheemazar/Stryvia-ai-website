@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
+import {
+  ACCENTS,
+  ACCENT_COOKIE,
+  DEFAULT_ACCENT,
+  DEFAULT_MODE,
+  MODE_COOKIE,
+} from "@/lib/theme";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing, localeDirection } from "@/i18n/routing";
 import { fontVariables } from "@/lib/fonts";
@@ -75,6 +82,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const dir = localeDirection[locale] ?? "ltr";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://stryvia.ai";
 
+  // Pages stay statically generated; the saved theme (cookie) is applied by the
+  // pre-paint inline script below, so there's no flash and no per-request
+  // rendering. The server-rendered attributes are the brand defaults.
+  const accentIds = ACCENTS.map((a) => a.id);
+  const themeScript =
+    `(function(){try{var d=document.documentElement,c=document.cookie;` +
+    `var m=(c.match(/(?:^|; )${MODE_COOKIE}=([^;]+)/)||[])[1];` +
+    `var a=(c.match(/(?:^|; )${ACCENT_COOKIE}=([^;]+)/)||[])[1];` +
+    `if(!m){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'${DEFAULT_MODE}';}` +
+    `d.dataset.theme=m==='light'?'light':'dark';` +
+    `var A=${JSON.stringify(accentIds)};` +
+    `d.dataset.accent=A.indexOf(a)>-1?a:'${DEFAULT_ACCENT}';` +
+    `}catch(e){}})();`;
+
   // Organization + WebSite structured data (Spec §8).
   const jsonLd = {
     "@context": "https://schema.org",
@@ -96,8 +117,18 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   };
 
   return (
-    <html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={dir}
+      data-theme={DEFAULT_MODE}
+      data-accent={DEFAULT_ACCENT}
+      className={fontVariables}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Apply the saved theme (or OS preference on first visit) before paint
+            so there's no flash and pages can stay statically generated. */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Without JS, never leave reveal content hidden. */}
         <noscript>
           <style>{`.sv-reveal{opacity:1 !important}`}</style>

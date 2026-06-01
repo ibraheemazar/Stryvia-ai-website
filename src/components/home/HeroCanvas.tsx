@@ -25,8 +25,20 @@ export function HeroCanvas() {
     type Node = { x: number; y: number; vx: number; vy: number; green: boolean };
     let nodes: Node[] = [];
 
-    const GREEN = "192,250,32";
-    const WHITE = "244,246,244";
+    // Colors follow the active accent + light/dark mode (read from CSS vars),
+    // and re-read when the theme picker dispatches a change.
+    let GREEN = "192,250,32";
+    let WHITE = "244,246,244";
+    function readColors() {
+      const cs = getComputedStyle(document.documentElement);
+      const accent = cs.getPropertyValue("--sv-accent-rgb").trim();
+      if (accent) GREEN = accent.replace(/\s+/g, ",");
+      WHITE =
+        document.documentElement.dataset.theme === "light"
+          ? "18,21,15"
+          : "244,246,244";
+    }
+    readColors();
 
     function resize() {
       const parent = canvas!.parentElement!;
@@ -109,6 +121,11 @@ export function HeroCanvas() {
 
     const onResize = () => resize();
     window.addEventListener("resize", onResize);
+    const onTheme = () => {
+      readColors();
+      if (reduce) render();
+    };
+    window.addEventListener("sv:themechange", onTheme);
     const io = new IntersectionObserver((e) => {
       if (reduce) return;
       const wasRunning = running;
@@ -121,6 +138,7 @@ export function HeroCanvas() {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("sv:themechange", onTheme);
       io.disconnect();
     };
   }, []);

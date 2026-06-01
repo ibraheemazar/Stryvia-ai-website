@@ -4,6 +4,17 @@
     "description": "Apportez un problème. Dirigez le travail. L'intelligence fait le gros œuvre, et ce qui en sort est à vous. Stryvia vous donne la capacité de bâtir, créer et résoudre à la vitesse qu'exigeait une équipe entière.",
     "ogAlt": "Stryvia — l'intelligence avec laquelle vous bâtissez"
   },
+  "theme": {
+    "label": "Apparence",
+    "mode": "Mode",
+    "dark": "Sombre",
+    "light": "Clair",
+    "accent": "Accent",
+    "acid": "Acide",
+    "azure": "Azur",
+    "violet": "Violet",
+    "ember": "Ambre"
+  },
   "nav": {
     "skipToContent": "Aller au contenu",
     "home": "Accueil",

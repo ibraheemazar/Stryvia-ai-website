@@ -31,6 +31,7 @@
   --color-sv-text-2: rgba(244, 246, 244, 0.66);
   --color-sv-text-3: rgba(244, 246, 244, 0.4);
   --color-sv-ink: #0a0b0a;
+  --color-sv-on-accent: #0a0b0a; /* text/icon on an accent fill (overridable per theme) */
 
   /* Rare light beat */
   --color-sv-paper: #f4f6f4;
@@ -71,6 +72,22 @@
 
 /* ---- A.7 Motion + effect tokens (not Tailwind utilities; used in CSS) ---- */
 :root {
+  /* Accent palette — default is the acid-green signal. Everything green
+     derives from a single rgb triplet so a swapped accent flows everywhere
+     (fills, glows, gradients, aurora). --sv-accent-2-rgb is a harmonious
+     second hue used only by the aurora for depth. */
+  --sv-accent-rgb: 192 250 32;
+  --sv-accent-2-rgb: 52 226 176;
+  --color-sv-green: rgb(var(--sv-accent-rgb));
+  --color-sv-green-press: #a6de07;
+  --color-sv-green-soft: rgb(var(--sv-accent-rgb) / 0.14);
+  --color-sv-green-line: rgb(var(--sv-accent-rgb) / 0.4);
+
+  /* Headline gradient ends + premium edge mid-stop, theme-aware. */
+  --sv-grad-head: #ffffff; /* the non-accent end of headline gradients */
+  --sv-grad-foot: #b9c0b8;
+  --sv-edge-mid: rgba(244, 246, 244, 0.06);
+
   --sv-grain-opacity: 0.04;
   --sv-focus-ring: 0 0 0 1px var(--color-sv-green),
     0 0 24px var(--color-sv-green-soft);
@@ -125,7 +142,7 @@
 
   ::selection {
     background: var(--color-sv-green);
-    color: var(--color-sv-ink);
+    color: var(--color-sv-on-accent);
   }
 
   :focus-visible {
@@ -445,7 +462,7 @@
 /* Gradient hairline edge — faint at rest, lit on hover (premium depth). */
 .sv-card::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-  background: linear-gradient(150deg, rgba(192,250,32,0.30), rgba(244,246,244,0.05) 40%, transparent 72%);
+  background: linear-gradient(150deg, rgb(var(--sv-accent-rgb) / 0.30), var(--sv-edge-mid) 40%, transparent 72%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   opacity: 0.5; transition: opacity var(--sv-dur) var(--sv-ease);
@@ -485,7 +502,7 @@
 
 /* Premium type depth — a subtle vertical sheen on the largest headings. */
 .sv-grad-text {
-  background: linear-gradient(177deg, #ffffff 0%, #ffffff 55%, #b9c0b8 100%);
+  background: linear-gradient(177deg, var(--sv-grad-head) 0%, var(--sv-grad-head) 55%, var(--sv-grad-foot) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -503,23 +520,23 @@
   will-change: transform;
 }
 .sv-aurora .a1 { width: 52vw; height: 52vw; top: -16%; inset-inline-start: -10%;
-  background: radial-gradient(circle, #c0fa20, transparent 62%); animation: sv-aur1 20s ease-in-out infinite; }
+  background: radial-gradient(circle, rgb(var(--sv-accent-rgb)), transparent 62%); animation: sv-aur1 20s ease-in-out infinite; }
 .sv-aurora .a2 { width: 46vw; height: 46vw; bottom: -22%; inset-inline-end: -8%;
-  background: radial-gradient(circle, #34e2b0, transparent 62%); opacity: 0.16; animation: sv-aur2 26s ease-in-out infinite; }
+  background: radial-gradient(circle, rgb(var(--sv-accent-2-rgb)), transparent 62%); opacity: 0.16; animation: sv-aur2 26s ease-in-out infinite; }
 .sv-aurora .a3 { width: 38vw; height: 38vw; top: 38%; inset-inline-start: 46%;
-  background: radial-gradient(circle, #1f8f6a, transparent 60%); opacity: 0.14; animation: sv-aur3 30s ease-in-out infinite; }
+  background: radial-gradient(circle, rgb(var(--sv-accent-rgb) / 0.7), transparent 60%); opacity: 0.14; animation: sv-aur3 30s ease-in-out infinite; }
 @keyframes sv-aur1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(6%,8%) scale(1.12)} }
 @keyframes sv-aur2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-7%,-6%) scale(1.1)} }
 @keyframes sv-aur3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-5%,7%) scale(1.15)} }
 
 /* Green→white gradient text for headline accents. */
 .sv-grad-green {
-  background: linear-gradient(104deg, #ffffff 0%, #ffffff 42%, #c0fa20 100%);
+  background: linear-gradient(104deg, var(--sv-grad-head) 0%, var(--sv-grad-head) 42%, rgb(var(--sv-accent-rgb)) 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
 .sv-grad-green-full {
-  background: linear-gradient(104deg, #eaffd0 0%, #c0fa20 60%, #7ef0a0 100%);
+  background: linear-gradient(104deg, rgb(var(--sv-accent-rgb) / 0.85) 0%, rgb(var(--sv-accent-rgb)) 60%, rgb(var(--sv-accent-2-rgb)) 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
@@ -528,15 +545,15 @@
 .sv-grad-border { position: relative; }
 .sv-grad-border::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-  background: linear-gradient(150deg, rgba(192,250,32,0.45), rgba(244,246,244,0.06) 38%, transparent 70%);
+  background: linear-gradient(150deg, rgb(var(--sv-accent-rgb) / 0.45), var(--sv-edge-mid) 38%, transparent 70%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   pointer-events: none;
 }
 
 /* Glow on primary actions. */
-.sv-btn-glow { box-shadow: 0 8px 30px -10px rgba(192,250,32,0.5); }
-.sv-btn-glow:hover { box-shadow: 0 10px 38px -8px rgba(192,250,32,0.7); }
+.sv-btn-glow { box-shadow: 0 8px 30px -10px rgb(var(--sv-accent-rgb) / 0.5); }
+.sv-btn-glow:hover { box-shadow: 0 10px 38px -8px rgb(var(--sv-accent-rgb) / 0.7); }
 
 /* Icon chip. */
 .sv-chip {
@@ -558,3 +575,68 @@
 @media (prefers-reduced-motion: reduce) {
   .sv-aurora span { animation: none !important; }
 }
+
+/* ===========================================================================
+   THEME LAYER — accent palettes + light mode. Applied via [data-accent] and
+   [data-theme] on <html>. Acid + dark is the brand default; the alternates
+   are tuned to stay premium. One accent at a time; never a rainbow.
+   =========================================================================== */
+
+/* ---- Accent palettes (work in both light and dark) ---- */
+[data-accent="acid"] {
+  --sv-accent-rgb: 192 250 32;
+  --sv-accent-2-rgb: 52 226 176;
+  --color-sv-green-press: #a6de07;
+}
+[data-accent="azure"] {
+  --sv-accent-rgb: 59 169 255;
+  --sv-accent-2-rgb: 56 211 224;
+  --color-sv-green-press: #2f93e6;
+}
+[data-accent="violet"] {
+  --sv-accent-rgb: 183 148 255;
+  --sv-accent-2-rgb: 122 162 255;
+  --color-sv-green-press: #9a78f0;
+}
+[data-accent="ember"] {
+  --sv-accent-rgb: 255 159 69;
+  --sv-accent-2-rgb: 255 99 99;
+  --color-sv-green-press: #f5851f;
+}
+
+/* ---- Light mode ---- */
+[data-theme="light"] {
+  --color-sv-base: #eef1ec;
+  --color-sv-surface-1: #f7f9f6;
+  --color-sv-surface-2: #ffffff;
+  --color-sv-surface-3: #e6eae4;
+
+  --color-sv-line: rgba(12, 16, 12, 0.10);
+  --color-sv-line-strong: rgba(12, 16, 12, 0.20);
+
+  --color-sv-text: #12150f;
+  --color-sv-text-2: rgba(18, 21, 15, 0.66);
+  --color-sv-text-3: rgba(18, 21, 15, 0.46);
+  --color-sv-ink: #0a0b0a;
+  --color-sv-paper: #ffffff;
+
+  /* Headline gradients flip to dark→accent; edges read as dark hairlines. */
+  --sv-grad-head: #14180f;
+  --sv-grad-foot: #5b6354;
+  --sv-edge-mid: rgba(12, 16, 12, 0.06);
+
+  --sv-grain-opacity: 0.03;
+}
+
+/* The grain overlay reads better as multiply on a light canvas. */
+[data-theme="light"] .sv-grain { mix-blend-mode: multiply; }
+
+/* Soft, light vignette instead of the dark edge-darkening one. */
+[data-theme="light"] .sv-vignette {
+  background: radial-gradient(120% 90% at 50% 35%, transparent 58%, rgba(12, 16, 12, 0.06) 100%);
+}
+
+/* Aurora glows need to tint, not wash out, on white. */
+[data-theme="light"] .sv-aurora span { mix-blend-mode: multiply; opacity: 0.18; filter: blur(110px); }
+[data-theme="light"] .sv-aurora .a2 { opacity: 0.13; }
+[data-theme="light"] .sv-aurora .a3 { opacity: 0.11; }

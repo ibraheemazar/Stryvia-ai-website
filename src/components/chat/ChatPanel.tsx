@@ -252,7 +252,7 @@ export function ChatPanel({
             onClick={submit}
             disabled={!draft.trim() || phase !== "idle"}
             aria-label={t("send")}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sv-sm bg-sv-green text-sv-ink transition-opacity duration-200 disabled:opacity-30"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sv-sm bg-sv-green text-sv-on-accent transition-opacity duration-200 disabled:opacity-30"
           >
             <span className="font-mono text-lg leading-none rtl:-scale-x-100">→</span>
           </button>
