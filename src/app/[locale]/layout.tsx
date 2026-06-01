@@ -10,6 +10,7 @@ import { SiteNav } from "@/components/layout/SiteNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ChatDock } from "@/components/chat/ChatDock";
 import { ConsentBanner } from "@/components/layout/ConsentBanner";
+import { ScrollReveal } from "@/components/providers/ScrollReveal";
 import "@/styles/globals.css";
 
 export function generateStaticParams() {
@@ -95,6 +96,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} dir={dir} className={fontVariables} suppressHydrationWarning>
+      <head>
+        {/* Without JS, never leave reveal content hidden. */}
+        <noscript>
+          <style>{`.sv-reveal{opacity:1 !important}`}</style>
+        </noscript>
+      </head>
       <body>
         <script
           type="application/ld+json"
@@ -103,6 +110,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <NextIntlClientProvider>
           <PostHogProvider>
             <ChatProvider>
+              <ScrollReveal />
               {/* Atmosphere layers (A.6) sit behind everything, non-interactive */}
               <div className="sv-vignette" aria-hidden="true" />
               <div className="sv-grain" aria-hidden="true" />

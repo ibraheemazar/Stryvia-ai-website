@@ -111,7 +111,7 @@ export function ChatPanel({
         aria-label={t("ariaLog")}
       >
         {isEmpty && phase === "idle" ? (
-          <div className="flex h-full flex-col justify-center gap-5 py-6">
+          <div className="flex flex-col gap-5 py-3">
             <p className="font-display text-sv-h3 text-sv-text">{t("emptyPrompt")}</p>
             <div className="flex flex-wrap gap-2">
               {chips.map((chip) => (

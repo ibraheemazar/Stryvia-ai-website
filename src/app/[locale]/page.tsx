@@ -28,7 +28,7 @@ export default async function HomePage({
                 {t("scene1.eyebrow")}
               </Eyebrow>
               <h1
-                className="sv-reveal mt-6 text-sv-display-xl"
+                className="sv-reveal mt-6 text-sv-display-xl leading-[0.98]"
                 style={{ ["--i" as string]: 1 }}
               >
                 {t("scene1.headline")}
@@ -41,11 +41,11 @@ export default async function HomePage({
               </p>
             </div>
 
-            <div
-              id="hero-chat"
-              className="sv-reveal relative lg:-mt-8"
-              style={{ ["--i" as string]: 4 }}
-            >
+            {/* No reveal transform on this wrapper: a lingering transform would
+                become the containing block for the Chat's mobile full-screen
+                takeover (fixed inset-0), trapping it. The panel's own bracket
+                focus-in carries the entrance. */}
+            <div id="hero-chat" className="relative lg:-mt-8">
               <HeroChat />
             </div>
           </div>

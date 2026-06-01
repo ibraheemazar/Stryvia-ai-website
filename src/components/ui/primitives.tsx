@@ -38,7 +38,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "relative py-[clamp(96px,12vw,200px)]",
+        "relative py-[clamp(72px,9vw,140px)]",
         surface === "surface-1" && "bg-sv-surface-1",
         surface === "paper" && "bg-sv-paper text-sv-ink",
         className,
