@@ -416,5 +416,16 @@
     "overviewCta": "Talk it through",
     "moreTitle": "Don't see your sector?",
     "moreBody": "The list is illustrative. Bring your world — the intelligence works for any of them."
+  },
+  "audiences": {
+    "eyebrow": "FOR YOU",
+    "title": "Which of these is you?",
+    "lead": "The same capability sits under all of them — with a different framing on top, written to you.",
+    "problemsHeading": "In your words",
+    "changeHeading": "What changes for you",
+    "scenariosHeading": "What it looks like",
+    "cta": "Talk it through",
+    "seeAll": "For you",
+    "overviewCta": "Talk it through"
   }
 }

@@ -20,6 +20,7 @@ export function SiteFooter() {
         { href: "/how-it-works", label: nav("howItWorks") },
         { href: "/capabilities", label: nav("capabilities") },
         { href: "/industries", label: nav("industries") },
+        { href: "/for-you", label: nav("forYou") },
         { href: "/intelligence", label: nav("intelligence") },
         { href: "/solution-finder", label: sf("eyebrow") },
         { href: "/estimate", label: est("eyebrow") },

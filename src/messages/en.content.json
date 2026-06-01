@@ -866,5 +866,127 @@
       ],
       "note": "Built in the region, your IP and data kept close."
     }
+  },
+  "audienceData": {
+    "the-visionary": {
+      "name": "I have an idea I've never been able to build",
+      "headline": "The idea was always yours. Now the power to build it is too.",
+      "lead": "You've carried it for years because building it meant assembling people you couldn't pull together. That wall is gone.",
+      "problems": [
+        "Every idea I've had needed a full team I couldn't afford.",
+        "I've watched ideas die in the gap between having them and building them.",
+        "I don't want to hand my idea to someone else and hope."
+      ],
+      "change": "You describe it, you direct it, and it gets built with you — and what comes out is unmistakably yours.",
+      "scenarios": [
+        "idea-carried-for-years",
+        "product-no-team"
+      ]
+    },
+    "entrepreneurs": {
+      "name": "I'm building a business",
+      "headline": "Move at the speed of your decisions, not your hiring.",
+      "lead": "Build or grow a venture without the team and budget a venture used to demand. Momentum, and ownership.",
+      "problems": [
+        "I'm stuck while competitors move.",
+        "I can't afford the team a real venture needs.",
+        "I want to own what I build, not depend on a vendor."
+      ],
+      "change": "The market read, the model, the brand, the build — directed by you, owned by you, fast.",
+      "scenarios": [
+        "business-unknown-field",
+        "raise-story-numbers"
+      ]
+    },
+    "operations-leaders": {
+      "name": "I run operations",
+      "headline": "Run leaner and move faster, without headcount for every initiative.",
+      "lead": "Execute the initiatives that used to require a new team, with control and efficiency.",
+      "problems": [
+        "Every new initiative means new cost and headcount.",
+        "We depend on vendors for everything.",
+        "Our processes are manual and leaky."
+      ],
+      "change": "Map, redesign, and automate the work — you decide what stays human, and you own the result.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ]
+    },
+    "business-owners": {
+      "name": "I lead a company",
+      "headline": "Solve the problem without assembling a cast of experts first.",
+      "lead": "Carrying a business problem, often outside your expertise? Understand it and solve it, with you in control.",
+      "problems": [
+        "I'm facing a problem in an area I don't know.",
+        "Hiring consultants is slow and expensive.",
+        "I want clarity and a path, not a 90-page deck."
+      ],
+      "change": "The analysis, the options, and a clear recommendation you can act on — directed by you.",
+      "scenarios": [
+        "business-unknown-field",
+        "raise-story-numbers"
+      ]
+    },
+    "domain-newcomers": {
+      "name": "I'm entering something I don't understand yet",
+      "headline": "Act without first becoming an expert, or hiring a row of them.",
+      "lead": "\"I'd need a CFO, a strategist, a designer\" — the dependency itself is the block. It doesn't have to be.",
+      "problems": [
+        "I'd need to hire a row of specialists just to start.",
+        "I'm blocked by what I don't know.",
+        "I want to move without becoming an expert first."
+      ],
+      "change": "Expertise on demand, with you in control — you get what you'd hire for, shaped to your situation.",
+      "scenarios": [
+        "business-unknown-field",
+        "new-market"
+      ]
+    },
+    "creatives": {
+      "name": "I create",
+      "headline": "Produce far beyond what your headcount should allow.",
+      "lead": "Leverage inside your own craft — the scale and quality that normally needs a full production apparatus.",
+      "problems": [
+        "I'm capped by resources and budget, not ideas.",
+        "I can't produce at the scale I see in my head.",
+        "Stitching tools breaks the coherence."
+      ],
+      "change": "Concept, production, and variations made as one coherent body of work — yours to run.",
+      "scenarios": [
+        "campaign-at-scale",
+        "idea-carried-for-years"
+      ]
+    },
+    "marketing-leaders": {
+      "name": "I run marketing",
+      "headline": "The growth capability you direct yourself.",
+      "lead": "Campaigns, content, and growth without the cost and slowness of an agency or a large internal team.",
+      "problems": [
+        "An agency is slow and expensive.",
+        "An internal team is a big commitment.",
+        "I want output and speed I control."
+      ],
+      "change": "Campaigns and content across channels, orchestrated as one, fast, and in your control.",
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market"
+      ]
+    },
+    "enterprises": {
+      "name": "We're an enterprise",
+      "headline": "Serious capability you own, with your data kept close.",
+      "lead": "Capability without vendor lock-in, with data in the region and handled to local standards. Infrastructure you build on.",
+      "problems": [
+        "Vendor lock-in and data exposure are real risks.",
+        "We want capability we own and control.",
+        "We need it built for how we actually work."
+      ],
+      "change": "Custom systems and capability, owned by you, with data kept in the region — not a vendor you're tied to.",
+      "scenarios": [
+        "internal-tool",
+        "manual-process"
+      ]
+    }
   }
 }

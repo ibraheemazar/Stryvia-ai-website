@@ -72,3 +72,26 @@ export type Industry = {
   scenarios: string[];
   note: string;
 };
+
+// Audience "for you" doors (Spec §6.12). Investors have their own gated page.
+export const AUDIENCE_SLUGS = [
+  "the-visionary",
+  "entrepreneurs",
+  "operations-leaders",
+  "business-owners",
+  "domain-newcomers",
+  "creatives",
+  "marketing-leaders",
+  "enterprises",
+] as const;
+
+export type AudienceSlug = (typeof AUDIENCE_SLUGS)[number];
+
+export type Audience = {
+  name: string;
+  headline: string;
+  lead: string;
+  problems: string[];
+  change: string;
+  scenarios: string[];
+};
