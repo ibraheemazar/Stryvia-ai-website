@@ -43,7 +43,7 @@ UI before wiring services. To go live, provide:
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase client + admin auth |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-side conversation/lead writes and admin reads |
 | `ADMIN_EMAIL_ALLOWLIST` | Comma-separated emails allowed into `/admin` |
-| `LEAD_NOTIFY_TO` / `LEAD_NOTIFY_FROM` / `RESEND_API_KEY` | Immediate converted-lead email |
+| `LEAD_NOTIFY_TO` / `LEAD_NOTIFY_FROM` / `SES_REGION` / `SES_ACCESS_KEY_ID` / `SES_SECRET_ACCESS_KEY` | Immediate converted-lead email via Amazon SES |
 | `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` | Analytics (consent-gated) |
 | `NEXT_PUBLIC_SITE_URL` | Metadata, hreflang, sitemap |
 | `NEXT_PUBLIC_DATA_REGION` / `NEXT_PUBLIC_DATA_IN_KINGDOM` | **Data residency truth** (see below) |
