@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container, Section } from "@/components/ui/primitives";
 import { PageHero } from "@/components/ui/PageHero";
-import { SeedTiles, type SeedTile } from "@/components/content/SeedTiles";
+import { Bracket } from "@/components/ui/Bracket";
+import { Link } from "@/i18n/navigation";
 import { SCENARIO_SLUGS, type Scenario } from "@/lib/content";
 
 export async function generateMetadata({
@@ -25,17 +26,6 @@ export default async function ExamplesPage({
   const t = await getTranslations("galleries");
   const tc = await getTranslations();
 
-  const tiles: SeedTile[] = SCENARIO_SLUGS.map((sid, i) => {
-    const sc = tc.raw(`scenarios.${sid}`) as Scenario;
-    return {
-      title: sc.title,
-      subtitle: sc.approach,
-      meta: `EXAMPLE / ${String(i + 1).padStart(2, "0")}`,
-      seed: sc.title,
-      pageContext: `example: ${sid}`,
-    };
-  });
-
   return (
     <>
       <PageHero
@@ -46,7 +36,28 @@ export default async function ExamplesPage({
       />
       <Section className="pt-16 lg:pt-20">
         <Container>
-          <SeedTiles tiles={tiles} action={t("examplesCta")} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SCENARIO_SLUGS.map((sid, i) => {
+              const sc = tc.raw(`scenarios.${sid}`) as Scenario;
+              return (
+                <Link
+                  key={sid}
+                  href={`/examples/${sid}`}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 transition-colors duration-200 hover:border-sv-green-line"
+                >
+                  <span className="sv-scan-line" aria-hidden />
+                  <Bracket />
+                  <p className="sv-label-sm sv-label">{`EXAMPLE / ${String(i + 1).padStart(2, "0")}`}</p>
+                  <p className="mt-3 flex-1 font-display text-sv-h3 text-sv-text transition-colors duration-200 group-hover:text-sv-green">
+                    {sc.title}
+                  </p>
+                  <span className="mt-5 font-mono text-sv-label uppercase tracking-[0.14em] text-sv-text-3 transition-colors group-hover:text-sv-green">
+                    {t("examplesCta")} →
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </Container>
       </Section>
     </>

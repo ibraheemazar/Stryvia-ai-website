@@ -147,6 +147,8 @@
     "cta": "Let's build this together",
     "askElse": "Ask something else",
     "threshold": "BEYOND WHAT I SHOULD PROMISE",
+    "thresholdBody": "This one is past what I should responsibly scope on my own. The honest move is to bring in a person from Stryvia who can take it properly. Leave your details and they'll reach out.",
+    "thresholdAction": "Talk to a person",
     "handoff": {
       "title": "Let's build this together",
       "carry": "Your conversation comes with you.",

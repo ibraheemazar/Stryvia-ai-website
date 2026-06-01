@@ -21,9 +21,14 @@ export function ChatPanel({
   className?: string;
 }) {
   const t = useTranslations("chat");
-  const { messages, phase, signal, error, converted, send, reset } = useChat();
+  const { messages, phase, signal, error, converted, hasStarted, send, reset } = useChat();
   const [draft, setDraft] = useState("");
   const [showHandoff, setShowHandoff] = useState(false);
+  const [inspect, setInspect] = useState(false);
+  const [minimized, setMinimized] = useState(false);
+
+  // On mobile, the hero Chat becomes a full-screen takeover once engaged (§F).
+  const mobileFull = variant === "hero" && hasStarted && !minimized;
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
@@ -71,6 +76,8 @@ export function ChatPanel({
       className={cn(
         "sv-scanlines relative flex flex-col overflow-hidden rounded-sv-lg border border-sv-line-strong bg-sv-surface-1",
         variant === "hero" ? "min-h-[30rem]" : "h-full",
+        mobileFull &&
+          "max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:min-h-0 max-sm:rounded-none",
         className,
       )}
     >
@@ -82,6 +89,16 @@ export function ChatPanel({
         <span className="flex items-center gap-2">
           <span className="sv-live-dot" />
           <span className="sv-label sv-label--live">{t("live")}</span>
+          {mobileFull && (
+            <button
+              type="button"
+              onClick={() => setMinimized(true)}
+              aria-label={t("askElse")}
+              className="ms-2 flex h-7 w-7 items-center justify-center rounded-sv-sm text-sv-text-2 sm:hidden"
+            >
+              <span className="text-lg leading-none">⌄</span>
+            </button>
+          )}
         </span>
       </div>
 
@@ -142,10 +159,48 @@ export function ChatPanel({
               );
             })}
 
-            {/* Confidence threshold — honest, no green celebration */}
-            {signal === "human" && (
-              <div className="rounded-sv-md border border-sv-warn/40 bg-sv-surface-2 p-4">
+            {/* Confidence threshold — honest, no green celebration, with a
+                plain message and a route to a human (A.8) */}
+            {signal === "human" && !showHandoff && !converted && (
+              <div className="rounded-sv-md border border-sv-warn/40 bg-sv-surface-2 p-4 sv-reveal">
                 <p className="sv-label mb-2 text-sv-warn">{t("threshold")}</p>
+                <p className="mb-4 text-sv-small text-sv-text-2">{t("thresholdBody")}</p>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setShowHandoff(true);
+                    track("lead_started");
+                  }}
+                >
+                  {t("thresholdAction")}
+                </Button>
+              </div>
+            )}
+
+            {/* Inspect the reasoning — a calm list of the steps taken (A.8),
+                never a raw transcript */}
+            {ctaReady && !showHandoff && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => setInspect((v) => !v)}
+                  className="font-mono text-sv-label-sm uppercase tracking-[0.14em] text-sv-text-3 transition-colors hover:text-sv-text"
+                >
+                  {inspect ? `− ${t("scope.inspectClose")}` : `+ ${t("scope.inspect")}`}
+                </button>
+                {inspect && (
+                  <div className="mt-3 space-y-1.5 border-s border-sv-line ps-4 sv-reveal">
+                    {[
+                      t("status.understanding"),
+                      t("status.mapping"),
+                      t("status.shaping"),
+                    ].map((line) => (
+                      <p key={line} className="sv-label text-sv-text-3">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
