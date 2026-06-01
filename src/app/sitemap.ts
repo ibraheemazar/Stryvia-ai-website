@@ -1,6 +1,11 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
-import { CAPABILITY_SLUGS } from "@/lib/content";
+import {
+  CAPABILITY_SLUGS,
+  INDUSTRY_SLUGS,
+  AUDIENCE_SLUGS,
+  ARTICLE_SLUGS,
+} from "@/lib/content";
 
 // Bilingual sitemap with hreflang alternates per path (Spec §8 technical SEO).
 const PATHS = [
@@ -8,12 +13,25 @@ const PATHS = [
   "/how-it-works",
   "/capabilities",
   ...CAPABILITY_SLUGS.map((s) => `/capabilities/${s}`),
+  "/industries",
+  ...INDUSTRY_SLUGS.map((s) => `/industries/${s}`),
+  "/for-you",
+  ...AUDIENCE_SLUGS.map((s) => `/for-you/${s}`),
   "/intelligence",
+  "/works-with-everything",
+  "/compare",
+  "/see-it-in-control",
   "/solution-finder",
   "/estimate",
+  "/examples",
+  "/problems",
+  "/outcomes",
+  "/resources",
+  ...ARTICLE_SLUGS.map((s) => `/resources/${s}`),
   "/trust",
   "/pricing",
   "/manifesto",
+  "/why-stryvia-exists",
   "/faq",
   "/start",
   "/early-access",

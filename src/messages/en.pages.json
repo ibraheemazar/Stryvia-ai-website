@@ -359,7 +359,11 @@
     "lead": "Pick what you want to build and a rough scale. These are rough ranges, not a quote — your real scope comes from a conversation.",
     "pickArchetype": "What do you want to build?",
     "pickScale": "Rough scale",
-    "scales": ["Small", "Medium", "Large"],
+    "scales": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
     "oldWay": "THE OLD WAY",
     "stryviaWay": "WITH STRYVIA",
     "team": "Team",
@@ -369,10 +373,176 @@
     "disclaimer": "These are rough ranges to show the shape of the difference, not a quote.",
     "cta": "Scope this properly",
     "archetypes": [
-      { "name": "A product or app", "oldTeam": "4–6 people", "oldTime": "5–8 months", "oldCost": "high", "newTime": "5–8 weeks" },
-      { "name": "A new venture plan", "oldTeam": "3–5 people", "oldTime": "3–5 months", "oldCost": "high", "newTime": "1–2 weeks" },
-      { "name": "A campaign at scale", "oldTeam": "4–7 people", "oldTime": "2–4 months", "oldCost": "medium", "newTime": "1–3 weeks" },
-      { "name": "An automation", "oldTeam": "2–4 people", "oldTime": "3–6 months", "oldCost": "medium", "newTime": "3–6 weeks" }
+      {
+        "name": "A product or app",
+        "oldTeam": "4–6 people",
+        "oldTime": "5–8 months",
+        "oldCost": "high",
+        "newTime": "5–8 weeks"
+      },
+      {
+        "name": "A new venture plan",
+        "oldTeam": "3–5 people",
+        "oldTime": "3–5 months",
+        "oldCost": "high",
+        "newTime": "1–2 weeks"
+      },
+      {
+        "name": "A campaign at scale",
+        "oldTeam": "4–7 people",
+        "oldTime": "2–4 months",
+        "oldCost": "medium",
+        "newTime": "1–3 weeks"
+      },
+      {
+        "name": "An automation",
+        "oldTeam": "2–4 people",
+        "oldTime": "3–6 months",
+        "oldCost": "medium",
+        "newTime": "3–6 weeks"
+      }
     ]
+  },
+  "industries": {
+    "eyebrow": "INDUSTRIES",
+    "title": "Do you understand my world?",
+    "lead": "Capabilities answer what gets built. Industries answer whether it's built for you. These are entry points, not a boundary.",
+    "problemsHeading": "The problems specific to it",
+    "applyHeading": "How the capabilities apply here",
+    "scenariosHeading": "What it looks like",
+    "regionHeading": "Built in the region",
+    "cta": "Talk it through",
+    "seeAll": "Industries",
+    "overviewCta": "Talk it through",
+    "moreTitle": "Don't see your sector?",
+    "moreBody": "The list is illustrative. Bring your world — the intelligence works for any of them."
+  },
+  "audiences": {
+    "eyebrow": "FOR YOU",
+    "title": "Which of these is you?",
+    "lead": "The same capability sits under all of them — with a different framing on top, written to you.",
+    "problemsHeading": "In your words",
+    "changeHeading": "What changes for you",
+    "scenariosHeading": "What it looks like",
+    "cta": "Talk it through",
+    "seeAll": "For you",
+    "overviewCta": "Talk it through"
+  },
+  "galleries": {
+    "examplesEyebrow": "EXAMPLES",
+    "examplesTitle": "Here's what you can build.",
+    "examplesLead": "Present possibility, not past clients. Pick one close to you and start a conversation about a problem like it.",
+    "examplesCta": "Start a conversation about a problem like this",
+    "problemsEyebrow": "PROBLEM GALLERY",
+    "problemsTitle": "Recognize your situation? Step straight in.",
+    "problemsLead": "Real problems in real words. Tap the one that's yours and the intelligence picks it up.",
+    "outcomesEyebrow": "OUTCOME SHOWCASE",
+    "outcomesTitle": "What becomes possible.",
+    "outcomesLead": "Not deliverables a vendor produced — capability you gain, framed around what you can now do.",
+    "outcomesCta": "Tell it what you want to build"
+  },
+  "whyExists": {
+    "eyebrow": "WHY STRYVIA EXISTS",
+    "title": "We built Stryvia to close a gap that was never supposed to exist.",
+    "paras": [
+      "For most of history, the ability to build anything was gated behind assembling people. The idea was yours; the power to build it belonged to everyone but you.",
+      "That gate kept most ideas from ever existing. Not because they were bad — because the cost of building them was a team you couldn't pull together.",
+      "Stryvia exists to remove that gate. An intelligence you build with, that takes a problem and produces the solution, across any domain, while you stay the author and the owner.",
+      "We're building it here, in the region, with capability and data kept close to home — because the next layer of what's possible should be owned where it's used."
+    ],
+    "cta": "Start a conversation"
+  },
+  "integrations": {
+    "eyebrow": "WORKS WITH EVERYTHING",
+    "title": "Stryvia orchestrates the ecosystem. It fits what you already use.",
+    "lead": "At the center is Stryvia, the orchestrator. Around it: the leading AI models, the tools you already work in, and your own data — as inputs and outputs.",
+    "orchestrator": "STRYVIA",
+    "node1": "AI MODELS",
+    "node2": "YOUR TOOLS",
+    "node3": "YOUR DATA",
+    "node4": "YOUR OUTPUTS",
+    "points": [
+      {
+        "label": "NOT RIP-AND-REPLACE",
+        "text": "It works with what you already have. No tearing out your stack to start."
+      },
+      {
+        "label": "MANY MODELS, ONE RESULT",
+        "text": "It makes multiple models and tools work as one, producing what no single tool can."
+      },
+      {
+        "label": "THE MOAT, MADE VISIBLE",
+        "text": "The orchestration is the defensibility: the script and the storyboard, as one coherent piece of work."
+      }
+    ],
+    "cta": "See how it thinks"
+  },
+  "compare": {
+    "eyebrow": "COMPARE",
+    "title": "The honest comparison.",
+    "lead": "Genuine help choosing, not trash-talk. Here's how the alternatives really stack up.",
+    "cols": {
+      "option": "OPTION",
+      "cost": "COST",
+      "time": "TIME",
+      "limit": "THE LIMITATION"
+    },
+    "rows": [
+      {
+        "option": "Hire a consulting firm",
+        "cost": "High, ongoing",
+        "time": "Weeks to start, months to deliver",
+        "limit": "You don't own the method, and the meter never stops."
+      },
+      {
+        "option": "Build an in-house team",
+        "cost": "Salaries + overhead",
+        "time": "Months to hire and ramp",
+        "limit": "A fixed cost for every capability, whether you use it or not."
+      },
+      {
+        "option": "A no-code or single AI tool",
+        "cost": "Low",
+        "time": "Fast, but shallow",
+        "limit": "It does one thing. You're left stitching the pieces together yourself."
+      }
+    ],
+    "stryviaRow": {
+      "option": "Stryvia",
+      "cost": "Capability, not overhead",
+      "time": "Weeks, you directing",
+      "limit": "You own the result, with no lock-in — and it tells you its limits."
+    },
+    "cta": "Scope your problem"
+  },
+  "control": {
+    "eyebrow": "SEE IT IN CONTROL",
+    "title": "You're the director. Here's what that looks like.",
+    "lead": "A preview of the working relationship — the choices surfaced, you deciding, the work executing. A walkthrough, not a finished product.",
+    "steps": [
+      {
+        "label": "01 — IT SURFACES THE CHOICES",
+        "text": "The intelligence brings you the decisions that matter, framed clearly, with the trade-offs honest."
+      },
+      {
+        "label": "02 — YOU MAKE THE CALL",
+        "text": "You decide. The direction is yours, at every consequential step."
+      },
+      {
+        "label": "03 — IT EXECUTES",
+        "text": "The heavy lifting happens around your decision — built, not just advised."
+      },
+      {
+        "label": "04 — YOU REDIRECT ANYTIME",
+        "text": "If it drifts, you steer it back. Authorship never leaves your hands."
+      }
+    ],
+    "cta": "Direct your first build"
+  },
+  "resources": {
+    "eyebrow": "RESOURCES",
+    "title": "How to think about building with an intelligence.",
+    "lead": "Substantial, practical pieces on getting from a problem to a solution you own. Each ends where everything here does — a conversation.",
+    "readMore": "Read"
   }
 }

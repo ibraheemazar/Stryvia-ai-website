@@ -68,12 +68,25 @@
         "I need a working version fast, not a six-month roadmap."
       ],
       "sub": [
-        { "label": "FROM IDEA TO SPEC", "text": "You describe it in plain words; it becomes a clear, buildable shape you approve before anything is made." },
-        { "label": "THE BUILD", "text": "The interface, the logic, and the working thing get built with you directing the consequential calls." },
-        { "label": "ITERATE AND OWN", "text": "You change it whenever you want, because you own it — no lock-in, no dependency." }
+        {
+          "label": "FROM IDEA TO SPEC",
+          "text": "You describe it in plain words; it becomes a clear, buildable shape you approve before anything is made."
+        },
+        {
+          "label": "THE BUILD",
+          "text": "The interface, the logic, and the working thing get built with you directing the consequential calls."
+        },
+        {
+          "label": "ITERATE AND OWN",
+          "text": "You change it whenever you want, because you own it — no lock-in, no dependency."
+        }
       ],
       "approach": "It understands what the product is really for before proposing a shape, then orchestrates the design, the logic, and the build into one coherent thing instead of disconnected parts.",
-      "scenarios": ["product-no-team", "internal-tool", "idea-carried-for-years"]
+      "scenarios": [
+        "product-no-team",
+        "internal-tool",
+        "idea-carried-for-years"
+      ]
     },
     "launch-a-new-venture": {
       "name": "Launch a new venture",
@@ -85,12 +98,25 @@
         "I need to move before a competitor does, not wait on a team."
       ],
       "sub": [
-        { "label": "THE MARKET READ", "text": "Where the opportunity is, who it's for, and what it would take — specific to your situation, not a template." },
-        { "label": "MODEL & PLAN", "text": "The business model, the numbers, and the first concrete steps you can act on." },
-        { "label": "BRAND & FIRST MOVES", "text": "The identity and the assets to start, built coherently because one intelligence made them." }
+        {
+          "label": "THE MARKET READ",
+          "text": "Where the opportunity is, who it's for, and what it would take — specific to your situation, not a template."
+        },
+        {
+          "label": "MODEL & PLAN",
+          "text": "The business model, the numbers, and the first concrete steps you can act on."
+        },
+        {
+          "label": "BRAND & FIRST MOVES",
+          "text": "The identity and the assets to start, built coherently because one intelligence made them."
+        }
       ],
       "approach": "It reads your situation like a senior advisor, brings market, model, and brand thinking together, and hands you a plan you can direct and own.",
-      "scenarios": ["business-unknown-field", "new-market", "raise-story-numbers"]
+      "scenarios": [
+        "business-unknown-field",
+        "new-market",
+        "raise-story-numbers"
+      ]
     },
     "creative-and-content-production": {
       "name": "Creative and content production",
@@ -102,12 +128,25 @@
         "I need volume and quality at once."
       ],
       "sub": [
-        { "label": "CONCEPT", "text": "The idea and the direction, shaped with you so it's yours, not a generic output." },
-        { "label": "PRODUCTION AT SCALE", "text": "The assets across formats and channels, produced as one coherent body of work." },
-        { "label": "VARIATIONS", "text": "Versions across languages and placements that stay on-brand because they came from one mind." }
+        {
+          "label": "CONCEPT",
+          "text": "The idea and the direction, shaped with you so it's yours, not a generic output."
+        },
+        {
+          "label": "PRODUCTION AT SCALE",
+          "text": "The assets across formats and channels, produced as one coherent body of work."
+        },
+        {
+          "label": "VARIATIONS",
+          "text": "Versions across languages and placements that stay on-brand because they came from one mind."
+        }
       ],
       "approach": "Orchestration is the point here: many models produce, and Stryvia binds their output into one coherent campaign-grade result.",
-      "scenarios": ["campaign-at-scale", "new-market", "idea-carried-for-years"]
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market",
+        "idea-carried-for-years"
+      ]
     },
     "marketing-and-growth": {
       "name": "Marketing and growth",
@@ -119,12 +158,25 @@
         "I want output and speed I control."
       ],
       "sub": [
-        { "label": "CAMPAIGNS", "text": "Concept to assets to variations, across formats and languages, orchestrated as one." },
-        { "label": "CONTENT AT SCALE", "text": "The volume you need, on-brand, without a content team to manage." },
-        { "label": "GROWTH MOVES", "text": "The next concrete steps to grow, scoped to where you actually are." }
+        {
+          "label": "CAMPAIGNS",
+          "text": "Concept to assets to variations, across formats and languages, orchestrated as one."
+        },
+        {
+          "label": "CONTENT AT SCALE",
+          "text": "The volume you need, on-brand, without a content team to manage."
+        },
+        {
+          "label": "GROWTH MOVES",
+          "text": "The next concrete steps to grow, scoped to where you actually are."
+        }
       ],
       "approach": "It understands your market and message first, then produces and orchestrates the work so the whole campaign is coherent rather than stitched.",
-      "scenarios": ["campaign-at-scale", "new-market", "raise-story-numbers"]
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market",
+        "raise-story-numbers"
+      ]
     },
     "operations-and-automation": {
       "name": "Operations and automation",
@@ -136,12 +188,889 @@
         "I want an internal tool shaped to how we actually work."
       ],
       "sub": [
-        { "label": "MAP THE WORKFLOW", "text": "Where the work happens and where it hurts, made visible before anything changes." },
-        { "label": "REDESIGN", "text": "A better flow, with you deciding what stays human and what gets automated." },
-        { "label": "AUTOMATE & OWN", "text": "A working automation or internal tool, built to fit, owned and controlled by you." }
+        {
+          "label": "MAP THE WORKFLOW",
+          "text": "Where the work happens and where it hurts, made visible before anything changes."
+        },
+        {
+          "label": "REDESIGN",
+          "text": "A better flow, with you deciding what stays human and what gets automated."
+        },
+        {
+          "label": "AUTOMATE & OWN",
+          "text": "A working automation or internal tool, built to fit, owned and controlled by you."
+        }
       ],
       "approach": "It understands your process deeply, then builds and automates the execution — not just advice, the working thing, with you in control.",
-      "scenarios": ["manual-process", "internal-tool", "product-no-team"]
+      "scenarios": [
+        "manual-process",
+        "internal-tool",
+        "product-no-team"
+      ]
+    },
+    "brand-and-identity-creation": {
+      "name": "Brand and identity creation",
+      "headline": "A brand that looks like it had a full studio behind it — because it did.",
+      "lead": "You bring the idea and the feeling you want. You get a name, an identity, and a system you own, coherent down to the last detail.",
+      "problems": [
+        "I have a business but no real brand yet.",
+        "My identity looks thrown together, not intentional.",
+        "I can't afford a branding agency's price or timeline."
+      ],
+      "sub": [
+        {
+          "label": "NAME & POSITIONING",
+          "text": "What you stand for and how you say it, shaped with you until it's unmistakably yours."
+        },
+        {
+          "label": "THE IDENTITY",
+          "text": "Logo, type, color, and the visual system, built as one coherent language, not loose assets."
+        },
+        {
+          "label": "THE GUIDELINES",
+          "text": "A usable system you own, so the brand stays consistent everywhere it shows up."
+        }
+      ],
+      "approach": "It understands the feeling you're after before drawing anything, then orchestrates naming, visual, and verbal identity into one coherent whole.",
+      "scenarios": [
+        "business-unknown-field",
+        "campaign-at-scale",
+        "idea-carried-for-years"
+      ]
+    },
+    "advertising-and-campaigns": {
+      "name": "Advertising and campaigns",
+      "headline": "Campaigns that land, across every format, made as one piece of work.",
+      "lead": "You set the message. You get the concept, the assets, and the variations — coherent because one intelligence made them all.",
+      "problems": [
+        "I need ads but an agency is slow and costly.",
+        "My campaigns feel disconnected across channels.",
+        "I can't produce enough variations fast enough."
+      ],
+      "sub": [
+        {
+          "label": "THE CONCEPT",
+          "text": "A central idea worth running, shaped with you, not a generic template."
+        },
+        {
+          "label": "THE ASSETS",
+          "text": "Every format and placement produced as one coherent campaign."
+        },
+        {
+          "label": "VARIATIONS",
+          "text": "Versions across audiences and languages that stay on-brand."
+        }
+      ],
+      "approach": "Orchestration is the point: many models produce, and Stryvia binds the output into one campaign that holds together.",
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market",
+        "raise-story-numbers"
+      ]
+    },
+    "web-presence-and-seo": {
+      "name": "Web presence and SEO",
+      "headline": "A site that's found and that works, without a web team on retainer.",
+      "lead": "You describe what you want people to find and do. You get the site, the content, and the search foundation, yours to keep.",
+      "problems": [
+        "My site is outdated or doesn't exist yet.",
+        "I'm invisible in search for what I sell.",
+        "Every change means waiting on a developer."
+      ],
+      "sub": [
+        {
+          "label": "THE SITE",
+          "text": "Structure, pages, and copy built around what your visitors actually want."
+        },
+        {
+          "label": "SEARCH FOUNDATION",
+          "text": "The technical and content basics that make you findable for high-intent queries."
+        },
+        {
+          "label": "YOURS TO RUN",
+          "text": "Built so you can change it, not bend yourself around a vendor."
+        }
+      ],
+      "approach": "It understands your customer and your market first, then builds the site and the search surface as one coherent presence.",
+      "scenarios": [
+        "business-unknown-field",
+        "new-market",
+        "internal-tool"
+      ]
+    },
+    "content-and-copywriting-at-scale": {
+      "name": "Content and copywriting at scale",
+      "headline": "The volume and quality of a content team, directed by you.",
+      "lead": "You set the voice and the goal. You get content across channels at a scale your headcount shouldn't allow.",
+      "problems": [
+        "I can't produce enough content to keep up.",
+        "Quality drops when I try to scale volume.",
+        "Hiring writers is slow and expensive."
+      ],
+      "sub": [
+        {
+          "label": "YOUR VOICE",
+          "text": "Captured once, applied everywhere, so everything sounds like you."
+        },
+        {
+          "label": "AT SCALE",
+          "text": "Articles, pages, posts, and emails produced as a coherent body of work."
+        },
+        {
+          "label": "ON-BRAND",
+          "text": "Consistent across formats because it came from one mind."
+        }
+      ],
+      "approach": "It learns your voice and your intent, then produces at volume without the incoherence of stitching many tools.",
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market",
+        "idea-carried-for-years"
+      ]
+    },
+    "process-and-workflow-design": {
+      "name": "Process and workflow design",
+      "headline": "Redesign how the work flows, then make it run itself.",
+      "lead": "You describe how things work today and where it hurts. You get a better flow, and the automation to run it, owned by you.",
+      "problems": [
+        "Our process is messy and slow.",
+        "Work falls through the cracks between people.",
+        "Every fix needs a consultant."
+      ],
+      "sub": [
+        {
+          "label": "MAP IT",
+          "text": "Where the work happens and where it breaks, made visible."
+        },
+        {
+          "label": "REDESIGN",
+          "text": "A cleaner flow, with you deciding what stays human."
+        },
+        {
+          "label": "AUTOMATE",
+          "text": "The new flow built to run, owned and controlled by you."
+        }
+      ],
+      "approach": "It understands your process deeply, then builds and automates the execution rather than just advising.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool",
+        "product-no-team"
+      ]
+    },
+    "custom-ai-agents-and-assistants": {
+      "name": "Custom AI agents and assistants",
+      "headline": "An assistant built around your work, not a generic chatbot.",
+      "lead": "You describe the job to be done. You get an agent shaped to your workflow, your data, and your rules, yours to control.",
+      "problems": [
+        "Generic AI tools don't fit how we work.",
+        "I want to automate judgment-heavy tasks, safely.",
+        "I need something my team actually uses."
+      ],
+      "sub": [
+        {
+          "label": "SHAPED TO YOU",
+          "text": "Built around your tasks, your data, and your guardrails."
+        },
+        {
+          "label": "IN YOUR CONTROL",
+          "text": "You decide what it can and can't do, and where a human steps in."
+        },
+        {
+          "label": "YOURS",
+          "text": "An asset you own and refine, not a tool you rent."
+        }
+      ],
+      "approach": "It understands the job and its limits first, then orchestrates the right models into an agent that fits your work.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool",
+        "product-no-team"
+      ]
+    },
+    "crm-and-customer-systems": {
+      "name": "CRM and customer systems",
+      "headline": "A customer system shaped to how you actually sell, not the other way around.",
+      "lead": "You describe how your team works with customers. You get a system built to fit, owned by you, no per-seat tax.",
+      "problems": [
+        "Off-the-shelf CRMs don't fit our process.",
+        "We bend our workflow around the tool.",
+        "Per-seat pricing punishes us for growing."
+      ],
+      "sub": [
+        {
+          "label": "BUILT TO FIT",
+          "text": "Your pipeline, your stages, your fields — shaped to your reality."
+        },
+        {
+          "label": "CONNECTED",
+          "text": "Tied into the tools and data you already use."
+        },
+        {
+          "label": "YOURS",
+          "text": "You own it and change it, with no lock-in."
+        }
+      ],
+      "approach": "It understands how your team really works, then builds a system that fits instead of forcing you into a generic product.",
+      "scenarios": [
+        "internal-tool",
+        "manual-process",
+        "new-market"
+      ]
+    },
+    "ecommerce-setup-and-optimization": {
+      "name": "E-commerce setup and optimization",
+      "headline": "From storefront to selling, built and tuned with you.",
+      "lead": "You bring the product. You get the store, the merchandising, and the growth levers, yours to run.",
+      "problems": [
+        "I need to start selling online, fast.",
+        "My store isn't converting.",
+        "I can't afford a full e-commerce team."
+      ],
+      "sub": [
+        {
+          "label": "THE STORE",
+          "text": "Set up around your product and your customer, ready to sell."
+        },
+        {
+          "label": "OPTIMIZATION",
+          "text": "The merchandising, copy, and flows that lift conversion."
+        },
+        {
+          "label": "GROWTH",
+          "text": "The next concrete moves to sell more, scoped to where you are."
+        }
+      ],
+      "approach": "It understands your product and buyer first, then builds and tunes the store as one coherent operation.",
+      "scenarios": [
+        "business-unknown-field",
+        "new-market",
+        "campaign-at-scale"
+      ]
+    },
+    "finance-modeling-and-forecasting": {
+      "name": "Finance, modeling and forecasting",
+      "headline": "Models and forecasts that hold up under scrutiny, without a finance hire.",
+      "lead": "You bring the business. You get the model, the scenarios, and the numbers, built to defend, directed by you.",
+      "problems": [
+        "I need a real financial model, fast.",
+        "My numbers won't survive due diligence.",
+        "Hiring a finance lead is premature."
+      ],
+      "sub": [
+        {
+          "label": "THE MODEL",
+          "text": "Built on real drivers, structured so you can flex the assumptions."
+        },
+        {
+          "label": "SCENARIOS",
+          "text": "Best, base, and downside, so you can decide with eyes open."
+        },
+        {
+          "label": "DEFENSIBLE",
+          "text": "Clear enough to hold up in a room full of skeptics."
+        }
+      ],
+      "approach": "It understands your business model first, then builds the numbers so they're both rigorous and yours to direct.",
+      "scenarios": [
+        "raise-story-numbers",
+        "business-unknown-field",
+        "internal-tool"
+      ]
+    },
+    "strategy-and-business-intelligence": {
+      "name": "Strategy and business intelligence",
+      "headline": "The thinking a strategy team does, on your problem, with you steering.",
+      "lead": "You bring the question. You get the analysis, the options, and a clear recommendation, in language you can act on.",
+      "problems": [
+        "I'm facing a decision outside my expertise.",
+        "I'd need to hire consultants to think it through.",
+        "I want clarity, not a 90-page deck."
+      ],
+      "sub": [
+        {
+          "label": "THE ANALYSIS",
+          "text": "The real picture of your situation, market, and options."
+        },
+        {
+          "label": "THE OPTIONS",
+          "text": "Clear paths with honest trade-offs, not hedged consultant-speak."
+        },
+        {
+          "label": "THE CALL",
+          "text": "A recommendation you can actually act on, with you deciding."
+        }
+      ],
+      "approach": "It understands your situation like a senior advisor, then structures the thinking so the decision is yours to make well.",
+      "scenarios": [
+        "business-unknown-field",
+        "new-market",
+        "raise-story-numbers"
+      ]
+    },
+    "market-and-competitor-research": {
+      "name": "Market and competitor research",
+      "headline": "Know your market and your rivals, without weeks of desk research.",
+      "lead": "You name the market. You get the landscape, the players, and the openings, shaped to your decision.",
+      "problems": [
+        "I'm entering a market I don't know well.",
+        "I don't know who I'm really up against.",
+        "Research takes weeks I don't have."
+      ],
+      "sub": [
+        {
+          "label": "THE LANDSCAPE",
+          "text": "Who's playing, how, and where the demand actually is."
+        },
+        {
+          "label": "THE COMPETITORS",
+          "text": "What they do well, where they're weak, and the gap you can take."
+        },
+        {
+          "label": "THE OPENING",
+          "text": "The specific angle worth pursuing, for your situation."
+        }
+      ],
+      "approach": "It frames the question first, then orchestrates the research into a read you can decide on, not a data dump.",
+      "scenarios": [
+        "new-market",
+        "business-unknown-field",
+        "campaign-at-scale"
+      ]
+    },
+    "data-analysis-and-dashboards": {
+      "name": "Data analysis and dashboards",
+      "headline": "Turn your data into answers and a dashboard you actually use.",
+      "lead": "You bring the data and the questions. You get the analysis and a living view, owned by you.",
+      "problems": [
+        "My data is everywhere and tells me nothing.",
+        "I can't afford a data analyst.",
+        "I want answers, not spreadsheets."
+      ],
+      "sub": [
+        {
+          "label": "THE ANALYSIS",
+          "text": "The real questions answered from your actual data."
+        },
+        {
+          "label": "THE DASHBOARD",
+          "text": "A living view of what matters, built to your decisions."
+        },
+        {
+          "label": "YOURS",
+          "text": "Owned and changeable, not a locked vendor report."
+        }
+      ],
+      "approach": "It understands the decisions you need to make, then builds the analysis and the view around them.",
+      "scenarios": [
+        "internal-tool",
+        "manual-process",
+        "raise-story-numbers"
+      ]
+    },
+    "sales-enablement-and-pipelines": {
+      "name": "Sales enablement and pipelines",
+      "headline": "The materials and the system to sell, built around your motion.",
+      "lead": "You describe how you win. You get the assets, the pipeline, and the playbook, yours to run.",
+      "problems": [
+        "My sales materials are thin or off-message.",
+        "Deals stall and I don't know why.",
+        "I need a repeatable motion, not heroics."
+      ],
+      "sub": [
+        {
+          "label": "THE ASSETS",
+          "text": "Decks, one-pagers, and messaging that actually move deals."
+        },
+        {
+          "label": "THE PIPELINE",
+          "text": "A system shaped to how you really sell."
+        },
+        {
+          "label": "THE PLAYBOOK",
+          "text": "A repeatable motion your team can run."
+        }
+      ],
+      "approach": "It understands your buyer and your motion, then builds the assets and the system as one coherent engine.",
+      "scenarios": [
+        "raise-story-numbers",
+        "internal-tool",
+        "new-market"
+      ]
+    },
+    "investor-and-pitch-materials": {
+      "name": "Investor and pitch materials",
+      "headline": "A raise package that holds up, in your voice, fast.",
+      "lead": "You bring the business. You get the deck, the model, and the narrative, built to convince, directed by you.",
+      "problems": [
+        "I need a deck that doesn't look amateur.",
+        "My story and my numbers don't line up.",
+        "I'm raising and time is short."
+      ],
+      "sub": [
+        {
+          "label": "THE NARRATIVE",
+          "text": "A story that's true, sharp, and in your voice."
+        },
+        {
+          "label": "THE DECK",
+          "text": "Designed and structured to carry a room."
+        },
+        {
+          "label": "THE MODEL",
+          "text": "Numbers that back the story under scrutiny."
+        }
+      ],
+      "approach": "It understands what makes your case compelling, then builds the narrative, deck, and model as one coherent package.",
+      "scenarios": [
+        "raise-story-numbers",
+        "business-unknown-field",
+        "idea-carried-for-years"
+      ]
+    },
+    "document-and-contract-drafting": {
+      "name": "Document and contract drafting",
+      "headline": "Clear, careful documents drafted fast — with human expertise where stakes are high.",
+      "lead": "You describe what you need. You get a strong first draft, and an honest handoff to a professional when it matters.",
+      "problems": [
+        "I need documents drafted but legal help is slow.",
+        "I waste hours on first drafts.",
+        "I want a careful starting point, not risk."
+      ],
+      "sub": [
+        {
+          "label": "THE DRAFT",
+          "text": "A strong, clear first version shaped to your situation."
+        },
+        {
+          "label": "THE STRUCTURE",
+          "text": "The right sections and terms, organized properly."
+        },
+        {
+          "label": "THE LIMIT",
+          "text": "Where stakes are high, it routes you to human expertise — plainly."
+        }
+      ],
+      "approach": "It drafts carefully and tells you, honestly, when a document needs a professional rather than guessing.",
+      "scenarios": [
+        "business-unknown-field",
+        "raise-story-numbers",
+        "internal-tool"
+      ]
+    },
+    "training-and-knowledge-systems": {
+      "name": "Training and knowledge systems",
+      "headline": "Turn what your team knows into a system that teaches and scales.",
+      "lead": "You describe the knowledge and the gap. You get the training and the system to hold it, owned by you.",
+      "problems": [
+        "Knowledge lives in a few people's heads.",
+        "Onboarding is slow and inconsistent.",
+        "We keep re-explaining the same things."
+      ],
+      "sub": [
+        {
+          "label": "CAPTURE",
+          "text": "The know-how that matters, drawn out and organized."
+        },
+        {
+          "label": "THE TRAINING",
+          "text": "Material that actually teaches, shaped to your team."
+        },
+        {
+          "label": "THE SYSTEM",
+          "text": "A living knowledge base your team owns and grows."
+        }
+      ],
+      "approach": "It understands what your team needs to know, then builds the training and the system as one coherent whole.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool",
+        "idea-carried-for-years"
+      ]
+    }
+  },
+  "industryData": {
+    "real-estate-and-development": {
+      "name": "Real estate & development",
+      "headline": "The work your projects need, built at the speed your projects move.",
+      "lead": "From market reads to brand to the systems that run a development, shaped to how real estate actually works here.",
+      "problems": [
+        "I need a project brand and go-to-market, fast.",
+        "My sales and CRM don't fit how we sell units.",
+        "I need feasibility and models I can defend."
+      ],
+      "apply": "Strategy and market research scope the opportunity, brand and creative make it sell, and custom systems run the operation — orchestrated as one.",
+      "scenarios": [
+        "business-unknown-field",
+        "internal-tool"
+      ],
+      "note": "Built in the region, with your data kept close and handled to local standards."
+    },
+    "food-beverage-and-hospitality": {
+      "name": "Food, beverage & hospitality",
+      "headline": "From concept to opening, built with you.",
+      "lead": "The brand, the menu story, the digital presence, and the operations — shaped to a market that moves fast.",
+      "problems": [
+        "I'm opening a venue and need everything at once.",
+        "My brand doesn't stand out in a crowded scene.",
+        "My operations are manual and leaky."
+      ],
+      "apply": "Brand and content make the concept land, e-commerce and web bring it online, and automation tightens the operation.",
+      "scenarios": [
+        "business-unknown-field",
+        "manual-process"
+      ],
+      "note": "Regional understanding of how hospitality works here, with data kept close."
+    },
+    "retail-and-ecommerce": {
+      "name": "Retail & e-commerce",
+      "headline": "Sell more, across every channel, without a bigger team.",
+      "lead": "The store, the content, the campaigns, and the customer systems — built and tuned to convert.",
+      "problems": [
+        "My online store underperforms.",
+        "I can't produce enough content to keep up.",
+        "My customer data is scattered."
+      ],
+      "apply": "E-commerce setup, content at scale, and dashboards come together so the whole funnel works as one.",
+      "scenarios": [
+        "campaign-at-scale",
+        "internal-tool"
+      ],
+      "note": "Your customer data is encrypted and kept in the region."
+    },
+    "media-entertainment-and-production": {
+      "name": "Media, entertainment & production",
+      "headline": "Produce at a scale a full studio used to require.",
+      "lead": "Concept, content, and campaigns across formats and languages, coherent because they're made as one.",
+      "problems": [
+        "I'm capped by headcount, not ideas.",
+        "Stitching tools makes the work incoherent.",
+        "I need volume and quality at once."
+      ],
+      "apply": "Creative production and advertising are orchestrated so the script, the storyboard, and everything between arrive as one piece.",
+      "scenarios": [
+        "campaign-at-scale",
+        "idea-carried-for-years"
+      ],
+      "note": "Built in the region, your work and data kept close."
+    },
+    "healthcare": {
+      "name": "Healthcare",
+      "headline": "The capability to build and run, with care for what's sensitive.",
+      "lead": "From patient-facing presence to internal systems, shaped to a sector where trust and accuracy matter most.",
+      "problems": [
+        "I need digital presence patients trust.",
+        "My admin processes are slow and manual.",
+        "I need careful, accurate materials."
+      ],
+      "apply": "Web presence, automation, and knowledge systems come together, with the confidence threshold respected where stakes are high.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Sensitive data handled to strict standards and kept in the region; human expertise is brought in where it should be."
+    },
+    "education": {
+      "name": "Education",
+      "headline": "Build the programs, content, and systems that teach and scale.",
+      "lead": "From course content to the systems that deliver it, shaped to how learning actually happens.",
+      "problems": [
+        "I need to produce learning content at scale.",
+        "Onboarding and delivery are inconsistent.",
+        "Knowledge lives in too few heads."
+      ],
+      "apply": "Content at scale, training systems, and automation turn what you know into something that teaches and grows.",
+      "scenarios": [
+        "idea-carried-for-years",
+        "manual-process"
+      ],
+      "note": "Your data kept close and handled to local standards."
+    },
+    "professional-services": {
+      "name": "Professional services",
+      "headline": "Deliver more for clients without adding headcount for every engagement.",
+      "lead": "The research, the materials, and the systems that let a lean firm punch far above its size.",
+      "problems": [
+        "Every new service needs new hires.",
+        "I spend too long on first drafts and decks.",
+        "I want leverage without losing quality."
+      ],
+      "apply": "Research, document drafting, and sales materials come together so you execute engagements that used to need a team.",
+      "scenarios": [
+        "raise-story-numbers",
+        "internal-tool"
+      ],
+      "note": "Client data encrypted and kept in the region."
+    },
+    "financial-services": {
+      "name": "Financial services",
+      "headline": "Serious capability you own, with data kept close and handled with care.",
+      "lead": "Models, analysis, and systems shaped to a sector where rigor and trust are the product.",
+      "problems": [
+        "I need defensible models and analysis.",
+        "Vendor lock-in and data exposure worry me.",
+        "My reporting is manual and slow."
+      ],
+      "apply": "Finance modeling, data analysis, and automation come together, owned by you with no lock-in.",
+      "scenarios": [
+        "raise-story-numbers",
+        "manual-process"
+      ],
+      "note": "Data encrypted, access restricted, and kept in the region — a buying criterion here, not fine print."
+    },
+    "government-and-public-sector": {
+      "name": "Government & public sector",
+      "headline": "Capability built in the region, owned in the region.",
+      "lead": "The research, content, and systems that serve the public, aligned with where the region is heading.",
+      "problems": [
+        "I need capability without vendor dependency.",
+        "Data residency is non-negotiable.",
+        "Processes are heavy and manual."
+      ],
+      "apply": "Strategy, knowledge systems, and automation come together, with ownership and residency kept local.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Data kept in the region and handled to local standards; capability you own, not a vendor you're tied to."
+    },
+    "manufacturing-and-logistics": {
+      "name": "Manufacturing & logistics",
+      "headline": "Map, redesign, and automate the work that slows you down.",
+      "lead": "From operations to the systems that run them, shaped to how things actually move.",
+      "problems": [
+        "Our processes are manual and slow.",
+        "Data sits in silos and tells us little.",
+        "Every fix needs a vendor."
+      ],
+      "apply": "Workflow design, automation, and dashboards come together into systems you own and control.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Your operational data kept close and handled to local standards."
+    },
+    "technology-and-startups": {
+      "name": "Technology & startups",
+      "headline": "Build the product, the story, and the growth — without waiting on a team.",
+      "lead": "From MVP to raise to go-to-market, shaped to how startups actually move.",
+      "problems": [
+        "I need to build a product with no team.",
+        "I'm raising and need the story and numbers.",
+        "I need growth without an agency."
+      ],
+      "apply": "Product build, investor materials, and marketing come together so a founder moves at the speed of their decisions.",
+      "scenarios": [
+        "product-no-team",
+        "raise-story-numbers"
+      ],
+      "note": "Built in the region, your IP and data kept close."
+    }
+  },
+  "audienceData": {
+    "the-visionary": {
+      "name": "I have an idea I've never been able to build",
+      "headline": "The idea was always yours. Now the power to build it is too.",
+      "lead": "You've carried it for years because building it meant assembling people you couldn't pull together. That wall is gone.",
+      "problems": [
+        "Every idea I've had needed a full team I couldn't afford.",
+        "I've watched ideas die in the gap between having them and building them.",
+        "I don't want to hand my idea to someone else and hope."
+      ],
+      "change": "You describe it, you direct it, and it gets built with you — and what comes out is unmistakably yours.",
+      "scenarios": [
+        "idea-carried-for-years",
+        "product-no-team"
+      ]
+    },
+    "entrepreneurs": {
+      "name": "I'm building a business",
+      "headline": "Move at the speed of your decisions, not your hiring.",
+      "lead": "Build or grow a venture without the team and budget a venture used to demand. Momentum, and ownership.",
+      "problems": [
+        "I'm stuck while competitors move.",
+        "I can't afford the team a real venture needs.",
+        "I want to own what I build, not depend on a vendor."
+      ],
+      "change": "The market read, the model, the brand, the build — directed by you, owned by you, fast.",
+      "scenarios": [
+        "business-unknown-field",
+        "raise-story-numbers"
+      ]
+    },
+    "operations-leaders": {
+      "name": "I run operations",
+      "headline": "Run leaner and move faster, without headcount for every initiative.",
+      "lead": "Execute the initiatives that used to require a new team, with control and efficiency.",
+      "problems": [
+        "Every new initiative means new cost and headcount.",
+        "We depend on vendors for everything.",
+        "Our processes are manual and leaky."
+      ],
+      "change": "Map, redesign, and automate the work — you decide what stays human, and you own the result.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ]
+    },
+    "business-owners": {
+      "name": "I lead a company",
+      "headline": "Solve the problem without assembling a cast of experts first.",
+      "lead": "Carrying a business problem, often outside your expertise? Understand it and solve it, with you in control.",
+      "problems": [
+        "I'm facing a problem in an area I don't know.",
+        "Hiring consultants is slow and expensive.",
+        "I want clarity and a path, not a 90-page deck."
+      ],
+      "change": "The analysis, the options, and a clear recommendation you can act on — directed by you.",
+      "scenarios": [
+        "business-unknown-field",
+        "raise-story-numbers"
+      ]
+    },
+    "domain-newcomers": {
+      "name": "I'm entering something I don't understand yet",
+      "headline": "Act without first becoming an expert, or hiring a row of them.",
+      "lead": "\"I'd need a CFO, a strategist, a designer\" — the dependency itself is the block. It doesn't have to be.",
+      "problems": [
+        "I'd need to hire a row of specialists just to start.",
+        "I'm blocked by what I don't know.",
+        "I want to move without becoming an expert first."
+      ],
+      "change": "Expertise on demand, with you in control — you get what you'd hire for, shaped to your situation.",
+      "scenarios": [
+        "business-unknown-field",
+        "new-market"
+      ]
+    },
+    "creatives": {
+      "name": "I create",
+      "headline": "Produce far beyond what your headcount should allow.",
+      "lead": "Leverage inside your own craft — the scale and quality that normally needs a full production apparatus.",
+      "problems": [
+        "I'm capped by resources and budget, not ideas.",
+        "I can't produce at the scale I see in my head.",
+        "Stitching tools breaks the coherence."
+      ],
+      "change": "Concept, production, and variations made as one coherent body of work — yours to run.",
+      "scenarios": [
+        "campaign-at-scale",
+        "idea-carried-for-years"
+      ]
+    },
+    "marketing-leaders": {
+      "name": "I run marketing",
+      "headline": "The growth capability you direct yourself.",
+      "lead": "Campaigns, content, and growth without the cost and slowness of an agency or a large internal team.",
+      "problems": [
+        "An agency is slow and expensive.",
+        "An internal team is a big commitment.",
+        "I want output and speed I control."
+      ],
+      "change": "Campaigns and content across channels, orchestrated as one, fast, and in your control.",
+      "scenarios": [
+        "campaign-at-scale",
+        "new-market"
+      ]
+    },
+    "enterprises": {
+      "name": "We're an enterprise",
+      "headline": "Serious capability you own, with your data kept close.",
+      "lead": "Capability without vendor lock-in, with data in the region and handled to local standards. Infrastructure you build on.",
+      "problems": [
+        "Vendor lock-in and data exposure are real risks.",
+        "We want capability we own and control.",
+        "We need it built for how we actually work."
+      ],
+      "change": "Custom systems and capability, owned by you, with data kept in the region — not a vendor you're tied to.",
+      "scenarios": [
+        "internal-tool",
+        "manual-process"
+      ]
+    }
+  },
+  "problemGallery": [
+    "A product idea with no development team",
+    "Launching into three markets with one strategist",
+    "Broadcast-quality content with no production house",
+    "A business problem in a domain I don't understand",
+    "A manual process eating my team's week",
+    "A CRM that doesn't fit how we sell",
+    "A raise with no deck and no model",
+    "An operation that breaks every time we grow",
+    "A brand that looks thrown together",
+    "Entering a market I don't know",
+    "Reporting that takes days and tells me little",
+    "An idea I've carried for years and never built"
+  ],
+  "outcomes": [
+    {
+      "label": "SPEED",
+      "text": "Weeks where the old way took months — because there's no team to hire, brief, and wait on."
+    },
+    {
+      "label": "SCALE",
+      "text": "Produce at a volume your headcount shouldn't allow, without losing coherence."
+    },
+    {
+      "label": "OWNERSHIP",
+      "text": "Walk away owning the brand, the system, the model — yours to change, with no lock-in."
+    },
+    {
+      "label": "INDEPENDENCE",
+      "text": "Move on a problem in a domain you don't know, without hiring a row of experts first."
+    },
+    {
+      "label": "COHERENCE",
+      "text": "Get the script, the storyboard, and everything between as one piece, not five disconnected tools."
+    },
+    {
+      "label": "CONTROL",
+      "text": "Direct every decision that matters while the heavy lifting happens around you."
+    },
+    {
+      "label": "CLARITY",
+      "text": "A real plan and a defensible model, fast, instead of a 90-page deck that decides nothing."
+    },
+    {
+      "label": "MOMENTUM",
+      "text": "Start now, shape as you go, and pay for the capability, not the overhead."
+    },
+    {
+      "label": "REACH",
+      "text": "Whatever you bring — product, venture, campaign, operation — it gets built."
+    }
+  ],
+  "articles": {
+    "build-without-a-team": {
+      "title": "How to build a product when you don't have a team",
+      "lead": "The old answer was: hire developers, designers, and a PM, then wait. There's a faster way that leaves you owning the result.",
+      "body": [
+        "Start with the problem, not the features. The clearest products come from a sharp description of what should exist and why — not a spec sheet. Say what you want to be true for the person using it.",
+        "Make the consequential calls early. What it is, who it's for, what it must do on day one. These are yours to decide; everything downstream hangs on them.",
+        "Then let the building happen around your decisions. The interface, the logic, the working thing — produced as one coherent piece, with you steering, not managing a team.",
+        "The result is yours to change. No lock-in, no dependency. That's the difference between renting a tool and owning a capability."
+      ]
+    },
+    "ai-without-an-agency": {
+      "title": "Marketing at scale without an agency",
+      "lead": "Agencies are slow and expensive; an internal team is a big commitment. There's a third path you direct yourself.",
+      "body": [
+        "Set the message and the goal first. Everything coherent comes from a clear point of view — the rest is production.",
+        "Produce across channels as one piece of work. Stitching content from five tools is what makes campaigns feel disconnected. Orchestrated, they hold together.",
+        "Keep the variations on-brand by keeping them from one mind. Languages, formats, placements — consistent because they came from the same intelligence.",
+        "You stay in control of output and speed, and you own what's made."
+      ]
+    },
+    "knowing-the-limits": {
+      "title": "Why an intelligence that knows its limits is the one to trust",
+      "lead": "The most useful thing an intelligence can say is sometimes \"this is beyond what I should promise.\"",
+      "body": [
+        "Overconfidence is the failure mode of most tools. They guess, confidently, and you find out later.",
+        "A genuine confidence threshold is the opposite: it recognizes the edge of what it can responsibly deliver and routes you to human expertise instead of fabricating certainty.",
+        "That honesty isn't a weakness in the pitch — it's what makes everything else believable. If it tells you the truth at the edge, you can trust it in the middle.",
+        "Trust, for an intelligence you hand your problem to, is the product."
+      ]
     }
   }
 }
