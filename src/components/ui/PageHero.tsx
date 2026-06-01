@@ -25,7 +25,7 @@ export function PageHero({
           {eyebrow}
         </Eyebrow>
         <h1
-          className="sv-reveal mt-6 max-w-4xl text-sv-display-l"
+          className="sv-reveal sv-grad-text mt-6 max-w-4xl text-sv-display-l"
           style={{ ["--i" as string]: 1 } as React.CSSProperties}
         >
           {title}
