@@ -3,6 +3,7 @@ import { verifyAdmin, requireService } from "@/lib/admin-auth";
 import { getMarketingOverview, getConversationIntelligence } from "@/lib/marketing/data";
 import { seedIntegrations, resolveSegmentLeads } from "@/lib/marketing/actions";
 import { providerConfigured } from "@/lib/marketing/connectors";
+import { getPerformance } from "@/lib/marketing/performance";
 import { INTEGRATIONS } from "@/lib/marketing/integrations";
 
 export const runtime = "nodejs";
@@ -68,6 +69,11 @@ export async function GET(req: NextRequest) {
         .limit(40),
     ]);
     return NextResponse.json({ ok: true, automations: automations ?? [], runs: runs ?? [] });
+  }
+
+  if (section === "performance") {
+    const channels = await getPerformance();
+    return NextResponse.json({ ok: true, channels });
   }
 
   if (section === "campaigns") {
