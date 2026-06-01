@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "title": "Stryvia — The intelligence you build with",
+    "description": "Bring a problem. Direct the work. The intelligence does the heavy lifting, and what comes out is yours. Stryvia gives you the capability to build, create, and solve at the speed a team used to require.",
+    "ogAlt": "Stryvia — the intelligence you build with"
+  },
+  "nav": {
+    "skipToContent": "Skip to content",
+    "home": "Home",
+    "howItWorks": "How it works",
+    "capabilities": "Capabilities",
+    "intelligence": "The intelligence",
+    "trust": "Trust",
+    "pricing": "Pricing",
+    "manifesto": "Manifesto",
+    "faq": "FAQ",
+    "start": "Start",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "live": "LIVE"
+  },
+  "footer": {
+    "tagline": "The intelligence you build with.",
+    "explore": "Explore",
+    "company": "Company",
+    "trustCol": "Trust & access",
+    "start": "Start",
+    "earlyAccess": "Request early access",
+    "investors": "For investors",
+    "privacy": "Privacy policy",
+    "rights": "All rights reserved.",
+    "coordinate": "BUILT IN THE REGION · ENCRYPTED · YOURS TO OWN"
+  },
+  "home": {
+    "scene1": {
+      "eyebrow": "STRYVIA / THE INTELLIGENCE YOU BUILD WITH",
+      "headline": "The thing you could never build without a team. Build it now.",
+      "subline": "Bring a problem. Direct the work. The intelligence does the heavy lifting, and what comes out is yours.",
+      "scrollCue": "SCROLL"
+    },
+    "scene3": {
+      "headline": "For as long as building anything meant assembling people, your ambition was capped by who you could afford to hire and wait for.",
+      "body": "That cap is gone. You bring the problem. You make the decisions. The intelligence builds. You own what it makes. No team to assemble, no months to wait, no handing your idea to someone else and hoping."
+    },
+    "scene4": {
+      "eyebrow": "WHY IT'S DIFFERENT",
+      "headline": "One model writes the script. None of them can also build the storyboard. Stryvia does both, as one piece of work.",
+      "body": "Stryvia makes many models work together as one, so you get the whole thing finished and coherent, not five disconnected pieces you have to stitch yourself. That is the part no single tool can do.",
+      "link": "See how it thinks",
+      "nodeScript": "SCRIPT",
+      "nodeStoryboard": "STORYBOARD",
+      "nodeAssets": "ASSETS",
+      "nodeCopy": "COPY",
+      "nodeOrchestrate": "STRYVIA",
+      "nodeOutput": "ONE COHERENT RESULT"
+    },
+    "scene5": {
+      "eyebrow": "WHAT BECOMES POSSIBLE",
+      "headline": "Whatever you bring, it gets built.",
+      "body": "From a product to a venture to a campaign to a finance model to an operation. Different problems, one intelligence.",
+      "action": "Tell it what you want to build"
+    },
+    "scene6": {
+      "eyebrow": "THE OLD WAY VS STRYVIA",
+      "headline": "Six months and a team of five, or six weeks while you direct it.",
+      "body": "The old way means hiring, briefing, coordinating, waiting, and paying for all of it. The Stryvia way means you start now, shape as you go, and pay for the capability, not the overhead.",
+      "oldLabel": "THE OLD WAY",
+      "oldTeam": "A team of five, assembled",
+      "oldTime": "≈ 6 months",
+      "oldCost": "Salaries, overhead, coordination",
+      "newLabel": "WITH STRYVIA",
+      "newTeam": "You, directing",
+      "newTime": "≈ 6 weeks",
+      "newCost": "Capability, not overhead",
+      "action": "Scope it in the chat"
+    },
+    "scene7": {
+      "eyebrow": "THE THINGS YOU'RE WONDERING",
+      "controlLabel": "CONTROL",
+      "control": "You direct the work. Every decision that matters is yours.",
+      "ownershipLabel": "OWNERSHIP",
+      "ownership": "You own what gets built. No lock-in, ever.",
+      "dataLabel": "YOUR DATA",
+      "data": "It is encrypted, handled to local standards, and kept in the region.",
+      "limitsLabel": "LIMITS",
+      "limits": "When a problem is beyond what we should promise, we tell you."
+    },
+    "scene8": {
+      "eyebrow": "WHICH OF THESE IS YOU",
+      "doors": [
+        "I have an idea I've never been able to build",
+        "I'm building a business",
+        "I run operations",
+        "I lead a company",
+        "I create",
+        "I run marketing",
+        "We're an enterprise"
+      ]
+    },
+    "scene9": {
+      "quote": "Creation should belong to the person who had the idea, not to whoever they could afford to hire.",
+      "link": "Read the manifesto"
+    },
+    "scene10": {
+      "headline": "You've seen what it does. Tell it what you want to build.",
+      "start": "Start",
+      "earlyAccess": "Request early access"
+    }
+  },
+  "chat": {
+    "title": "STRYVIA INTELLIGENCE",
+    "live": "LIVE",
+    "emptyPrompt": "Describe what you want to build or solve.",
+    "placeholder": "Describe what you want to build or solve…",
+    "placeholderShort": "What do you want to build?",
+    "send": "Send",
+    "chips": [
+      "Launch a product with no dev team",
+      "Open a business I don't understand yet",
+      "Produce a campaign at scale",
+      "Fix an operation that's too manual"
+    ],
+    "status": {
+      "understanding": "Understanding the problem",
+      "mapping": "Mapping the approach",
+      "shaping": "Shaping the solution"
+    },
+    "scope": {
+      "building": "WHAT YOU'RE BUILDING",
+      "approach": "THE APPROACH",
+      "shape": "SHAPE & TIMELINE",
+      "ownership": "WHAT YOU'LL OWN",
+      "inspect": "Inspect the reasoning",
+      "inspectClose": "Hide reasoning"
+    },
+    "cta": "Let's build this together",
+    "askElse": "Ask something else",
+    "threshold": "BEYOND WHAT I SHOULD PROMISE",
+    "handoff": {
+      "title": "Let's build this together",
+      "carry": "Your conversation comes with you.",
+      "name": "Your name",
+      "email": "Your email",
+      "company": "Company (optional)",
+      "submit": "Send it",
+      "submitting": "Sending…",
+      "successTitle": "We've got it.",
+      "successBody": "Your conversation is saved and on its way to a person who will reach out to build this with you.",
+      "errorRequired": "Name and email are needed so we can reach you.",
+      "errorEmail": "That email doesn't look right.",
+      "errorGeneric": "Something went wrong sending that. Try once more."
+    },
+    "error": "The connection dropped. Say that again and I'll pick it back up.",
+    "newLine": "Shift + Enter for a new line",
+    "ariaLog": "Conversation with the Stryvia intelligence",
+    "you": "You",
+    "stryvia": "Stryvia"
+  },
+  "earlyAccess": {
+    "eyebrow": "EARLY ACCESS",
+    "title": "Be among the first to build with it.",
+    "body": "Not ready to start a full conversation? Request access and we'll bring you in.",
+    "name": "Your name",
+    "email": "Your email",
+    "context": "What would you build? (optional)",
+    "submit": "Request access",
+    "submitting": "Sending…",
+    "success": "You're on the list. We'll be in touch.",
+    "errorRequired": "An email is needed so we can reach you.",
+    "errorEmail": "That email doesn't look right."
+  },
+  "common": {
+    "backHome": "Back to home",
+    "startConversation": "Start a conversation",
+    "talkItThrough": "Talk it through in the chat",
+    "readMore": "Read more"
+  }
+}

@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   STRYVIA DESIGN SYSTEM — Build Package Part A is the law.
+   The intelligent instrument: dark-first, white type, one acid-green live
+   signal (#C0FA20) spent sparingly. Crisp corners, hairline rules, bracket
+   corners, focus-pull motion. Nothing decorative for its own sake.
+   =========================================================================== */
+
+/* ---- A.2 Color · A.3 Type · A.5 Radius — registered as Tailwind theme
+   tokens so they become utilities (bg-sv-base, text-sv-text, font-display…). */
+@theme {
+  /* Core field */
+  --color-sv-base: #0a0b0a; /* canvas, the dark field */
+  --color-sv-surface-1: #111312; /* raised surface, sections */
+  --color-sv-surface-2: #181b19; /* cards */
+  --color-sv-surface-3: #20241f; /* hover surface, inputs */
+
+  /* Lines and structure */
+  --color-sv-line: rgba(244, 246, 244, 0.08);
+  --color-sv-line-strong: rgba(244, 246, 244, 0.16);
+
+  /* Live signal — green means the intelligence is active */
+  --color-sv-green: #c0fa20;
+  --color-sv-green-press: #a6de07;
+  --color-sv-green-soft: rgba(192, 250, 32, 0.14);
+  --color-sv-green-line: rgba(192, 250, 32, 0.4);
+
+  /* Type */
+  --color-sv-text: #f4f6f4;
+  --color-sv-text-2: rgba(244, 246, 244, 0.66);
+  --color-sv-text-3: rgba(244, 246, 244, 0.4);
+  --color-sv-ink: #0a0b0a;
+
+  /* Rare light beat */
+  --color-sv-paper: #f4f6f4;
+
+  /* Semantic, used minimally */
+  --color-sv-warn: #f5c24b;
+  --color-sv-danger: #ff6b5c;
+
+  /* Font families — open-source set, self-hosted via next/font.
+     The CSS variables are injected by the root layout. */
+  --font-display: var(--font-bricolage), ui-sans-serif, sans-serif;
+  --font-body: var(--font-hanken), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-ar: var(--font-plex-arabic), var(--font-hanken), sans-serif;
+
+  /* Radius */
+  --radius-sv-sm: 4px;
+  --radius-sv-md: 8px;
+  --radius-sv-lg: 12px;
+  --radius-sv-pill: 999px;
+
+  /* Easing — registered so `ease-sv` / `ease-sv-reveal` utilities exist */
+  --ease-sv: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-sv-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Fluid type scale (A.3) */
+  --text-sv-display-xl: clamp(2.75rem, 6.5vw, 5.75rem);
+  --text-sv-display-l: clamp(2.1rem, 4.5vw, 3.75rem);
+  --text-sv-h1: clamp(1.75rem, 3vw, 2.5rem);
+  --text-sv-h2: clamp(1.4rem, 2.2vw, 1.875rem);
+  --text-sv-h3: 1.25rem;
+  --text-sv-body-l: 1.125rem;
+  --text-sv-body: 1.0625rem;
+  --text-sv-small: 0.875rem;
+  --text-sv-label: 0.75rem;
+  --text-sv-label-sm: 0.6875rem;
+}
+
+/* ---- A.7 Motion + effect tokens (not Tailwind utilities; used in CSS) ---- */
+:root {
+  --sv-grain-opacity: 0.04;
+  --sv-focus-ring: 0 0 0 1px var(--color-sv-green),
+    0 0 24px var(--color-sv-green-soft);
+
+  --sv-dur-fast: 120ms;
+  --sv-dur: 220ms;
+  --sv-dur-slow: 420ms;
+  --sv-dur-reveal: 640ms;
+  --sv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sv-ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===========================================================================
+   BASE
+   =========================================================================== */
+@layer base {
+  * {
+    border-color: var(--color-sv-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-sv-base);
+    color: var(--color-sv-text);
+    font-family: var(--font-body);
+    font-size: var(--text-sv-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+  }
+
+  /* Arabic switches the whole stack to the Arabic family. */
+  :lang(ar) body,
+  [dir="rtl"] body {
+    font-family: var(--font-ar);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--color-sv-green);
+    color: var(--color-sv-ink);
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--sv-focus-ring);
+    border-radius: var(--radius-sv-sm);
+  }
+
+  /* Thin instrument-style scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-sv-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-sv-surface-3);
+    border-radius: var(--radius-sv-pill);
+    border: 2px solid var(--color-sv-base);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-sv-line-strong);
+  }
+}
+
+/* ===========================================================================
+   INSTRUMENT UTILITIES — bracket device, grain, vignette, mono label,
+   scan-line. Kept as components so they are reusable, not one-offs.
+   =========================================================================== */
+@layer components {
+  /* The mono instrument voice (A.3): uppercase, tracked, tertiary or green. */
+  .sv-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-sv-label);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-sv-text-3);
+    /* Latin codes stay LTR even in an RTL layout. */
+    unicode-bidi: plaintext;
+  }
+  .sv-label--live {
+    color: var(--color-sv-green);
+  }
+  .sv-label-sm {
+    font-size: var(--text-sv-label-sm);
+  }
+
+  /* Full-page grain (A.6): SVG noise, overlay blend, fixed, non-interactive. */
+  .sv-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: var(--sv-grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+  }
+
+  /* Soft radial vignette keeping focus toward the center (A.6). */
+  .sv-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 35%,
+      transparent 55%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+
+  /* Optional faint scanline texture, Chat panel only (A.6). */
+  .sv-scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(244, 246, 244, 0.02) 0px,
+      rgba(244, 246, 244, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /* Hairline divider beat. */
+  .sv-rule {
+    border: 0;
+    border-top: 1px solid var(--color-sv-line);
+  }
+}
+
+/* ===========================================================================
+   A.7 MOTION — focus-pull is the signature. Bracket corners settle inward;
+   content fades and rises 12px with a staggered delay.
+   =========================================================================== */
+@keyframes sv-focus-pull {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sv-bracket-settle {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sv-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 var(--color-sv-green-soft);
+  }
+  50% {
+    opacity: 0.65;
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+
+@keyframes sv-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes sv-caret {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.sv-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-sv-pill);
+  background: var(--color-sv-green);
+  animation: sv-pulse 2.4s var(--sv-ease) infinite;
+}
+
+.sv-bracket-focus {
+  animation: sv-bracket-settle var(--sv-dur-slow) var(--sv-ease-reveal) forwards;
+}
+
+/* Accessible skip link — visually hidden until focused. */
+.sv-skip-link {
+  position: fixed;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  z-index: 100;
+  padding: 8px 16px;
+  background: var(--color-sv-green);
+  color: var(--color-sv-ink);
+  border-radius: var(--radius-sv-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sv-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+  transition: transform var(--sv-dur) var(--sv-ease);
+}
+.sv-skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Green scan-line wipe used on hover for links and card edges. */
+.sv-scan-line {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-sv-green),
+    transparent
+  );
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.group:hover .sv-scan-line {
+  opacity: 1;
+  animation: sv-scan var(--sv-dur-slow) var(--sv-ease) forwards;
+}
+
+/* Reveal-on-load / scroll-into-view, staggered by child index via --i. */
+.sv-reveal {
+  opacity: 0;
+  animation: sv-focus-pull var(--sv-dur-reveal) var(--sv-ease-reveal) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.sv-stream-caret::after {
+  content: "▋";
+  margin-inline-start: 2px;
+  color: var(--color-sv-green);
+  animation: sv-caret 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .sv-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
