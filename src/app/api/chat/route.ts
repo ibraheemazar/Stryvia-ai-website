@@ -94,7 +94,8 @@ export async function POST(req: NextRequest) {
         const anthropicStream = anthropic.messages.stream({
           model: ANTHROPIC_MODEL,
           max_tokens: 1400,
-          temperature: 0.6,
+          // Note: temperature is deprecated for claude-opus-4-8 and rejected by
+          // the API, so it is intentionally omitted.
           system,
           messages: messages.map((m) => ({ role: m.role, content: m.content })),
         });
