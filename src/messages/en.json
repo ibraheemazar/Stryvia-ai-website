@@ -44,7 +44,7 @@
   },
   "home": {
     "scene1": {
-      "eyebrow": "STRYVIA / THE INTELLIGENCE YOU BUILD WITH",
+      "eyebrow": "THE INTELLIGENCE YOU BUILD WITH",
       "headline": "The thing you could never build without a team. Build it now.",
       "subline": "Bring a problem. Direct the work. The intelligence does the heavy lifting, and what comes out is yours.",
       "scrollCue": "SCROLL"
@@ -122,7 +122,7 @@
     "title": "STRYVIA INTELLIGENCE",
     "live": "LIVE",
     "emptyPrompt": "Describe what you want to build or solve.",
-    "placeholder": "Describe what you want to build or solve…",
+    "placeholder": "Type your problem…",
     "placeholderShort": "What do you want to build?",
     "send": "Send",
     "chips": [

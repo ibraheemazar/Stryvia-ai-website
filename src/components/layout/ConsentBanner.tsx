@@ -11,8 +11,26 @@ export function ConsentBanner() {
   const t = useTranslations("consent");
   const [show, setShow] = useState(false);
 
+  // Defer the notice so it doesn't compete with the hero Chat / mobile menu at
+  // the most important first moment — show after a short delay or first scroll.
   useEffect(() => {
-    if (getConsent() === null) setShow(true);
+    if (getConsent() !== null) return;
+    let done = false;
+    const reveal = () => {
+      if (done) return;
+      done = true;
+      setShow(true);
+      window.removeEventListener("scroll", onScroll);
+    };
+    const onScroll = () => {
+      if (window.scrollY > 240) reveal();
+    };
+    const timer = setTimeout(reveal, 4000);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   if (!show) return null;

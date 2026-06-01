@@ -325,9 +325,14 @@
   animation: sv-scan var(--sv-dur-slow) var(--sv-ease) forwards;
 }
 
-/* Reveal-on-load / scroll-into-view, staggered by child index via --i. */
+/* Reveal-on-scroll-into-view, staggered by child index via --i. The element
+   starts hidden and plays the focus-pull when the ScrollReveal observer adds
+   `is-visible` — which fires immediately for anything already on screen, so the
+   hero still animates on load while below-fold content reveals as it enters. */
 .sv-reveal {
   opacity: 0;
+}
+.sv-reveal.is-visible {
   animation: sv-focus-pull var(--sv-dur-reveal) var(--sv-ease-reveal) forwards;
   animation-delay: calc(var(--i, 0) * 70ms);
 }
