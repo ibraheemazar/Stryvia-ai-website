@@ -162,25 +162,46 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
         let signal: ChatSignal = null;
         let convId: string | null = state.conversationId;
+        let errored = false;
         try {
           const meta = JSON.parse(metaRaw);
           signal = meta.signal ?? null;
           convId = meta.conversationId ?? convId;
+          errored = Boolean(meta.error);
+          if (errored) {
+            console.error("[stryvia] chat error:", meta.status, meta.detail);
+          }
         } catch {
           /* no metadata frame */
         }
 
-        setState((s) => {
-          const next = [...s.messages];
-          next[next.length - 1] = { role: "assistant", content: buffer };
-          return {
-            ...s,
-            messages: next,
-            phase: "idle",
-            signal,
-            conversationId: convId,
-          };
-        });
+        // A failed model call with no streamed text becomes an error state,
+        // never a silent empty bubble.
+        if (errored && buffer.trim().length === 0) {
+          setState((s) => {
+            const next = [...s.messages];
+            if (
+              next.length &&
+              next[next.length - 1].role === "assistant" &&
+              !next[next.length - 1].content
+            ) {
+              next.pop();
+            }
+            return { ...s, messages: next, phase: "idle", error: true };
+          });
+        } else {
+          setState((s) => {
+            const next = [...s.messages];
+            next[next.length - 1] = { role: "assistant", content: buffer };
+            return {
+              ...s,
+              messages: next,
+              phase: "idle",
+              signal,
+              conversationId: convId,
+            };
+          });
+        }
 
         track("chat_scope_returned", { locale });
         if (signal === "ready") track("chat_muscle_shown", { locale });

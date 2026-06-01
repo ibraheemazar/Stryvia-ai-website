@@ -147,16 +147,34 @@ export async function POST(req: NextRequest) {
         controller.close();
       } catch (err) {
         console.error("[stryvia] chat stream error:", err);
+        // Surface a concise reason so the client can show an error state and so
+        // failures are diagnosable, then close gracefully — calling
+        // controller.error() here would discard the frame and yield an empty
+        // 200, leaving the visitor with a silent blank response.
+        const status =
+          (err as { status?: number })?.status ?? null;
+        const detail =
+          (err as { error?: { error?: { message?: string } } })?.error?.error
+            ?.message ||
+          (err as { message?: string })?.message ||
+          "unknown error";
         try {
           controller.enqueue(
             encoder.encode(
-              RS + JSON.stringify({ signal: null, conversationId, error: true }),
+              RS +
+                JSON.stringify({
+                  signal: null,
+                  conversationId,
+                  error: true,
+                  status,
+                  detail: String(detail).slice(0, 300),
+                }),
             ),
           );
+          controller.close();
         } catch {
           /* stream already torn down */
         }
-        controller.error(err);
       }
     },
   });
