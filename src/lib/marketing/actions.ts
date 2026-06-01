@@ -100,7 +100,7 @@ export async function resolveSegmentLeads(rules: {
   locale?: string;
   converted?: boolean;
   leadStatus?: string;
-}): Promise<{ id: string; name: string; email: string; conversation_id: string | null }[]> {
+}): Promise<{ id: string; name: string; email: string; phone: string | null; conversation_id: string | null }[]> {
   const svc = getServiceSupabase();
   if (!svc) return [];
 
@@ -115,7 +115,7 @@ export async function resolveSegmentLeads(rules: {
     if (convFilterIds.length === 0) return [];
   }
 
-  let lq = svc.from("leads").select("id, name, email, conversation_id, status").limit(5000);
+  let lq = svc.from("leads").select("id, name, email, phone, conversation_id, status").limit(5000);
   if (rules.leadStatus) lq = lq.eq("status", rules.leadStatus);
   if (convFilterIds) lq = lq.in("conversation_id", convFilterIds);
   const { data: leads } = await lq;
@@ -123,6 +123,7 @@ export async function resolveSegmentLeads(rules: {
     id: l.id,
     name: l.name,
     email: l.email,
+    phone: l.phone ?? null,
     conversation_id: l.conversation_id,
   }));
 }
@@ -182,15 +183,22 @@ export async function runAutomations(): Promise<number> {
               severity: "info",
             });
             log.push("insight");
-          } else if (a.type === "slack_notify" && process.env.SLACK_WEBHOOK_URL) {
-            await fetch(process.env.SLACK_WEBHOOK_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                text: String(p.message || `Lead ${lead.name} matched ${auto.name}`),
-              }),
-            });
-            log.push("slack");
+          } else if (a.type === "slack_notify") {
+            const { slackNotify } = await import("./connectors");
+            const ok = await slackNotify(String(p.message || `Lead ${lead.name} matched ${auto.name}`));
+            log.push(ok ? "slack" : "slack:skipped");
+          } else if (a.type === "send_whatsapp" && p.message && lead.phone) {
+            const { sendWhatsApp } = await import("./connectors");
+            const ok = await sendWhatsApp(lead.phone, String(p.message));
+            log.push(ok ? "whatsapp" : "whatsapp:skipped");
+          } else if (a.type === "send_sms" && p.message && lead.phone) {
+            const { sendSMS } = await import("./connectors");
+            const ok = await sendSMS(lead.phone, String(p.message));
+            log.push(ok ? "sms" : "sms:skipped");
+          } else if (a.type === "webhook" && p.url) {
+            const { webhookPost } = await import("./connectors");
+            await webhookPost(String(p.url), { lead, automation: auto.name });
+            log.push("webhook");
           }
         } catch (err) {
           log.push(`error:${a.type}`);

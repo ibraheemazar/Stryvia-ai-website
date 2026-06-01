@@ -155,6 +155,7 @@
       "name": "Your name",
       "email": "Your email",
       "company": "Company (optional)",
+      "phone": "Phone / WhatsApp (optional)",
       "submit": "Send it",
       "submitting": "Sending…",
       "successTitle": "We've got it.",

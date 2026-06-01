@@ -3,7 +3,7 @@ import { defineRouting } from "next-intl/routing";
 // Trilingual-ready from day one. English and Arabic ship at launch;
 // French is added later by appending "fr" here and providing messages/fr.json
 // plus the locale metadata below. No re-engineering required.
-export const locales = ["en", "ar"] as const;
+export const locales = ["en", "ar", "fr"] as const;
 export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "en";

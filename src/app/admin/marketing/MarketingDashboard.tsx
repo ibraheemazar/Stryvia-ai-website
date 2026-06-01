@@ -483,6 +483,9 @@ function Automations({ api }: { api: Api }) {
   const [actEmailSubject, setActEmailSubject] = useState("");
   const [actEmailBody, setActEmailBody] = useState("");
   const [actStatus, setActStatus] = useState("");
+  const [actWhatsapp, setActWhatsapp] = useState("");
+  const [actSms, setActSms] = useState("");
+  const [actSlack, setActSlack] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -497,6 +500,9 @@ function Automations({ api }: { api: Api }) {
   async function create() {
     const actions: { type: string; params: Record<string, unknown> }[] = [];
     if (actEmailSubject && actEmailBody) actions.push({ type: "send_email", params: { subject: actEmailSubject, body: actEmailBody } });
+    if (actWhatsapp) actions.push({ type: "send_whatsapp", params: { message: actWhatsapp } });
+    if (actSms) actions.push({ type: "send_sms", params: { message: actSms } });
+    if (actSlack) actions.push({ type: "slack_notify", params: { message: actSlack } });
     if (actStatus) actions.push({ type: "set_lead_status", params: { status: actStatus } });
     await api("/automations", {
       method: "POST",
@@ -536,6 +542,9 @@ function Automations({ api }: { api: Api }) {
             <p className="sv-label-sm sv-label">THEN — do</p>
             <input value={actEmailSubject} onChange={(e) => setActEmailSubject(e.target.value)} placeholder="Send email — subject" className={cn(inputCls, "w-full")} />
             <textarea value={actEmailBody} onChange={(e) => setActEmailBody(e.target.value)} placeholder="Send email — body" className={cn(inputCls, "min-h-20 w-full resize-none")} />
+            <input value={actWhatsapp} onChange={(e) => setActWhatsapp(e.target.value)} placeholder="Send WhatsApp — message (needs phone + WhatsApp connected)" className={cn(inputCls, "w-full")} />
+            <input value={actSms} onChange={(e) => setActSms(e.target.value)} placeholder="Send SMS — message (needs phone + SMS connected)" className={cn(inputCls, "w-full")} />
+            <input value={actSlack} onChange={(e) => setActSlack(e.target.value)} placeholder="Slack alert — message" className={cn(inputCls, "w-full")} />
             <input value={actStatus} onChange={(e) => setActStatus(e.target.value)} placeholder="Set lead status (e.g. contacted)" className={cn(inputCls, "w-full")} />
           </div>
         </div>
@@ -585,15 +594,18 @@ function Automations({ api }: { api: Api }) {
 // ---------------------------------------------------------------- Channels
 function Channels({ api }: { api: Api }) {
   const [rows, setRows] = useState<IntegrationRow[]>([]);
+  const [env, setEnv] = useState<Record<string, boolean>>({});
   const load = useCallback(async () => {
     const d = await api("?section=home");
     setRows((d.integrations as IntegrationRow[]) || []);
+    setEnv((d.envConfigured as Record<string, boolean>) || {});
   }, [api]);
   useEffect(() => {
     load();
   }, [load]);
 
-  const statusOf = (provider: string) => rows.find((r) => r.provider === provider)?.status || "disconnected";
+  const statusOf = (provider: string) =>
+    env[provider] ? "connected" : rows.find((r) => r.provider === provider)?.status || "disconnected";
 
   async function toggle(provider: string, connect: boolean) {
     await api("/integrations", {

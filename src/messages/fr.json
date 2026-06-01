@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "title": "Stryvia — l'intelligence avec laquelle vous bâtissez",
+    "description": "Apportez un problème. Dirigez le travail. L'intelligence fait le gros œuvre, et ce qui en sort est à vous. Stryvia vous donne la capacité de bâtir, créer et résoudre à la vitesse qu'exigeait une équipe entière.",
+    "ogAlt": "Stryvia — l'intelligence avec laquelle vous bâtissez"
+  },
+  "nav": {
+    "skipToContent": "Aller au contenu",
+    "home": "Accueil",
+    "howItWorks": "Comment ça marche",
+    "capabilities": "Capacités",
+    "industries": "Secteurs",
+    "forYou": "Pour vous",
+    "intelligence": "L'intelligence",
+    "trust": "Confiance",
+    "pricing": "Tarifs",
+    "manifesto": "Manifeste",
+    "faq": "FAQ",
+    "worksWith": "Compatible avec tout",
+    "compare": "Comparer",
+    "control": "Gardez le contrôle",
+    "examples": "Exemples",
+    "problems": "Galerie de problèmes",
+    "outcomes": "Résultats possibles",
+    "whyExists": "Pourquoi Stryvia existe",
+    "resources": "Ressources",
+    "start": "Commencer",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "language": "Langue",
+    "live": "EN DIRECT"
+  },
+  "footer": {
+    "tagline": "L'intelligence avec laquelle vous bâtissez.",
+    "explore": "Explorer",
+    "company": "Entreprise",
+    "trustCol": "Confiance & accès",
+    "start": "Commencer",
+    "earlyAccess": "Demander un accès anticipé",
+    "investors": "Pour les investisseurs",
+    "privacy": "Politique de confidentialité",
+    "rights": "Tous droits réservés.",
+    "coordinate": "BÂTI DANS LA RÉGION · CHIFFRÉ · À VOUS"
+  },
+  "home": {
+    "scene1": {
+      "eyebrow": "L'INTELLIGENCE AVEC LAQUELLE VOUS BÂTISSEZ",
+      "headline": "Ce que vous n'auriez jamais pu bâtir sans une équipe. Bâtissez-le maintenant.",
+      "subline": "Apportez un problème. Dirigez le travail. L'intelligence fait le gros œuvre, et ce qui en sort est à vous.",
+      "scrollCue": "DÉFILER"
+    },
+    "scene3": {
+      "headline": "Tant que bâtir signifiait réunir des gens, votre ambition restait limitée par qui vous pouviez vous offrir et attendre.",
+      "body": "Cette limite a disparu. Vous apportez le problème. Vous prenez les décisions. L'intelligence bâtit. Vous possédez ce qu'elle crée. Aucune équipe à réunir, aucun mois à attendre, et votre idée ne passe plus entre les mains d'un autre."
+    },
+    "scene4": {
+      "eyebrow": "CE QUI LA REND DIFFÉRENTE",
+      "headline": "Un modèle écrit le script. Aucun ne sait aussi en faire le storyboard. Stryvia fait les deux, comme une seule œuvre.",
+      "body": "Stryvia fait travailler plusieurs modèles comme un seul, pour que vous obteniez l'ensemble, fini et cohérent, au lieu de cinq pièces décousues à assembler. C'est ce qu'aucun outil seul ne sait faire.",
+      "link": "Voir comment elle pense",
+      "nodeScript": "SCRIPT",
+      "nodeStoryboard": "STORYBOARD",
+      "nodeAssets": "VISUELS",
+      "nodeCopy": "TEXTES",
+      "nodeOrchestrate": "STRYVIA",
+      "nodeOutput": "UN RÉSULTAT COHÉRENT"
+    },
+    "scene5": {
+      "eyebrow": "CE QUI DEVIENT POSSIBLE",
+      "headline": "Quoi que vous apportiez, ça se construit.",
+      "body": "D'un produit à une entreprise, à une campagne, à un modèle financier, à une opération. Des problèmes différents, une seule intelligence.",
+      "action": "Dites-lui ce que vous voulez bâtir"
+    },
+    "scene6": {
+      "eyebrow": "L'ANCIENNE FAÇON VS STRYVIA",
+      "headline": "Six mois et une équipe de cinq, ou six semaines pendant que vous dirigez.",
+      "body": "L'ancienne façon, c'est recruter, briefer, coordonner, attendre et tout payer. La façon Stryvia, c'est commencer maintenant, façonner en chemin, et payer la capacité, pas les frais généraux.",
+      "oldLabel": "L'ANCIENNE FAÇON",
+      "oldTeam": "Une équipe de cinq, réunie",
+      "oldTime": "≈ 6 mois",
+      "oldCost": "Salaires, frais, coordination",
+      "newLabel": "AVEC STRYVIA",
+      "newTeam": "Vous, aux commandes",
+      "newTime": "≈ 6 semaines",
+      "newCost": "La capacité, pas les frais",
+      "action": "Cadrez-le dans la conversation"
+    },
+    "scene7": {
+      "eyebrow": "CE QUE VOUS VOUS DEMANDEZ",
+      "controlLabel": "CONTRÔLE",
+      "control": "Vous dirigez le travail. Chaque décision qui compte est la vôtre.",
+      "ownershipLabel": "PROPRIÉTÉ",
+      "ownership": "Vous possédez ce qui est bâti. Aucun verrouillage, jamais.",
+      "dataLabel": "VOS DONNÉES",
+      "data": "Chiffrées, traitées selon les normes locales, et conservées dans la région.",
+      "limitsLabel": "LIMITES",
+      "limits": "Quand un problème dépasse ce que nous devrions promettre, nous vous le disons."
+    },
+    "scene8": {
+      "eyebrow": "LEQUEL EST VOUS",
+      "doors": [
+        "J'ai une idée que je n'ai jamais pu bâtir",
+        "Je bâtis une entreprise",
+        "Je dirige les opérations",
+        "Je dirige une société",
+        "Je crée",
+        "Je dirige le marketing",
+        "Nous sommes une grande organisation"
+      ]
+    },
+    "scene9": {
+      "quote": "La création devrait appartenir à celui qui a eu l'idée, pas à celui qu'il a pu se permettre d'embaucher.",
+      "link": "Lire le manifeste"
+    },
+    "scene10": {
+      "headline": "Vous avez vu ce qu'elle fait. Dites-lui ce que vous voulez bâtir.",
+      "start": "Commencer",
+      "earlyAccess": "Demander un accès anticipé"
+    }
+  },
+  "chat": {
+    "title": "INTELLIGENCE STRYVIA",
+    "live": "EN DIRECT",
+    "emptyPrompt": "Décrivez ce que vous voulez bâtir ou résoudre.",
+    "placeholder": "Décrivez votre problème…",
+    "placeholderShort": "Que voulez-vous bâtir ?",
+    "send": "Envoyer",
+    "chips": [
+      "Lancer un produit sans équipe de dev",
+      "Ouvrir une activité dans un domaine que je ne maîtrise pas",
+      "Produire une campagne à grande échelle",
+      "Réparer une opération trop manuelle"
+    ],
+    "status": {
+      "understanding": "Je comprends le problème",
+      "mapping": "Je trace l'approche",
+      "shaping": "Je façonne la solution"
+    },
+    "scope": {
+      "building": "CE QUE VOUS BÂTISSEZ",
+      "approach": "L'APPROCHE",
+      "shape": "AMPLEUR & DÉLAIS",
+      "ownership": "CE QUE VOUS POSSÉDEREZ",
+      "inspect": "Voir le raisonnement",
+      "inspectClose": "Masquer le raisonnement"
+    },
+    "cta": "Bâtissons-le ensemble",
+    "askElse": "Demander autre chose",
+    "threshold": "AU-DELÀ DE CE QUE JE DEVRAIS PROMETTRE",
+    "thresholdBody": "Celui-ci dépasse ce que je devrais cadrer seul de façon responsable. Le mieux est de faire intervenir une personne de Stryvia. Laissez vos coordonnées et elle vous recontactera.",
+    "thresholdAction": "Parler à une personne",
+    "handoff": {
+      "title": "Bâtissons-le ensemble",
+      "carry": "Votre conversation vous accompagne.",
+      "name": "Votre nom",
+      "email": "Votre e-mail",
+      "company": "Société (facultatif)",
+      "phone": "Téléphone / WhatsApp (facultatif)",
+      "submit": "Envoyer",
+      "submitting": "Envoi…",
+      "successTitle": "C'est reçu.",
+      "successBody": "Votre conversation est enregistrée et en route vers une personne qui vous recontactera pour bâtir cela avec vous.",
+      "errorRequired": "Le nom et l'e-mail sont nécessaires pour vous joindre.",
+      "errorEmail": "Cet e-mail ne semble pas correct.",
+      "errorGeneric": "Un souci à l'envoi. Réessayez une fois."
+    },
+    "error": "La connexion a coupé. Redites-le et je reprends.",
+    "newLine": "Maj + Entrée pour une nouvelle ligne",
+    "ariaLog": "Conversation avec l'intelligence Stryvia",
+    "you": "Vous",
+    "stryvia": "Stryvia"
+  },
+  "earlyAccess": {
+    "eyebrow": "ACCÈS ANTICIPÉ",
+    "title": "Soyez parmi les premiers à bâtir avec elle.",
+    "body": "Pas encore prêt pour une conversation complète ? Demandez l'accès et nous vous intégrerons.",
+    "name": "Votre nom",
+    "email": "Votre e-mail",
+    "context": "Que bâtiriez-vous ? (facultatif)",
+    "submit": "Demander l'accès",
+    "submitting": "Envoi…",
+    "success": "Vous êtes sur la liste. Nous reviendrons vers vous.",
+    "errorRequired": "Un e-mail est nécessaire pour vous joindre.",
+    "errorEmail": "Cet e-mail ne semble pas correct."
+  },
+  "common": {
+    "backHome": "Retour à l'accueil",
+    "startConversation": "Démarrer une conversation",
+    "talkItThrough": "En parler dans la conversation",
+    "readMore": "Lire plus"
+  },
+  "consent": {
+    "text": "Nous utilisons des analyses pour comprendre l'usage du site, avec les champs personnels masqués. Vous pouvez refuser sans affecter le site.",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "privacy": "Confidentialité"
+  }
+}
