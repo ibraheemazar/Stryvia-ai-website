@@ -4,7 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { INTEGRATIONS, CATEGORY_LABELS, type IntegrationCategory } from "@/lib/marketing/integrations";
 
-type Tab = "overview" | "intelligence" | "content" | "audiences" | "email" | "automations" | "channels";
+type Tab =
+  | "overview"
+  | "intelligence"
+  | "content"
+  | "audiences"
+  | "email"
+  | "automations"
+  | "landing"
+  | "performance"
+  | "channels";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Command center" },
@@ -13,6 +22,8 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "audiences", label: "Audiences" },
   { id: "email", label: "Email" },
   { id: "automations", label: "Automations" },
+  { id: "landing", label: "Landing & A/B" },
+  { id: "performance", label: "Performance" },
   { id: "channels", label: "Channels" },
 ];
 
@@ -60,6 +71,8 @@ export function MarketingDashboard({ token }: { token: string }) {
       {tab === "audiences" && <Audiences api={api} />}
       {tab === "email" && <EmailCampaigns api={api} />}
       {tab === "automations" && <Automations api={api} />}
+      {tab === "landing" && <Landing api={api} />}
+      {tab === "performance" && <Performance api={api} />}
       {tab === "channels" && <Channels api={api} />}
     </div>
   );
@@ -663,6 +676,176 @@ function Channels({ api }: { api: Api }) {
   );
 }
 
+// ---------------------------------------------------------------- Landing & A/B
+type VariantForm = { label: string; weight: string; eyebrow: string; headline: string; subhead: string; body: string; ctaText: string };
+const emptyVariant = (label: string): VariantForm => ({ label, weight: "50", eyebrow: "", headline: "", subhead: "", body: "", ctaText: "Start a conversation" });
+
+function Landing({ api }: { api: Api }) {
+  const [pages, setPages] = useState<LandingRow[]>([]);
+  const [name, setName] = useState("");
+  const [goal, setGoal] = useState("");
+  const [locale, setLocale] = useState("en");
+  const [a, setA] = useState<VariantForm>(emptyVariant("A"));
+  const [b, setB] = useState<VariantForm>(emptyVariant("B"));
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    const d = await api("/landing");
+    setPages((d.pages as LandingRow[]) || []);
+  }, [api]);
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function create() {
+    const variants = [a, b]
+      .filter((v) => v.headline.trim())
+      .map((v, i) => ({
+        id: v.label || String.fromCharCode(65 + i),
+        label: v.label || String.fromCharCode(65 + i),
+        weight: Number(v.weight) || 50,
+        eyebrow: v.eyebrow || undefined,
+        headline: v.headline,
+        subhead: v.subhead || undefined,
+        body: v.body || undefined,
+        ctaText: v.ctaText || "Start a conversation",
+      }));
+    if (!name || variants.length === 0) return;
+    const d = await api("/landing", { method: "POST", body: JSON.stringify({ action: "create", name, goal, locale, variants }) });
+    if (d.ok) {
+      setMsg(`Created /${locale === "en" ? "" : locale + "/"}l/${d.slug} — publish it to go live.`);
+      setName(""); setGoal(""); setA(emptyVariant("A")); setB(emptyVariant("B"));
+      load();
+    }
+  }
+  async function setStatus(id: string, status: string) {
+    await api("/landing", { method: "POST", body: JSON.stringify({ action: "status", id, status }) });
+    load();
+  }
+  async function del(id: string) {
+    await api("/landing", { method: "POST", body: JSON.stringify({ action: "delete", id }) });
+    load();
+  }
+
+  const vfield = (v: VariantForm, set: (v: VariantForm) => void) => (
+    <div className="space-y-2 rounded-sv-sm border border-sv-line p-3">
+      <div className="flex gap-2">
+        <input value={v.label} onChange={(e) => set({ ...v, label: e.target.value })} placeholder="Label" className={cn(inputCls, "w-20")} />
+        <input value={v.weight} onChange={(e) => set({ ...v, weight: e.target.value })} placeholder="Weight" className={cn(inputCls, "w-20")} />
+        <input value={v.ctaText} onChange={(e) => set({ ...v, ctaText: e.target.value })} placeholder="CTA text" className={cn(inputCls, "flex-1")} />
+      </div>
+      <input value={v.eyebrow} onChange={(e) => set({ ...v, eyebrow: e.target.value })} placeholder="Eyebrow (mono)" className={cn(inputCls, "w-full")} />
+      <input value={v.headline} onChange={(e) => set({ ...v, headline: e.target.value })} placeholder="Headline" className={cn(inputCls, "w-full")} />
+      <input value={v.subhead} onChange={(e) => set({ ...v, subhead: e.target.value })} placeholder="Subhead" className={cn(inputCls, "w-full")} />
+      <textarea value={v.body} onChange={(e) => set({ ...v, body: e.target.value })} placeholder="Body (one paragraph per line)" className={cn(inputCls, "min-h-16 w-full resize-none")} />
+    </div>
+  );
+
+  return (
+    <div className="space-y-8">
+      <Panel title="NEW LANDING PAGE — A/B">
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Page name" className={cn(inputCls, "flex-1")} />
+            <Select value={locale} onChange={setLocale} options={[["en", "EN"], ["ar", "AR"], ["fr", "FR"]]} />
+          </div>
+          <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Conversion goal / seed sent to the Chat on CTA click" className={cn(inputCls, "w-full")} />
+          <div className="grid gap-3 md:grid-cols-2">
+            {vfield(a, setA)}
+            {vfield(b, setB)}
+          </div>
+          <button onClick={create} disabled={!name} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
+            Create page
+          </button>
+          {msg && <p className="text-sv-small text-sv-green">{msg}</p>}
+        </div>
+      </Panel>
+
+      <Panel title={`PAGES (${pages.length})`}>
+        <div className="space-y-3">
+          {pages.map((p) => (
+            <div key={p.id} className="rounded-sv-sm border border-sv-line bg-sv-surface-2/40 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-sv-small text-sv-text">{p.name}</p>
+                  <p className="font-mono text-sv-label-sm text-sv-text-3">/{p.locale === "en" ? "" : p.locale + "/"}l/{p.slug}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={cn("rounded-sv-pill px-2 py-0.5 text-sv-label-sm uppercase", p.status === "published" ? "bg-sv-green-soft text-sv-green" : "border border-sv-line text-sv-text-3")}>{p.status}</span>
+                  <button onClick={() => setStatus(p.id, p.status === "published" ? "draft" : "published")} className="rounded-sv-sm border border-sv-line px-2 py-1 text-sv-label-sm text-sv-text-2">
+                    {p.status === "published" ? "Unpublish" : "Publish"}
+                  </button>
+                  <button onClick={() => del(p.id)} className="text-sv-label-sm text-sv-danger">Delete</button>
+                </div>
+              </div>
+              {p.results && p.results.length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {p.results.map((r) => (
+                    <div key={r.variantId} className="flex items-center gap-3 text-sv-small">
+                      <span className="w-16 text-sv-text-2">{r.label}</span>
+                      <span className="w-28 text-sv-text-3">{r.views} views · {r.conversions} conv</span>
+                      <span className="w-16 font-mono text-sv-green">{r.rate}%</span>
+                      {r.uplift !== null && <span className={cn("font-mono text-sv-label-sm", r.uplift >= 0 ? "text-sv-green" : "text-sv-danger")}>{r.uplift >= 0 ? "+" : ""}{r.uplift}% vs A</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- Performance
+function Performance({ api }: { api: Api }) {
+  const [channels, setChannels] = useState<ChannelMetric[] | null>(null);
+  useEffect(() => {
+    api("?section=performance").then((d) => setChannels((d.channels as ChannelMetric[]) || []));
+  }, [api]);
+  if (!channels) return <Loading />;
+
+  return (
+    <div className="space-y-4">
+      <p className="max-w-2xl text-sv-small text-sv-text-2">
+        Live spend and performance per platform. Each card pulls real data once its credentials are in
+        the environment — until then it waits, never showing invented numbers.
+      </p>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {channels.map((c) => (
+          <div key={c.provider} className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
+            <div className="flex items-center justify-between">
+              <p className="sv-label">{c.label}</p>
+              <span className={cn("h-2 w-2 rounded-full", c.configured ? (c.error ? "bg-sv-danger" : "bg-sv-green") : "bg-sv-line-strong")} />
+            </div>
+            {!c.configured ? (
+              <p className="mt-3 text-sv-label-sm text-sv-text-3">Awaiting credentials.</p>
+            ) : c.error ? (
+              <p className="mt-3 text-sv-label-sm text-sv-danger">Connected, but the last fetch errored.</p>
+            ) : (
+              <dl className="mt-3 space-y-1 text-sv-small">
+                {c.metrics?.spend !== undefined && <Row k="Spend (30d)" v={`$${Math.round(c.metrics.spend).toLocaleString()}`} />}
+                {c.metrics?.impressions !== undefined && <Row k="Impressions" v={c.metrics.impressions.toLocaleString()} />}
+                {c.metrics?.clicks !== undefined && <Row k={c.note?.includes("session") ? "Sessions" : "Clicks"} v={c.metrics.clicks.toLocaleString()} />}
+                {c.metrics?.conversions !== undefined && <Row k="Conversions" v={c.metrics.conversions.toLocaleString()} />}
+              </dl>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <dt className="text-sv-text-3">{k}</dt>
+      <dd className="font-mono text-sv-text">{v}</dd>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------- shared bits
 const inputCls =
   "rounded-sv-sm border border-sv-line bg-sv-surface-3 px-3 py-2 text-sv-small text-sv-text placeholder:text-sv-text-3 focus:border-sv-green-line focus:outline-none";
@@ -745,3 +928,6 @@ type ContentRow = { id: string; type: string; channel: string | null; locale: st
 type SegmentRow = { id: string; name: string; rules: Record<string, unknown>; count: number };
 type AutomationRow = { id: string; name: string; enabled: boolean; run_count: number; actions: unknown[] };
 type RunRow = { id: string; detail: string | null; status: string; created_at: string };
+type VariantResult = { variantId: string; label: string; views: number; conversions: number; rate: number; uplift: number | null };
+type LandingRow = { id: string; slug: string; name: string; locale: string; status: string; results?: VariantResult[] };
+type ChannelMetric = { provider: string; label: string; configured: boolean; note?: string; error?: string; metrics?: { spend?: number; impressions?: number; clicks?: number; conversions?: number } };
