@@ -1,0 +1,147 @@
+{
+  "scenarios": {
+    "product-no-team": {
+      "title": "You have a product in your head and no team to build it.",
+      "problem": "You can see the thing clearly. You just have no developers, designers, or budget to assemble them.",
+      "approach": "You describe what you want to exist and make the calls on what it should be. The interface, the logic, and the working thing get built with you.",
+      "shape": "Weeks, not months.",
+      "ownership": "You own all of it, yours to change."
+    },
+    "business-unknown-field": {
+      "title": "You want to open a business in a field you don't know yet.",
+      "problem": "You have the idea but you'd need a strategist, an analyst, and a row of consultants just to begin.",
+      "approach": "You bring the idea. You get the market read, the model, the brand, the plan, and the first steps, in language you understand and shaped to your situation.",
+      "shape": "A clear plan in days; the build that follows scoped with you.",
+      "ownership": "Yours to decide and move on."
+    },
+    "campaign-at-scale": {
+      "title": "You need a campaign across several platforms at once.",
+      "problem": "Different formats, different languages, and one of you. Stitching it from five tools makes it incoherent.",
+      "approach": "You set the intent and the message. You get the concept, the assets, and the variations across formats and languages, coherent because it was orchestrated as one.",
+      "shape": "A full campaign in a fraction of the usual time.",
+      "ownership": "Yours to run."
+    },
+    "manual-process": {
+      "title": "Your team is drowning in a manual process.",
+      "problem": "The work is repetitive and slow, and every fix needs a vendor or a new hire.",
+      "approach": "You describe the workflow and where it hurts. You get it mapped, redesigned, and automated, with you deciding what stays in human hands.",
+      "shape": "Weeks to a working automation.",
+      "ownership": "You own and control it."
+    },
+    "raise-story-numbers": {
+      "title": "You're raising and need the story and the numbers.",
+      "problem": "You need a model, a thesis, and a deck that hold up under scrutiny, fast.",
+      "approach": "You bring the business. You get the model, the thesis, and the deck, built to hold up, in your voice, with you directing what it argues.",
+      "shape": "A tight, defensible package, fast.",
+      "ownership": "Yours."
+    },
+    "internal-tool": {
+      "title": "You want a tool your team uses every day.",
+      "problem": "A CRM or internal system shaped to how you actually work, not a generic product you bend yourself around.",
+      "approach": "You describe how your team works. You get a system built to fit.",
+      "shape": "Weeks to something real.",
+      "ownership": "You own it."
+    },
+    "new-market": {
+      "title": "You're entering a new market.",
+      "problem": "You need research, localization, and a go-to-market built for that market specifically.",
+      "approach": "You bring the ambition. You get the research, the localization, and the go-to-market, built for that market, with you steering.",
+      "shape": "A real plan and the assets to start, quickly.",
+      "ownership": "Yours."
+    },
+    "idea-carried-for-years": {
+      "title": "You've carried an idea for years and never built it.",
+      "problem": "It never happened because it always needed people you couldn't pull together.",
+      "approach": "You finally describe it. The intelligence helps you shape it and bring it into existence, with you as the author the whole way.",
+      "shape": "From idea to something real, at last.",
+      "ownership": "Entirely yours."
+    }
+  },
+  "capabilities": {
+    "build-a-product-or-app": {
+      "name": "Build a product or app",
+      "headline": "Turn the product in your head into a real one, without assembling a team first.",
+      "lead": "You describe what you want to exist. You make the calls on what it should be. Stryvia builds it with you, and you own it.",
+      "problems": [
+        "I have a product idea and no development team.",
+        "I've paid for builds before and ended up with something I don't control.",
+        "I need a working version fast, not a six-month roadmap."
+      ],
+      "sub": [
+        { "label": "FROM IDEA TO SPEC", "text": "You describe it in plain words; it becomes a clear, buildable shape you approve before anything is made." },
+        { "label": "THE BUILD", "text": "The interface, the logic, and the working thing get built with you directing the consequential calls." },
+        { "label": "ITERATE AND OWN", "text": "You change it whenever you want, because you own it — no lock-in, no dependency." }
+      ],
+      "approach": "It understands what the product is really for before proposing a shape, then orchestrates the design, the logic, and the build into one coherent thing instead of disconnected parts.",
+      "scenarios": ["product-no-team", "internal-tool", "idea-carried-for-years"]
+    },
+    "launch-a-new-venture": {
+      "name": "Launch a new venture",
+      "headline": "Start the business without hiring a row of consultants first.",
+      "lead": "You bring the idea. You get the market read, the model, the brand, and the first steps — shaped to your situation, in language you understand.",
+      "problems": [
+        "I have an idea but I'd need a strategist and analysts just to begin.",
+        "I'm entering a field I don't fully understand yet.",
+        "I need to move before a competitor does, not wait on a team."
+      ],
+      "sub": [
+        { "label": "THE MARKET READ", "text": "Where the opportunity is, who it's for, and what it would take — specific to your situation, not a template." },
+        { "label": "MODEL & PLAN", "text": "The business model, the numbers, and the first concrete steps you can act on." },
+        { "label": "BRAND & FIRST MOVES", "text": "The identity and the assets to start, built coherently because one intelligence made them." }
+      ],
+      "approach": "It reads your situation like a senior advisor, brings market, model, and brand thinking together, and hands you a plan you can direct and own.",
+      "scenarios": ["business-unknown-field", "new-market", "raise-story-numbers"]
+    },
+    "creative-and-content-production": {
+      "name": "Creative and content production",
+      "headline": "Produce at a scale a full production apparatus used to require.",
+      "lead": "You set the intent and the craft direction. You get the work — coherent across formats, made as one.",
+      "problems": [
+        "I'm capped by headcount and budget, not by ideas.",
+        "Stitching content from five tools makes it incoherent.",
+        "I need volume and quality at once."
+      ],
+      "sub": [
+        { "label": "CONCEPT", "text": "The idea and the direction, shaped with you so it's yours, not a generic output." },
+        { "label": "PRODUCTION AT SCALE", "text": "The assets across formats and channels, produced as one coherent body of work." },
+        { "label": "VARIATIONS", "text": "Versions across languages and placements that stay on-brand because they came from one mind." }
+      ],
+      "approach": "Orchestration is the point here: many models produce, and Stryvia binds their output into one coherent campaign-grade result.",
+      "scenarios": ["campaign-at-scale", "new-market", "idea-carried-for-years"]
+    },
+    "marketing-and-growth": {
+      "name": "Marketing and growth",
+      "headline": "The growth capability you direct yourself, without an agency's cost and pace.",
+      "lead": "You set the message and the goal. You get campaigns, content, and the moves to grow — fast, and in your control.",
+      "problems": [
+        "An agency is slow and expensive; an internal team is a big commitment.",
+        "I need campaigns across channels that actually cohere.",
+        "I want output and speed I control."
+      ],
+      "sub": [
+        { "label": "CAMPAIGNS", "text": "Concept to assets to variations, across formats and languages, orchestrated as one." },
+        { "label": "CONTENT AT SCALE", "text": "The volume you need, on-brand, without a content team to manage." },
+        { "label": "GROWTH MOVES", "text": "The next concrete steps to grow, scoped to where you actually are." }
+      ],
+      "approach": "It understands your market and message first, then produces and orchestrates the work so the whole campaign is coherent rather than stitched.",
+      "scenarios": ["campaign-at-scale", "new-market", "raise-story-numbers"]
+    },
+    "operations-and-automation": {
+      "name": "Operations and automation",
+      "headline": "Map, redesign, and automate the work that's eating your team's time.",
+      "lead": "You describe the workflow and where it hurts. You decide what stays in human hands. The rest gets automated, and you own it.",
+      "problems": [
+        "A manual process is slow and repetitive.",
+        "Every fix needs a vendor or a new hire.",
+        "I want an internal tool shaped to how we actually work."
+      ],
+      "sub": [
+        { "label": "MAP THE WORKFLOW", "text": "Where the work happens and where it hurts, made visible before anything changes." },
+        { "label": "REDESIGN", "text": "A better flow, with you deciding what stays human and what gets automated." },
+        { "label": "AUTOMATE & OWN", "text": "A working automation or internal tool, built to fit, owned and controlled by you." }
+      ],
+      "approach": "It understands your process deeply, then builds and automates the execution — not just advice, the working thing, with you in control.",
+      "scenarios": ["manual-process", "internal-tool", "product-no-team"]
+    }
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "manifesto": {
+    "eyebrow": "MANIFESTO",
+    "title": "Creation should belong to the person who had the idea.",
+    "paras": [
+      "For most of history, having an idea was never the hard part. Building it was.",
+      "Every idea that mattered needed people. Developers, designers, strategists, analysts, producers, specialists you had to find, afford, brief, manage, and wait on. The idea was yours. The power to build it belonged to everyone but you. Most ideas died in that gap.",
+      "We think that gap was never supposed to exist.",
+      "Stryvia is an intelligence you build with. You bring the problem. You stay in control. It does the heavy lifting, across every kind of work, and what comes out is customized to you and owned by you. Not a team you hire. Not a tool that hands you more work. An intelligence that makes building effortless and leaves you holding something that is unmistakably yours.",
+      "Creation should belong to the person who had the idea. We built Stryvia to give it back to them."
+    ],
+    "cta": "Tell it what you want to build"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "The things you're wondering, answered plainly.",
+    "items": [
+      {
+        "q": "Does this replace my team?",
+        "a": "No. It amplifies what you and your team can do. You take on the work that used to be out of reach, and you do it faster."
+      },
+      {
+        "q": "Do I stay in control?",
+        "a": "Yes. You direct the work and make every decision that matters. The intelligence does the heavy lifting; the authorship is yours."
+      },
+      {
+        "q": "Who owns what gets built?",
+        "a": "You do. There is no lock-in. What you build with Stryvia is yours to use, change, and keep."
+      },
+      {
+        "q": "What if I need changes later?",
+        "a": "You own it, so you change it whenever you want, with or without us."
+      },
+      {
+        "q": "How long does it take?",
+        "a": "It depends on the problem, but it is faster than hiring and waiting, usually by a wide margin. The scope conversation gives you a realistic range."
+      },
+      {
+        "q": "Is this just a generic AI tool?",
+        "a": "No. Stryvia understands your problem before it proposes anything, and it makes many models work together so you get a finished, coherent result no single tool can produce."
+      },
+      {
+        "q": "What if my problem is too complex?",
+        "a": "Stryvia tells you when something is beyond what it should responsibly take on, and brings in human expertise. That honesty is the point."
+      },
+      {
+        "q": "What does it cost?",
+        "a": "You pay for the capability delivered and you own the result. Scoping your problem is free. There are no per-seat licenses and no lock-in."
+      },
+      {
+        "q": "Where does my data go?",
+        "a": "It is encrypted, handled to local standards, and kept in the region. Details are on the Trust page."
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "PRICING",
+    "title": "You pay for capability, not for overhead.",
+    "lead": "No grid we are not ready to commit to, and no rent extracted from dependency. Here is the whole philosophy.",
+    "points": [
+      {
+        "label": "WHAT YOU PAY FOR",
+        "text": "You pay for the capability delivered and you own what is built. The value is the solution in your hands, not seats or hours."
+      },
+      {
+        "label": "SCOPING IS FREE",
+        "text": "Describing your problem and getting a real scope of how it would be solved costs nothing. You see the value before anything else."
+      },
+      {
+        "label": "NO PER-SEAT LICENSES",
+        "text": "You are not taxed for every person who touches the work. The capability is yours to use across your team."
+      },
+      {
+        "label": "NO LOCK-IN",
+        "text": "You own the result and can take it anywhere. We do not extract rent from your dependency, because there is none."
+      }
+    ],
+    "cta": "Scope the cost of your problem"
+  },
+  "trust": {
+    "eyebrow": "TRUST",
+    "title": "For an intelligence you hand your problem to, trust is the product.",
+    "lead": "Not a compliance afterthought. The commitments below are how Stryvia behaves, stated plainly.",
+    "thresholdLabel": "THE CONFIDENCE THRESHOLD",
+    "thresholdTitle": "It tells you when a problem is beyond what it should promise.",
+    "thresholdBody": "Stryvia recognizes the edge of what it can responsibly deliver and says so, routing you to human expertise rather than guessing or overpromising. Knowing its limits is what makes everything else it tells you believable.",
+    "dataLabel": "DATA & REGION",
+    "dataTitle": "Your data is encrypted, handled to local standards, and kept close to home.",
+    "dataInKingdom": "Your conversations and contact details are encrypted at rest and protected in transit, and stored within the Kingdom. Access is restricted to authenticated Stryvia accounts.",
+    "dataNearest": "Your conversations and contact details are encrypted at rest and protected in transit, and stored in the nearest available region. In-Kingdom hosting is adopted as the platform grows. Access is restricted to authenticated Stryvia accounts.",
+    "ownershipLabel": "OWNERSHIP",
+    "ownershipTitle": "You own what gets built. No lock-in, ever.",
+    "ownershipBody": "What you build with Stryvia is yours to use, change, and keep. You direct the work and the authorship stays with you. There is no dependency engineered into the relationship.",
+    "securityLabel": "SECURITY",
+    "securityTitle": "Built to handle what you bring with care.",
+    "securityBody": "Encryption at rest and in transit, restricted authenticated access to the admin, input handling and guardrails on the Chat, and session analytics with personal form fields masked so we never record the details you type.",
+    "stackLabel": "THE TRUST STACK",
+    "stackTitle": "What we build on, and what we commit to.",
+    "stackBody": "Stryvia is built on established cloud and model infrastructure and orchestrates it into one coherent capability. We commit to keeping your data close, keeping you in control, owning our limits, and never centering anyone but you.",
+    "rights": "Under the Kingdom's Personal Data Protection Law you can ask what we hold, access it, correct it, delete it, and withdraw consent. The Privacy policy explains how.",
+    "privacyLink": "Read the privacy policy",
+    "cta": "Start a conversation"
+  },
+  "howItWorks": {
+    "eyebrow": "HOW IT WORKS",
+    "title": "You set the intent. The intelligence does the heavy lifting. You own the result.",
+    "lead": "No jargon. Here is the method, and exactly where you stay in control of it.",
+    "steps": [
+      {
+        "label": "01 — UNDERSTAND",
+        "title": "It understands the problem before proposing anything.",
+        "text": "Like a senior advisor in a first meeting, Stryvia reads what you bring, reads your level of expertise, and pushes gently on vagueness instead of guessing. The solution fits you because it understood you first."
+      },
+      {
+        "label": "02 — ORCHESTRATE",
+        "title": "It makes many models work together as one.",
+        "text": "One model writes; another reasons; another produces. Stryvia orchestrates them so the whole exceeds any single one, and you get a coherent result instead of disconnected pieces."
+      },
+      {
+        "label": "03 — BUILD",
+        "title": "It does the heavy lifting and the execution.",
+        "text": "Not just advice. Stryvia builds the thing and automates the work, so you are not left managing a process or stitching tools together."
+      },
+      {
+        "label": "04 — OWN",
+        "title": "You direct throughout, and you own what comes out.",
+        "text": "You set the intent, make the consequential decisions, and redirect when it drifts. What gets built is customized to you, owned by you, with no lock-in."
+      }
+    ],
+    "directorLabel": "YOU ARE THE DIRECTOR",
+    "directorTitle": "Every decision that matters is yours.",
+    "directorBody": "The fear is losing control. You don't. You set the direction, you make the calls, and you redirect the work whenever you want. The intelligence does the heavy lifting; the authorship never leaves your hands.",
+    "cta": "Describe a problem and watch how it's approached"
+  },
+  "intelligence": {
+    "eyebrow": "THE INTELLIGENCE",
+    "title": "The moat is the method, not the models.",
+    "lead": "The models are horsepower anyone can rent. What makes Stryvia defensible is how it thinks. Here it is, at a high level, without exposing anything proprietary.",
+    "pillars": [
+      {
+        "label": "DEPTH OF UNDERSTANDING",
+        "text": "It understands a problem the way a senior team would before proposing anything, so the solution fits you instead of arriving as a generic template."
+      },
+      {
+        "label": "ORCHESTRATION",
+        "text": "It makes many models and tools work together so the whole exceeds any single one. A model can write the script; only orchestration also builds the storyboard. No single tool does this."
+      },
+      {
+        "label": "IT KNOWS ITS LIMITS",
+        "text": "It recognizes when a problem exceeds what it can responsibly handle and routes to human expertise rather than guessing. The honesty makes everything else believable."
+      },
+      {
+        "label": "A COMPOUNDING BASE",
+        "text": "Every problem approached deepens the reference the intelligence reasons from over time. The method generalizes across every domain, which is why the reach is universal."
+      }
+    ],
+    "explorerLabel": "HOW IT THINKS",
+    "explorerTitle": "Watch a problem move through the layers.",
+    "explorerBody": "A high-level walkthrough of how every problem is approached — understand, bring the right expertise, orchestrate, shape, hand it back. Illustrative, never a reveal of the proprietary thinking model.",
+    "explorerSample": "Launch a product in three markets at once",
+    "explorerPrev": "Back",
+    "explorerNext": "Next",
+    "explorerEnd": "This is how every problem is approached.",
+    "explorerSteps": [
+      {
+        "label": "01 — UNDERSTAND",
+        "title": "Read the problem the way a senior team would.",
+        "text": "It separates what you actually need from what you said, reads your constraints, and surfaces the questions that matter before committing to an approach."
+      },
+      {
+        "label": "02 — BRING EXPERTISE",
+        "title": "Pull in the right kind of thinking for this problem.",
+        "text": "Strategy, market, brand, build, localization — the relevant expertise is assembled around your specific situation, not a generic template."
+      },
+      {
+        "label": "03 — ORCHESTRATE",
+        "title": "Make many models work together as one.",
+        "text": "Different models do what each is best at, and the orchestration binds their output into a single coherent result instead of disconnected pieces."
+      },
+      {
+        "label": "04 — SHAPE",
+        "title": "Form the solution and check it against your intent.",
+        "text": "The pieces become a structured solution, shaped to your goal, with the consequential decisions surfaced for you to direct."
+      },
+      {
+        "label": "05 — HAND IT BACK",
+        "title": "You own what comes out.",
+        "text": "The result is customized to you and yours to keep, use, and change — with no lock-in, and a human to structure the build when you're ready."
+      }
+    ],
+    "investorLink": "See the investor thesis",
+    "cta": "Bring your own problem"
+  },
+  "capabilities": {
+    "eyebrow": "CAPABILITIES",
+    "title": "Whatever you bring, it gets built.",
+    "lead": "These are entry points, not a catalog. The same intelligence solves the next kind of problem just as readily. Pick the one closest to you, or just tell the Chat.",
+    "problemsHeading": "The problems this solves",
+    "subHeading": "What becomes possible",
+    "approachHeading": "How the intelligence approaches this",
+    "scenariosHeading": "What it looks like",
+    "moreTitle": "Don't see yours?",
+    "moreBody": "The list is illustrative. Bring whatever you have — the intelligence works for any domain.",
+    "seeAll": "Capabilities",
+    "cta": "Talk it through"
+  },
+  "start": {
+    "eyebrow": "START",
+    "title": "Tell the intelligence what you want to build.",
+    "lead": "Describe a real problem. You'll get a genuine scope — what it is, how it would be approached, the shape and timeline, and what you'd own. Then, when you're ready, a person structures the build with you."
+  },
+  "earlyAccessPage": {
+    "eyebrow": "EARLY ACCESS",
+    "title": "Be among the first to build with it.",
+    "lead": "Not ready for a full conversation yet? Request access and keep your place. We'll bring you in."
+  },
+  "investors": {
+    "eyebrow": "FOR INVESTORS",
+    "gateTitle": "The capability layer is open. Stryvia is building it.",
+    "gateBody": "A short note for investors who want exposure to the layer above AI tools. Leave an email to read the thesis.",
+    "gateButton": "Read the thesis",
+    "gateEmail": "Your email",
+    "gateError": "That email doesn't look right.",
+    "title": "Infrastructure for capability itself.",
+    "sections": [
+      {
+        "label": "THE SHIFT",
+        "title": "From tools that do one thing to capability that does the work.",
+        "text": "The market is moving from AI tools that do one thing to AI capability that does the work. Tools have hit their ceiling. The next layer is an intelligence that takes a problem and produces the solution, across any domain. That layer is open, and Stryvia is building it."
+      },
+      {
+        "label": "WHAT STRYVIA IS",
+        "title": "The intelligence you build with.",
+        "text": "A person brings a problem, directs the work, and owns the result, while the intelligence does the heavy lifting, on any kind of problem. Not a vertical tool and not a services firm. Infrastructure for capability itself."
+      },
+      {
+        "label": "THE MOAT",
+        "title": "Why universal is a strength, not a lack of focus.",
+        "text": "The defensibility is not the underlying models, which everyone can rent. It is the proprietary thinking model that approaches any problem in structured layers, the orchestration that makes many models work as one, and the compounding base of solved problems that deepens the reasoning over time. Because the moat is the method, not a niche, it generalizes across every domain. Breadth is what a method-based moat produces."
+      },
+      {
+        "label": "WHY NOW",
+        "title": "The window opened recently, and it is open now.",
+        "text": "Models became good enough to reason inside a problem only recently, and orchestrating many of them into one coherent result became practical only recently. The window to build the capability layer is open now and was not open before."
+      },
+      {
+        "label": "THE MARKET",
+        "title": "Not a category — the cost of capability itself.",
+        "text": "The addressable market is every company and every founder who currently hires, contracts, or waits to get work done. Horizontal reach against a problem every business has."
+      },
+      {
+        "label": "WHY HERE",
+        "title": "Built in the region, anchored in it.",
+        "text": "Capability and data kept close to home, aligned with where the region is deliberately heading. A credible local champion in a moment when local capability is being actively backed."
+      },
+      {
+        "label": "THE INVITATION",
+        "title": "A statement, not a raise pitch.",
+        "text": "For investors who want exposure to the capability layer, a conversation."
+      }
+    ],
+    "cta": "Start a conversation"
+  },
+  "privacy": {
+    "eyebrow": "PRIVACY",
+    "title": "Privacy policy",
+    "draftNote": "Draft for review. Written to match how the site actually works. Not legal advice; to be reviewed by counsel familiar with the Kingdom's Personal Data Protection Law (PDPL) before launch.",
+    "lastUpdated": "Last updated",
+    "regionInKingdom": "Your data is stored within the Kingdom.",
+    "regionNearest": "Your data is stored in the nearest available region, with in-Kingdom hosting adopted as the platform grows.",
+    "contactEmail": "privacy@stryvia.ai",
+    "sections": [
+      {
+        "h": "Who we are",
+        "p": "This policy explains how Stryvia collects and handles personal data when you use stryvia.ai. For any question about this policy or your data, contact us at privacy@stryvia.ai."
+      },
+      {
+        "h": "What we collect",
+        "p": "We collect only what we need to understand your problem and follow up. When you use the chat, we collect the messages you send and the conversation that results. If you take the next step or request access, we collect the contact details you provide — your name, your email, and optionally your company. When you visit, we collect standard technical and usage data through our analytics: pages viewed, actions taken, approximate location from your IP, device and browser type, and the language you use. We do not ask for sensitive personal data, and we ask that you do not share it in the chat."
+      },
+      {
+        "h": "How we use your data",
+        "p": "We use your data to understand the problem you bring, to respond to you, to follow up if you ask us to build something with you, to operate and improve the site, and to understand what visitors need. We do not sell your personal data and we do not use it for advertising. The chat is powered by a third-party AI model provider that processes the content of your conversation in order to respond; we share only what is needed to generate the response."
+      },
+      {
+        "h": "How chat conversations are handled",
+        "p": "Conversations, including those that do not lead to contact, are stored so we can understand what visitors are looking for and improve how we help. Where a conversation includes contact details, it is linked to your record so the person who follows up has the context."
+      },
+      {
+        "h": "Where your data is stored",
+        "p": "Your data is stored with our hosting and database providers, encrypted at rest and protected in transit."
+      },
+      {
+        "h": "Analytics and cookies",
+        "p": "We use analytics to understand how the site is used, including which pages draw attention and where visitors encounter friction. This may include session recordings with personal form fields masked so we never capture what you type into a contact form. On your first visit you will be asked to consent to non-essential analytics, and you can withdraw it at any time. Essential cookies needed to make the site work do not require consent."
+      },
+      {
+        "h": "Third parties we rely on",
+        "p": "We use a small set of trusted providers to run the site: a hosting provider, a database provider, an AI model provider that powers the chat, and an analytics provider. Each processes data only as needed to provide its service."
+      },
+      {
+        "h": "How long we keep your data",
+        "p": "We keep conversation and contact data for as long as needed to follow up and to improve our service, and for a reasonable period after, unless you ask us to delete it sooner."
+      },
+      {
+        "h": "Your rights",
+        "p": "Under the Kingdom's Personal Data Protection Law you have the right to know what personal data we hold, to access it, to ask us to correct it, to ask us to delete it, and to withdraw consent. To exercise any of these, contact us at privacy@stryvia.ai and we will respond within the period the law requires."
+      },
+      {
+        "h": "Children",
+        "p": "The site is intended for businesses and adults. We do not knowingly collect data from children."
+      },
+      {
+        "h": "Changes to this policy",
+        "p": "We may update this policy as the site and our practices evolve. The current version is always the one posted here, with the date of last update shown above."
+      }
+    ]
+  },
+  "notFound": {
+    "code": "/ 404",
+    "title": "This isn't a page. But your problem is still welcome.",
+    "body": "Whatever you came to build, the intelligence is one conversation away.",
+    "cta": "Back to home"
+  }
+}
