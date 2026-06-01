@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import posthog from "posthog-js";
 import { usePathname } from "next/navigation";
 import { getConsent } from "@/lib/consent";
+import { captureAttribution } from "@/lib/attribution";
 
 // Behavioural analytics (Decisions §6). Session replay is on but every form
 // field is masked, so we never record the personal details a visitor types.
@@ -36,6 +37,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    captureAttribution(); // first-touch attribution, independent of analytics consent
     initPostHog();
     const onChange = () => initPostHog();
     window.addEventListener("sv-consent-change", onChange);

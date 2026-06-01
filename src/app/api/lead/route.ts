@@ -3,6 +3,7 @@ import { isValidEmail } from "@/lib/utils";
 import { persistConversation, markConversationStatus, createLead } from "@/lib/chat/store";
 import { summarizeConversation } from "@/lib/chat/summarize";
 import { notifyNewLead } from "@/lib/notify";
+import { runAutomations } from "@/lib/marketing/actions";
 import type { LeadRequestBody, ChatMessage } from "@/lib/chat/types";
 
 export const runtime = "nodejs";
@@ -69,6 +70,9 @@ export async function POST(req: NextRequest) {
     conversationId,
     messages,
   });
+
+  // Fire marketing automations for the new lead (non-blocking).
+  runAutomations().catch((err) => console.error("[stryvia] automations after lead:", err));
 
   return NextResponse.json({ ok: true, stored, conversationId });
 }

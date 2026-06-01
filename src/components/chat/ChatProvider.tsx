@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useLocale } from "next-intl";
 import { track } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 import type { ChatMessage, ChatSignal } from "@/lib/chat/types";
 
 const RS = "\x1e";
@@ -115,6 +116,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             locale,
             pageContext: state.pageContext,
             conversationId: state.conversationId,
+            attribution: getAttribution(),
           }),
         });
 
