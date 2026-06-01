@@ -40,7 +40,7 @@ export default async function CapabilitiesPage({
                 <Link
                   key={slug}
                   href={`/capabilities/${slug}`}
-                  className="group relative flex flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 transition-colors duration-200 hover:border-sv-green-line"
+                  className="sv-card group relative flex flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
                 >
                   <span className="sv-scan-line" aria-hidden />
                   <Bracket />

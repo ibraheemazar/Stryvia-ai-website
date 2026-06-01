@@ -18,8 +18,10 @@ export function PageHero({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-sv-line pt-32 pb-16 lg:pb-24">
-      <Container>
-        <Eyebrow code={code} className="sv-reveal">
+      <div className="sv-field" aria-hidden />
+      <div className="sv-beam" aria-hidden />
+      <Container className="relative z-10">
+        <Eyebrow code={code} className="sv-reveal" live>
           {eyebrow}
         </Eyebrow>
         <h1
