@@ -4,6 +4,7 @@ import { Bracket } from "@/components/ui/Bracket";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { HeroChat } from "@/components/home/HeroChat";
+import { HeroCanvas } from "@/components/home/HeroCanvas";
 import { OrchestrationVisual } from "@/components/home/OrchestrationVisual";
 import { ChatSeedButton } from "@/components/chat/ChatSeedButton";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
@@ -22,6 +23,7 @@ export default async function HomePage({
       {/* ===== Scene 1–2: opening frame + the live Chat ===== */}
       <section className="relative overflow-hidden pt-28 pb-[clamp(64px,10vw,140px)]">
         <div className="sv-field" aria-hidden />
+        <HeroCanvas />
         <div className="sv-beam" aria-hidden />
         <Container className="relative z-10">
           <div className="grid items-center gap-12 lg:grid-cols-[7fr_5fr] lg:gap-16">
@@ -30,7 +32,7 @@ export default async function HomePage({
                 {t("scene1.eyebrow")}
               </Eyebrow>
               <h1
-                className="sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
+                className="sv-grad-text sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
                 style={{ ["--i" as string]: 1 }}
               >
                 {t("scene1.headline")}
@@ -62,12 +64,25 @@ export default async function HomePage({
         </Container>
       </section>
 
+      {/* Instrument readout — illustrative breadth, scrolling */}
+      <div className="border-y border-sv-line bg-sv-surface-1/50 py-4">
+        <div className="sv-marquee">
+          <span className="sv-label text-sv-text-3">
+            {Array(2)
+              .fill(
+                "BUILD A PRODUCT · LAUNCH A VENTURE · BRAND & IDENTITY · CAMPAIGNS · MARKETING & GROWTH · OPERATIONS · AUTOMATION · FINANCE & MODELING · STRATEGY · MARKET RESEARCH · DASHBOARDS · CRM · E-COMMERCE · CONTENT AT SCALE · INVESTOR DECKS · WHATEVER YOU BRING · ",
+              )
+              .join("")}
+          </span>
+        </div>
+      </div>
+
       {/* ===== Scene 3: the turn ===== */}
       <Section>
         <Container>
           <hr className="sv-rule mb-16 max-w-xs" />
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-sv-display-l">{t("scene3.headline")}</h2>
+            <h2 className="sv-grad-text text-sv-display-l">{t("scene3.headline")}</h2>
             <p className="mx-auto mt-8 max-w-2xl text-sv-body-l text-sv-text-2">
               {t("scene3.body")}
             </p>
@@ -109,7 +124,7 @@ export default async function HomePage({
         <Container>
           <div className="max-w-2xl">
             <Eyebrow code="/ 05">{t("scene5.eyebrow")}</Eyebrow>
-            <h2 className="mt-6 text-sv-display-l">{t("scene5.headline")}</h2>
+            <h2 className="mt-6 sv-grad-text text-sv-display-l">{t("scene5.headline")}</h2>
             <p className="mt-6 text-sv-body-l text-sv-text-2">{t("scene5.body")}</p>
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,7 +142,7 @@ export default async function HomePage({
         <Container>
           <div className="max-w-2xl">
             <Eyebrow code="/ 06">{t("scene6.eyebrow")}</Eyebrow>
-            <h2 className="mt-6 text-sv-display-l">{t("scene6.headline")}</h2>
+            <h2 className="mt-6 sv-grad-text text-sv-display-l">{t("scene6.headline")}</h2>
             <p className="mt-6 text-sv-body-l text-sv-text-2">{t("scene6.body")}</p>
           </div>
 
@@ -217,7 +232,7 @@ export default async function HomePage({
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <span className="sv-label">/ 10</span>
-            <h2 className="mt-6 text-sv-display-l">{t("scene10.headline")}</h2>
+            <h2 className="mt-6 sv-grad-text text-sv-display-l">{t("scene10.headline")}</h2>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button href="/start" variant="primary">
                 {t("scene10.start")}
