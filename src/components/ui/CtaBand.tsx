@@ -18,10 +18,11 @@ export function CtaBand({
   return (
     <Section>
       <Container>
-        <div className="relative mx-auto max-w-3xl rounded-sv-lg border border-sv-line-strong bg-sv-surface-1 p-10 text-center lg:p-16">
+        <div className="sv-glow relative mx-auto max-w-3xl overflow-hidden rounded-sv-lg border border-sv-line-strong bg-sv-surface-1 p-10 text-center lg:p-16">
+          <div className="sv-field" aria-hidden />
           <Bracket live focusIn />
-          <h2 className="text-sv-h1">{title}</h2>
-          <div className="mt-8 flex justify-center">
+          <h2 className="relative z-10 text-sv-h1">{title}</h2>
+          <div className="relative z-10 mt-8 flex justify-center">
             <ChatSeedButton
               variant="primary"
               arrow={false}
