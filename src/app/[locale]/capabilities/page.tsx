@@ -44,7 +44,7 @@ export default async function CapabilitiesPage({
                 >
                   <span className="sv-scan-line" aria-hidden />
                   <Bracket />
-                  <p className="sv-label-sm sv-label">{`CAPABILITY / 0${i + 1}`}</p>
+                  <p className="sv-label-sm sv-label">{`CAPABILITY / ${String(i + 1).padStart(2, "0")}`}</p>
                   <h2 className="mt-4 font-display text-sv-h3 text-sv-text transition-colors duration-200 group-hover:text-sv-green">
                     {cap.name}
                   </h2>
