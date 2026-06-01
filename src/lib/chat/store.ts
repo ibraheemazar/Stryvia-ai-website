@@ -89,6 +89,7 @@ type CreateLeadArgs = {
   name: string;
   email: string;
   company?: string;
+  phone?: string;
 };
 
 export async function createLead(args: CreateLeadArgs): Promise<boolean> {
@@ -100,6 +101,7 @@ export async function createLead(args: CreateLeadArgs): Promise<boolean> {
       name: args.name,
       email: args.email,
       company: args.company ?? null,
+      phone: args.phone ?? null,
       status: "new",
     });
     if (error) {

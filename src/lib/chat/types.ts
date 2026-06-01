@@ -32,6 +32,7 @@ export type LeadRequestBody = {
   name: string;
   email: string;
   company?: string;
+  phone?: string;
   messages: ChatMessage[];
   locale: string;
   pageContext?: string;

@@ -17,6 +17,7 @@ export function HandoffForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +42,7 @@ export function HandoffForm() {
           conversationId: conversationId ?? "",
           name: name.trim(),
           email: email.trim(),
+          phone: phone.trim() || undefined,
           company: company.trim() || undefined,
           messages,
           locale,
@@ -106,6 +108,15 @@ export function HandoffForm() {
           onChange={(e) => setCompany(e.target.value)}
           autoComplete="organization"
           aria-label={t("company")}
+        />
+        <input
+          className={inputCls}
+          placeholder={t("phone")}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          type="tel"
+          autoComplete="tel"
+          aria-label={t("phone")}
         />
       </div>
 

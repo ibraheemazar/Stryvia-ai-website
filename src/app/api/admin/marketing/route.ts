@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAdmin, requireService } from "@/lib/admin-auth";
 import { getMarketingOverview, getConversationIntelligence } from "@/lib/marketing/data";
 import { seedIntegrations, resolveSegmentLeads } from "@/lib/marketing/actions";
+import { providerConfigured } from "@/lib/marketing/connectors";
+import { INTEGRATIONS } from "@/lib/marketing/integrations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,7 +28,10 @@ export async function GET(req: NextRequest) {
         .order("created_at", { ascending: false })
         .limit(20),
     ]);
-    return NextResponse.json({ ok: true, overview, intelligence, integrations, insights });
+    const envConfigured = Object.fromEntries(
+      INTEGRATIONS.map((i) => [i.provider, providerConfigured(i.provider)]),
+    );
+    return NextResponse.json({ ok: true, overview, intelligence, integrations, insights, envConfigured });
   }
 
   if (section === "content") {

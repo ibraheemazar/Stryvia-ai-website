@@ -106,3 +106,6 @@ alter table public.marketing_campaigns       enable row level security;
 alter table public.marketing_automations     enable row level security;
 alter table public.marketing_automation_runs enable row level security;
 alter table public.marketing_insights        enable row level security;
+
+-- Optional phone on leads, enabling WhatsApp/SMS outreach.
+alter table public.leads add column if not exists phone text;

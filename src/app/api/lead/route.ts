@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
   const name = String(body.name ?? "").trim().slice(0, 200);
   const email = String(body.email ?? "").trim().slice(0, 320);
   const company = body.company ? String(body.company).trim().slice(0, 200) : undefined;
+  const phone = body.phone ? String(body.phone).trim().slice(0, 40) : undefined;
 
   if (!name || !email) {
     return NextResponse.json({ ok: false, error: "required" }, { status: 400 });
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     converted: true,
   });
 
-  const stored = await createLead({ conversationId, name, email, company });
+  const stored = await createLead({ conversationId, name, email, company, phone });
 
   // Immediate notification regardless of DB outcome — the lead must not be lost.
   await notifyNewLead({
