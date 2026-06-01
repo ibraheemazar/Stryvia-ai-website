@@ -42,7 +42,7 @@ export async function summarizeConversation(
     const res = await getAnthropic().messages.create({
       model: ANTHROPIC_MODEL,
       max_tokens: 300,
-      temperature: 0,
+      // temperature is deprecated for claude-opus-4-8 and rejected by the API.
       system:
         "You label sales conversations for an internal dashboard. Reply ONLY with a " +
         "compact JSON object: {\"summary\": string (max 240 chars, what the visitor " +
