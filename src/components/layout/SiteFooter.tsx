@@ -19,6 +19,7 @@ export function SiteFooter() {
       links: [
         { href: "/how-it-works", label: nav("howItWorks") },
         { href: "/capabilities", label: nav("capabilities") },
+        { href: "/industries", label: nav("industries") },
         { href: "/intelligence", label: nav("intelligence") },
         { href: "/solution-finder", label: sf("eyebrow") },
         { href: "/estimate", label: est("eyebrow") },

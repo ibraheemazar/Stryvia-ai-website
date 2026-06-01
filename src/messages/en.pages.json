@@ -359,7 +359,11 @@
     "lead": "Pick what you want to build and a rough scale. These are rough ranges, not a quote — your real scope comes from a conversation.",
     "pickArchetype": "What do you want to build?",
     "pickScale": "Rough scale",
-    "scales": ["Small", "Medium", "Large"],
+    "scales": [
+      "Small",
+      "Medium",
+      "Large"
+    ],
     "oldWay": "THE OLD WAY",
     "stryviaWay": "WITH STRYVIA",
     "team": "Team",
@@ -369,10 +373,48 @@
     "disclaimer": "These are rough ranges to show the shape of the difference, not a quote.",
     "cta": "Scope this properly",
     "archetypes": [
-      { "name": "A product or app", "oldTeam": "4–6 people", "oldTime": "5–8 months", "oldCost": "high", "newTime": "5–8 weeks" },
-      { "name": "A new venture plan", "oldTeam": "3–5 people", "oldTime": "3–5 months", "oldCost": "high", "newTime": "1–2 weeks" },
-      { "name": "A campaign at scale", "oldTeam": "4–7 people", "oldTime": "2–4 months", "oldCost": "medium", "newTime": "1–3 weeks" },
-      { "name": "An automation", "oldTeam": "2–4 people", "oldTime": "3–6 months", "oldCost": "medium", "newTime": "3–6 weeks" }
+      {
+        "name": "A product or app",
+        "oldTeam": "4–6 people",
+        "oldTime": "5–8 months",
+        "oldCost": "high",
+        "newTime": "5–8 weeks"
+      },
+      {
+        "name": "A new venture plan",
+        "oldTeam": "3–5 people",
+        "oldTime": "3–5 months",
+        "oldCost": "high",
+        "newTime": "1–2 weeks"
+      },
+      {
+        "name": "A campaign at scale",
+        "oldTeam": "4–7 people",
+        "oldTime": "2–4 months",
+        "oldCost": "medium",
+        "newTime": "1–3 weeks"
+      },
+      {
+        "name": "An automation",
+        "oldTeam": "2–4 people",
+        "oldTime": "3–6 months",
+        "oldCost": "medium",
+        "newTime": "3–6 weeks"
+      }
     ]
+  },
+  "industries": {
+    "eyebrow": "INDUSTRIES",
+    "title": "Do you understand my world?",
+    "lead": "Capabilities answer what gets built. Industries answer whether it's built for you. These are entry points, not a boundary.",
+    "problemsHeading": "The problems specific to it",
+    "applyHeading": "How the capabilities apply here",
+    "scenariosHeading": "What it looks like",
+    "regionHeading": "Built in the region",
+    "cta": "Talk it through",
+    "seeAll": "Industries",
+    "overviewCta": "Talk it through",
+    "moreTitle": "Don't see your sector?",
+    "moreBody": "The list is illustrative. Bring your world — the intelligence works for any of them."
   }
 }

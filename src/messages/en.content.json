@@ -688,5 +688,183 @@
         "idea-carried-for-years"
       ]
     }
+  },
+  "industryData": {
+    "real-estate-and-development": {
+      "name": "Real estate & development",
+      "headline": "The work your projects need, built at the speed your projects move.",
+      "lead": "From market reads to brand to the systems that run a development, shaped to how real estate actually works here.",
+      "problems": [
+        "I need a project brand and go-to-market, fast.",
+        "My sales and CRM don't fit how we sell units.",
+        "I need feasibility and models I can defend."
+      ],
+      "apply": "Strategy and market research scope the opportunity, brand and creative make it sell, and custom systems run the operation — orchestrated as one.",
+      "scenarios": [
+        "business-unknown-field",
+        "internal-tool"
+      ],
+      "note": "Built in the region, with your data kept close and handled to local standards."
+    },
+    "food-beverage-and-hospitality": {
+      "name": "Food, beverage & hospitality",
+      "headline": "From concept to opening, built with you.",
+      "lead": "The brand, the menu story, the digital presence, and the operations — shaped to a market that moves fast.",
+      "problems": [
+        "I'm opening a venue and need everything at once.",
+        "My brand doesn't stand out in a crowded scene.",
+        "My operations are manual and leaky."
+      ],
+      "apply": "Brand and content make the concept land, e-commerce and web bring it online, and automation tightens the operation.",
+      "scenarios": [
+        "business-unknown-field",
+        "manual-process"
+      ],
+      "note": "Regional understanding of how hospitality works here, with data kept close."
+    },
+    "retail-and-ecommerce": {
+      "name": "Retail & e-commerce",
+      "headline": "Sell more, across every channel, without a bigger team.",
+      "lead": "The store, the content, the campaigns, and the customer systems — built and tuned to convert.",
+      "problems": [
+        "My online store underperforms.",
+        "I can't produce enough content to keep up.",
+        "My customer data is scattered."
+      ],
+      "apply": "E-commerce setup, content at scale, and dashboards come together so the whole funnel works as one.",
+      "scenarios": [
+        "campaign-at-scale",
+        "internal-tool"
+      ],
+      "note": "Your customer data is encrypted and kept in the region."
+    },
+    "media-entertainment-and-production": {
+      "name": "Media, entertainment & production",
+      "headline": "Produce at a scale a full studio used to require.",
+      "lead": "Concept, content, and campaigns across formats and languages, coherent because they're made as one.",
+      "problems": [
+        "I'm capped by headcount, not ideas.",
+        "Stitching tools makes the work incoherent.",
+        "I need volume and quality at once."
+      ],
+      "apply": "Creative production and advertising are orchestrated so the script, the storyboard, and everything between arrive as one piece.",
+      "scenarios": [
+        "campaign-at-scale",
+        "idea-carried-for-years"
+      ],
+      "note": "Built in the region, your work and data kept close."
+    },
+    "healthcare": {
+      "name": "Healthcare",
+      "headline": "The capability to build and run, with care for what's sensitive.",
+      "lead": "From patient-facing presence to internal systems, shaped to a sector where trust and accuracy matter most.",
+      "problems": [
+        "I need digital presence patients trust.",
+        "My admin processes are slow and manual.",
+        "I need careful, accurate materials."
+      ],
+      "apply": "Web presence, automation, and knowledge systems come together, with the confidence threshold respected where stakes are high.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Sensitive data handled to strict standards and kept in the region; human expertise is brought in where it should be."
+    },
+    "education": {
+      "name": "Education",
+      "headline": "Build the programs, content, and systems that teach and scale.",
+      "lead": "From course content to the systems that deliver it, shaped to how learning actually happens.",
+      "problems": [
+        "I need to produce learning content at scale.",
+        "Onboarding and delivery are inconsistent.",
+        "Knowledge lives in too few heads."
+      ],
+      "apply": "Content at scale, training systems, and automation turn what you know into something that teaches and grows.",
+      "scenarios": [
+        "idea-carried-for-years",
+        "manual-process"
+      ],
+      "note": "Your data kept close and handled to local standards."
+    },
+    "professional-services": {
+      "name": "Professional services",
+      "headline": "Deliver more for clients without adding headcount for every engagement.",
+      "lead": "The research, the materials, and the systems that let a lean firm punch far above its size.",
+      "problems": [
+        "Every new service needs new hires.",
+        "I spend too long on first drafts and decks.",
+        "I want leverage without losing quality."
+      ],
+      "apply": "Research, document drafting, and sales materials come together so you execute engagements that used to need a team.",
+      "scenarios": [
+        "raise-story-numbers",
+        "internal-tool"
+      ],
+      "note": "Client data encrypted and kept in the region."
+    },
+    "financial-services": {
+      "name": "Financial services",
+      "headline": "Serious capability you own, with data kept close and handled with care.",
+      "lead": "Models, analysis, and systems shaped to a sector where rigor and trust are the product.",
+      "problems": [
+        "I need defensible models and analysis.",
+        "Vendor lock-in and data exposure worry me.",
+        "My reporting is manual and slow."
+      ],
+      "apply": "Finance modeling, data analysis, and automation come together, owned by you with no lock-in.",
+      "scenarios": [
+        "raise-story-numbers",
+        "manual-process"
+      ],
+      "note": "Data encrypted, access restricted, and kept in the region — a buying criterion here, not fine print."
+    },
+    "government-and-public-sector": {
+      "name": "Government & public sector",
+      "headline": "Capability built in the region, owned in the region.",
+      "lead": "The research, content, and systems that serve the public, aligned with where the region is heading.",
+      "problems": [
+        "I need capability without vendor dependency.",
+        "Data residency is non-negotiable.",
+        "Processes are heavy and manual."
+      ],
+      "apply": "Strategy, knowledge systems, and automation come together, with ownership and residency kept local.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Data kept in the region and handled to local standards; capability you own, not a vendor you're tied to."
+    },
+    "manufacturing-and-logistics": {
+      "name": "Manufacturing & logistics",
+      "headline": "Map, redesign, and automate the work that slows you down.",
+      "lead": "From operations to the systems that run them, shaped to how things actually move.",
+      "problems": [
+        "Our processes are manual and slow.",
+        "Data sits in silos and tells us little.",
+        "Every fix needs a vendor."
+      ],
+      "apply": "Workflow design, automation, and dashboards come together into systems you own and control.",
+      "scenarios": [
+        "manual-process",
+        "internal-tool"
+      ],
+      "note": "Your operational data kept close and handled to local standards."
+    },
+    "technology-and-startups": {
+      "name": "Technology & startups",
+      "headline": "Build the product, the story, and the growth — without waiting on a team.",
+      "lead": "From MVP to raise to go-to-market, shaped to how startups actually move.",
+      "problems": [
+        "I need to build a product with no team.",
+        "I'm raising and need the story and numbers.",
+        "I need growth without an agency."
+      ],
+      "apply": "Product build, investor materials, and marketing come together so a founder moves at the speed of their decisions.",
+      "scenarios": [
+        "product-no-team",
+        "raise-story-numbers"
+      ],
+      "note": "Built in the region, your IP and data kept close."
+    }
   }
 }

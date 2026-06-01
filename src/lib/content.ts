@@ -44,3 +44,31 @@ export type Scenario = {
   shape: string;
   ownership: string;
 };
+
+// Industry layer (Spec §6.4). Illustrative sectors chosen for the regional
+// market and search demand; grown over time.
+export const INDUSTRY_SLUGS = [
+  "real-estate-and-development",
+  "food-beverage-and-hospitality",
+  "retail-and-ecommerce",
+  "media-entertainment-and-production",
+  "healthcare",
+  "education",
+  "professional-services",
+  "financial-services",
+  "government-and-public-sector",
+  "manufacturing-and-logistics",
+  "technology-and-startups",
+] as const;
+
+export type IndustrySlug = (typeof INDUSTRY_SLUGS)[number];
+
+export type Industry = {
+  name: string;
+  headline: string;
+  lead: string;
+  problems: string[];
+  apply: string;
+  scenarios: string[];
+  note: string;
+};
