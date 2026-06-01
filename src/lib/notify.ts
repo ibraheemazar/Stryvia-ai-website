@@ -1,9 +1,12 @@
 import "server-only";
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import type { ChatMessage } from "./chat/types";
 
 // Converted-lead notification (Decisions §5, §7): the moment a visitor converts,
-// an email lands immediately. Uses Resend if configured; otherwise logs so the
-// flow is observable in development without a provider.
+// an email lands immediately. Sent via Amazon SES. Custom SES_* env names are
+// used instead of AWS_* so they don't collide with the reserved AWS_* variables
+// the serverless runtime sets automatically. If SES isn't configured, the
+// notification logs to server output so the flow stays observable in dev.
 
 type NotifyArgs = {
   name: string;
@@ -16,10 +19,25 @@ type NotifyArgs = {
   messages: ChatMessage[];
 };
 
+let sesClient: SESv2Client | null = null;
+
+function getSes(): SESv2Client | null {
+  const region = process.env.SES_REGION;
+  const accessKeyId = process.env.SES_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.SES_SECRET_ACCESS_KEY;
+  if (!region || !accessKeyId || !secretAccessKey) return null;
+  if (!sesClient) {
+    sesClient = new SESv2Client({
+      region,
+      credentials: { accessKeyId, secretAccessKey },
+    });
+  }
+  return sesClient;
+}
+
 export async function notifyNewLead(args: NotifyArgs): Promise<void> {
   const to = process.env.LEAD_NOTIFY_TO;
   const from = process.env.LEAD_NOTIFY_FROM;
-  const apiKey = process.env.RESEND_API_KEY;
 
   const transcript = args.messages
     .map((m) => `${m.role === "user" ? "Visitor" : "Stryvia"}: ${m.content}`)
@@ -41,30 +59,29 @@ export async function notifyNewLead(args: NotifyArgs): Promise<void> {
     .filter(Boolean)
     .join("\n");
 
-  if (!apiKey || !to || !from) {
-    console.info(`[stryvia] lead notification (email not configured):\n${subject}\n${body}`);
+  const ses = getSes();
+  if (!ses || !to || !from) {
+    console.info(
+      `[stryvia] lead notification (SES not configured):\n${subject}\n${body}`,
+    );
     return;
   }
 
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: args.email,
-        subject,
-        text: body,
+    await ses.send(
+      new SendEmailCommand({
+        FromEmailAddress: from,
+        Destination: { ToAddresses: [to] },
+        ReplyToAddresses: [args.email],
+        Content: {
+          Simple: {
+            Subject: { Data: subject, Charset: "UTF-8" },
+            Body: { Text: { Data: body, Charset: "UTF-8" } },
+          },
+        },
       }),
-    });
-    if (!res.ok) {
-      console.error("[stryvia] lead email failed:", res.status, await res.text());
-    }
+    );
   } catch (err) {
-    console.error("[stryvia] lead email error:", err);
+    console.error("[stryvia] lead email (SES) failed:", err);
   }
 }
