@@ -22,8 +22,9 @@ export function SiteFooter() {
         { href: "/industries", label: nav("industries") },
         { href: "/for-you", label: nav("forYou") },
         { href: "/intelligence", label: nav("intelligence") },
-        { href: "/solution-finder", label: sf("eyebrow") },
-        { href: "/estimate", label: est("eyebrow") },
+        { href: "/works-with-everything", label: nav("worksWith") },
+        { href: "/compare", label: nav("compare") },
+        { href: "/see-it-in-control", label: nav("control") },
         { href: "/pricing", label: nav("pricing") },
       ],
     },
@@ -31,6 +32,10 @@ export function SiteFooter() {
       heading: t("company"),
       links: [
         { href: "/manifesto", label: nav("manifesto") },
+        { href: "/why-stryvia-exists", label: nav("whyExists") },
+        { href: "/solution-finder", label: sf("eyebrow") },
+        { href: "/estimate", label: est("eyebrow") },
+        { href: "/resources", label: nav("resources") },
         { href: "/faq", label: nav("faq") },
         { href: "/investors", label: t("investors") },
       ],
@@ -38,6 +43,9 @@ export function SiteFooter() {
     {
       heading: t("trustCol"),
       links: [
+        { href: "/examples", label: nav("examples") },
+        { href: "/problems", label: nav("problems") },
+        { href: "/outcomes", label: nav("outcomes") },
         { href: "/trust", label: nav("trust") },
         { href: "/start", label: t("start") },
         { href: "/early-access", label: t("earlyAccess") },

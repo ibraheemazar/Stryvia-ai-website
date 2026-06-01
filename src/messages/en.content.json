@@ -988,5 +988,89 @@
         "manual-process"
       ]
     }
+  },
+  "problemGallery": [
+    "A product idea with no development team",
+    "Launching into three markets with one strategist",
+    "Broadcast-quality content with no production house",
+    "A business problem in a domain I don't understand",
+    "A manual process eating my team's week",
+    "A CRM that doesn't fit how we sell",
+    "A raise with no deck and no model",
+    "An operation that breaks every time we grow",
+    "A brand that looks thrown together",
+    "Entering a market I don't know",
+    "Reporting that takes days and tells me little",
+    "An idea I've carried for years and never built"
+  ],
+  "outcomes": [
+    {
+      "label": "SPEED",
+      "text": "Weeks where the old way took months — because there's no team to hire, brief, and wait on."
+    },
+    {
+      "label": "SCALE",
+      "text": "Produce at a volume your headcount shouldn't allow, without losing coherence."
+    },
+    {
+      "label": "OWNERSHIP",
+      "text": "Walk away owning the brand, the system, the model — yours to change, with no lock-in."
+    },
+    {
+      "label": "INDEPENDENCE",
+      "text": "Move on a problem in a domain you don't know, without hiring a row of experts first."
+    },
+    {
+      "label": "COHERENCE",
+      "text": "Get the script, the storyboard, and everything between as one piece, not five disconnected tools."
+    },
+    {
+      "label": "CONTROL",
+      "text": "Direct every decision that matters while the heavy lifting happens around you."
+    },
+    {
+      "label": "CLARITY",
+      "text": "A real plan and a defensible model, fast, instead of a 90-page deck that decides nothing."
+    },
+    {
+      "label": "MOMENTUM",
+      "text": "Start now, shape as you go, and pay for the capability, not the overhead."
+    },
+    {
+      "label": "REACH",
+      "text": "Whatever you bring — product, venture, campaign, operation — it gets built."
+    }
+  ],
+  "articles": {
+    "build-without-a-team": {
+      "title": "How to build a product when you don't have a team",
+      "lead": "The old answer was: hire developers, designers, and a PM, then wait. There's a faster way that leaves you owning the result.",
+      "body": [
+        "Start with the problem, not the features. The clearest products come from a sharp description of what should exist and why — not a spec sheet. Say what you want to be true for the person using it.",
+        "Make the consequential calls early. What it is, who it's for, what it must do on day one. These are yours to decide; everything downstream hangs on them.",
+        "Then let the building happen around your decisions. The interface, the logic, the working thing — produced as one coherent piece, with you steering, not managing a team.",
+        "The result is yours to change. No lock-in, no dependency. That's the difference between renting a tool and owning a capability."
+      ]
+    },
+    "ai-without-an-agency": {
+      "title": "Marketing at scale without an agency",
+      "lead": "Agencies are slow and expensive; an internal team is a big commitment. There's a third path you direct yourself.",
+      "body": [
+        "Set the message and the goal first. Everything coherent comes from a clear point of view — the rest is production.",
+        "Produce across channels as one piece of work. Stitching content from five tools is what makes campaigns feel disconnected. Orchestrated, they hold together.",
+        "Keep the variations on-brand by keeping them from one mind. Languages, formats, placements — consistent because they came from the same intelligence.",
+        "You stay in control of output and speed, and you own what's made."
+      ]
+    },
+    "knowing-the-limits": {
+      "title": "Why an intelligence that knows its limits is the one to trust",
+      "lead": "The most useful thing an intelligence can say is sometimes \"this is beyond what I should promise.\"",
+      "body": [
+        "Overconfidence is the failure mode of most tools. They guess, confidently, and you find out later.",
+        "A genuine confidence threshold is the opposite: it recognizes the edge of what it can responsibly deliver and routes you to human expertise instead of fabricating certainty.",
+        "That honesty isn't a weakness in the pitch — it's what makes everything else believable. If it tells you the truth at the edge, you can trust it in the middle.",
+        "Trust, for an intelligence you hand your problem to, is the product."
+      ]
+    }
   }
 }

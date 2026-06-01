@@ -37,6 +37,18 @@ export type Capability = {
   scenarios: string[];
 };
 
+// Scenario pool (Decisions §8), surfaced in the Examples gallery and on pages.
+export const SCENARIO_SLUGS = [
+  "product-no-team",
+  "business-unknown-field",
+  "campaign-at-scale",
+  "manual-process",
+  "raise-story-numbers",
+  "internal-tool",
+  "new-market",
+  "idea-carried-for-years",
+] as const;
+
 export type Scenario = {
   title: string;
   problem: string;
@@ -94,4 +106,20 @@ export type Audience = {
   problems: string[];
   change: string;
   scenarios: string[];
+};
+
+// Resources (Spec §6.21): the long-tail SEO + depth engine. Genuine guides,
+// each ending in a Chat invitation.
+export const ARTICLE_SLUGS = [
+  "build-without-a-team",
+  "ai-without-an-agency",
+  "knowing-the-limits",
+] as const;
+
+export type ArticleSlug = (typeof ARTICLE_SLUGS)[number];
+
+export type Article = {
+  title: string;
+  lead: string;
+  body: string[];
 };
