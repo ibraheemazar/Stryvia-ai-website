@@ -57,7 +57,7 @@
       "ownership": "لك بالكامل."
     }
   },
-  "capabilities": {
+  "capabilityData": {
     "build-a-product-or-app": {
       "name": "ابنِ منتجًا أو تطبيقًا",
       "headline": "حوّل المنتج الذي في رأسك إلى منتجٍ حقيقي، دون جمع فريقٍ أولًا.",

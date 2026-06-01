@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import posthog from "posthog-js";
 import { usePathname } from "next/navigation";
+import { getConsent } from "@/lib/consent";
 
 // Behavioural analytics (Decisions §6). Session replay is on but every form
 // field is masked, so we never record the personal details a visitor types.
@@ -14,6 +15,8 @@ function initPostHog() {
   if (initialised) return;
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   if (!key || typeof window === "undefined") return;
+  // Only after the visitor has granted consent for non-essential analytics.
+  if (getConsent() !== "granted") return;
 
   posthog.init(key, {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
@@ -34,6 +37,9 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     initPostHog();
+    const onChange = () => initPostHog();
+    window.addEventListener("sv-consent-change", onChange);
+    return () => window.removeEventListener("sv-consent-change", onChange);
   }, []);
 
   useEffect(() => {

@@ -321,5 +321,58 @@
     "title": "This isn't a page. But your problem is still welcome.",
     "body": "Whatever you came to build, the intelligence is one conversation away.",
     "cta": "Back to home"
+  },
+  "solutionFinder": {
+    "eyebrow": "FIND WHERE TO START",
+    "title": "Three questions, then a sharp first conversation.",
+    "lead": "Not sure where to begin? Answer three quick questions and the intelligence picks up already knowing your situation.",
+    "step1": "What are you?",
+    "step2": "What are you trying to do?",
+    "step3": "What's the situation, in one line?",
+    "step3Placeholder": "Optional — a sentence is enough.",
+    "audiences": [
+      "Someone with an idea",
+      "An entrepreneur",
+      "An operations leader",
+      "A company owner",
+      "A creative",
+      "A marketer",
+      "An enterprise"
+    ],
+    "intents": [
+      "Build a product or app",
+      "Launch a venture",
+      "Produce creative or content",
+      "Run marketing and growth",
+      "Fix or automate an operation",
+      "Something else"
+    ],
+    "resultTitle": "Here's where you start",
+    "resultLead": "Based on what you told us, these are the closest entry points.",
+    "talk": "Talk it through",
+    "next": "Next",
+    "back": "Back"
+  },
+  "estimator": {
+    "eyebrow": "SPEED & COST",
+    "title": "See the compression, honestly.",
+    "lead": "Pick what you want to build and a rough scale. These are rough ranges, not a quote — your real scope comes from a conversation.",
+    "pickArchetype": "What do you want to build?",
+    "pickScale": "Rough scale",
+    "scales": ["Small", "Medium", "Large"],
+    "oldWay": "THE OLD WAY",
+    "stryviaWay": "WITH STRYVIA",
+    "team": "Team",
+    "time": "Time",
+    "cost": "Cost",
+    "saved": "TIME SAVED",
+    "disclaimer": "These are rough ranges to show the shape of the difference, not a quote.",
+    "cta": "Scope this properly",
+    "archetypes": [
+      { "name": "A product or app", "oldTeam": "4–6 people", "oldTime": "5–8 months", "oldCost": "high", "newTime": "5–8 weeks" },
+      { "name": "A new venture plan", "oldTeam": "3–5 people", "oldTime": "3–5 months", "oldCost": "high", "newTime": "1–2 weeks" },
+      { "name": "A campaign at scale", "oldTeam": "4–7 people", "oldTime": "2–4 months", "oldCost": "medium", "newTime": "1–3 weeks" },
+      { "name": "An automation", "oldTeam": "2–4 people", "oldTime": "3–6 months", "oldCost": "medium", "newTime": "3–6 weeks" }
+    ]
   }
 }

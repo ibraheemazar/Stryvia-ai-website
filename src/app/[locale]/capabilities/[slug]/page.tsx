@@ -23,7 +23,7 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   if (!CAPABILITY_SLUGS.includes(slug as never)) return {};
   const tc = await getTranslations({ locale });
-  const cap = tc.raw(`capabilities.${slug}`) as Capability;
+  const cap = tc.raw(`capabilityData.${slug}`) as Capability;
   return { title: cap.name, description: cap.headline };
 }
 
@@ -38,7 +38,7 @@ export default async function CapabilityPage({
 
   const t = await getTranslations("capabilities");
   const tc = await getTranslations();
-  const cap = tc.raw(`capabilities.${slug}`) as Capability;
+  const cap = tc.raw(`capabilityData.${slug}`) as Capability;
   const scenarioLabels = {
     shape: locale === "ar" ? "الحجم" : "SHAPE",
     ownership: locale === "ar" ? "تملك" : "YOU OWN",

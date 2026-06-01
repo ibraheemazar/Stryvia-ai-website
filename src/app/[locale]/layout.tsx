@@ -9,6 +9,7 @@ import { ChatProvider } from "@/components/chat/ChatProvider";
 import { SiteNav } from "@/components/layout/SiteNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ChatDock } from "@/components/chat/ChatDock";
+import { ConsentBanner } from "@/components/layout/ConsentBanner";
 import "@/styles/globals.css";
 
 export function generateStaticParams() {
@@ -89,6 +90,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
               <main id="main">{children}</main>
               <SiteFooter />
               <ChatDock />
+              <ConsentBanner />
             </ChatProvider>
           </PostHogProvider>
         </NextIntlClientProvider>

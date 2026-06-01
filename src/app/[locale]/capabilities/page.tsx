@@ -35,7 +35,7 @@ export default async function CapabilitiesPage({
         <Container>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {CAPABILITY_SLUGS.map((slug, i) => {
-              const cap = tc.raw(`capabilities.${slug}`) as Capability;
+              const cap = tc.raw(`capabilityData.${slug}`) as Capability;
               return (
                 <Link
                   key={slug}

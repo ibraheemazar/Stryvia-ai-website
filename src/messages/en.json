@@ -175,5 +175,11 @@
     "startConversation": "Start a conversation",
     "talkItThrough": "Talk it through in the chat",
     "readMore": "Read more"
+  },
+  "consent": {
+    "text": "We use analytics to understand how the site is used, with personal form fields masked. You can decline without affecting the site.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "privacy": "Privacy"
   }
 }

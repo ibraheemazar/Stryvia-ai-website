@@ -57,7 +57,7 @@
       "ownership": "Entirely yours."
     }
   },
-  "capabilities": {
+  "capabilityData": {
     "build-a-product-or-app": {
       "name": "Build a product or app",
       "headline": "Turn the product in your head into a real one, without assembling a team first.",

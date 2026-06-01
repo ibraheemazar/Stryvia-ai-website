@@ -9,6 +9,8 @@ import { Container } from "@/components/ui/primitives";
 export function SiteFooter() {
   const t = useTranslations("footer");
   const nav = useTranslations("nav");
+  const sf = useTranslations("solutionFinder");
+  const est = useTranslations("estimator");
   const year = new Date().getFullYear();
 
   const cols = [
@@ -18,6 +20,8 @@ export function SiteFooter() {
         { href: "/how-it-works", label: nav("howItWorks") },
         { href: "/capabilities", label: nav("capabilities") },
         { href: "/intelligence", label: nav("intelligence") },
+        { href: "/solution-finder", label: sf("eyebrow") },
+        { href: "/estimate", label: est("eyebrow") },
         { href: "/pricing", label: nav("pricing") },
       ],
     },
