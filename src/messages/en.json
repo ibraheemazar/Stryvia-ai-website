@@ -6,6 +6,11 @@
   },
   "theme": {
     "label": "Appearance",
+    "labelShort": "Theme",
+    "nudgeTitle": "Make it yours",
+    "nudgeBody": "Switch the theme and accent color to your taste — it remembers.",
+    "nudgeCta": "Customize",
+    "nudgeDismiss": "Dismiss",
     "mode": "Mode",
     "dark": "Dark",
     "light": "Light",

@@ -17,6 +17,21 @@ function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${value};path=/;max-age=${THEME_COOKIE_MAX_AGE};samesite=lax`;
 }
 
+// Remembers that the visitor has discovered the customizer, so the first-visit
+// nudge + attention pulse show exactly once and never nag on return.
+const SEEN_KEY = "sv-theme-customizer-seen";
+
+// Sliders glyph — signals "adjust / customize", which a bare swatch never did.
+function SlidersIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0">
+      <path d="M4 7h10M18 7h2M4 17h2M10 17h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="16" cy="7" r="2.4" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="8" cy="17" r="2.4" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
 // Reads the current state straight off <html> so it always matches what the
 // server rendered (no hydration mismatch, no flash).
 function readMode(): ThemeMode {
@@ -31,6 +46,10 @@ export function ThemePicker({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<ThemeMode>("dark");
   const [accent, setAccent] = useState<AccentId>("acid");
+  // Defaults keep the server render quiet (no pulse/nudge) until we confirm
+  // this is a first visit — avoids any hydration flash.
+  const [hasSeen, setHasSeen] = useState(true);
+  const [nudgeReady, setNudgeReady] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // Sync from the DOM after mount (server already set the attributes).
@@ -38,6 +57,23 @@ export function ThemePicker({ className }: { className?: string }) {
     setMode(readMode());
     setAccent(readAccent());
   }, []);
+
+  // First visit: surface the attention pulse immediately and the coachmark a
+  // beat later so it doesn't fight the page load.
+  useEffect(() => {
+    if (localStorage.getItem(SEEN_KEY)) return;
+    setHasSeen(false);
+    const id = window.setTimeout(() => setNudgeReady(true), 1100);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  function markSeen() {
+    try {
+      localStorage.setItem(SEEN_KEY, "1");
+    } catch {}
+    setHasSeen(true);
+    setNudgeReady(false);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -80,17 +116,66 @@ export function ThemePicker({ className }: { className?: string }) {
     <div ref={ref} className={cn("relative", className)}>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((v) => !v);
+          if (!hasSeen) markSeen();
+        }}
         aria-label={t("label")}
         aria-expanded={open}
-        className="flex h-9 w-9 items-center justify-center rounded-sv-sm text-sv-text-2 transition-colors duration-200 hover:text-sv-text"
+        className="relative flex h-9 items-center gap-2 rounded-sv-pill border border-sv-line px-3 text-sv-text-2 transition-colors duration-200 hover:border-sv-line-strong hover:text-sv-text"
       >
+        {/* attention pulse — first visit only, until discovered */}
+        {!hasSeen && (
+          <span
+            className="pointer-events-none absolute inset-0 rounded-sv-pill ring-1 ring-sv-green-line animate-ping"
+            aria-hidden
+          />
+        )}
+        <SlidersIcon />
         <span
-          className="h-3.5 w-3.5 rounded-full ring-1 ring-sv-line-strong"
+          className="h-3 w-3 rounded-full ring-1 ring-sv-line-strong"
           style={{ backgroundColor: current.swatch }}
           aria-hidden
         />
+        <span className="sv-label sv-label-sm hidden sm:inline">{t("labelShort")}</span>
       </button>
+
+      {/* First-visit coachmark — tells people the capability exists, once. */}
+      {!hasSeen && nudgeReady && !open && (
+        <div
+          role="status"
+          className="absolute end-0 top-12 z-50 w-60 rounded-sv-md border border-sv-green-line bg-sv-surface-1/95 p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur-md sv-reveal is-visible"
+        >
+          <span
+            className="absolute -top-1 end-6 h-2.5 w-2.5 rotate-45 border-s border-t border-sv-green-line bg-sv-surface-1"
+            aria-hidden
+          />
+          <div className="flex items-start justify-between gap-3">
+            <p className="sv-label sv-label--live">{t("nudgeTitle")}</p>
+            <button
+              type="button"
+              onClick={markSeen}
+              aria-label={t("nudgeDismiss")}
+              className="-mt-1 text-sv-text-3 transition-colors hover:text-sv-text"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          <p className="mt-2 text-sv-small text-sv-text-2">{t("nudgeBody")}</p>
+          <button
+            type="button"
+            onClick={() => {
+              markSeen();
+              setOpen(true);
+            }}
+            className="mt-3 inline-flex items-center gap-1 font-mono text-sv-label uppercase tracking-[0.14em] text-sv-green transition-opacity hover:opacity-80"
+          >
+            {t("nudgeCta")} →
+          </button>
+        </div>
+      )}
 
       {open && (
         <div

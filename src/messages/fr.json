@@ -6,6 +6,11 @@
   },
   "theme": {
     "label": "Apparence",
+    "labelShort": "Thème",
+    "nudgeTitle": "Personnalisez-le",
+    "nudgeBody": "Changez le thème et la couleur d'accent à votre goût — il s'en souvient.",
+    "nudgeCta": "Personnaliser",
+    "nudgeDismiss": "Fermer",
     "mode": "Mode",
     "dark": "Sombre",
     "light": "Clair",

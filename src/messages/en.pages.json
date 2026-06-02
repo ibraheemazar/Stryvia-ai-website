@@ -191,12 +191,36 @@
     "storyboard": {
       "label": "ORCHESTRATION · WORKED EXAMPLE",
       "tag": "MANY MODELS, ONE RESULT",
+      "switchHint": "SAME INTELLIGENCE, ANY DOMAIN — SWITCH THE BRIEF",
       "briefLabel": "ONE BRIEF",
-      "brief": "A 60-second launch film for a new product.",
-      "lanes": ["Script", "Storyboard", "Voiceover", "Footage & visuals", "Music", "Edit & grade"],
       "resultLabel": "ONE RESULT",
-      "result": "A finished film — coherent because it was orchestrated as one piece, not stitched together from six separate tools.",
-      "note": "Illustrative. The orchestration is the moat, not the underlying models — and it works the same way on any kind of problem."
+      "note": "Illustrative — a handful of domains out of any. The orchestration is the moat, not the underlying models, and it holds the same shape on whatever problem you bring.",
+      "examples": [
+        {
+          "tab": "Product",
+          "brief": "A web app that signs members up, takes payment, and runs the member area.",
+          "lanes": ["User flows", "Interface design", "Data & logic", "Payments", "Copy", "QA & launch"],
+          "result": "A working product — built as one coherent system, not assembled by hand from disconnected tools."
+        },
+        {
+          "tab": "Campaign",
+          "brief": "A launch campaign across web, social, and email for a new offer.",
+          "lanes": ["Positioning", "Core message", "Landing page", "Ad creative", "Email sequence", "Media plan"],
+          "result": "One campaign that says the same thing everywhere — coherent because a single mind shaped all of it."
+        },
+        {
+          "tab": "Film",
+          "brief": "A 60-second launch film for a new product.",
+          "lanes": ["Script", "Storyboard", "Voiceover", "Footage & visuals", "Music", "Edit & grade"],
+          "result": "A finished film — coherent because it was orchestrated as one piece, not stitched together from six separate tools."
+        },
+        {
+          "tab": "Research",
+          "brief": "A market-entry study for moving into a new region.",
+          "lanes": ["Market sizing", "Competitor scan", "Customer signals", "Pricing model", "Risk map", "Recommendation"],
+          "result": "A decision-ready study — one coherent argument, not six disconnected analyses left for you to reconcile."
+        }
+      ]
     },
     "investorLink": "See the investor thesis",
     "cta": "Bring your own problem"
