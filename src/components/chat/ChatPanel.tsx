@@ -95,9 +95,9 @@ export function ChatPanel({
     <div
       className={cn(
         "sv-scanlines relative flex flex-col overflow-hidden rounded-sv-lg border border-sv-line-strong bg-sv-surface-1",
-        variant === "hero" ? "min-h-[30rem]" : "h-full",
+        variant === "hero" ? "min-h-[30rem] max-h-[80vh]" : "h-full",
         mobileFull &&
-          "max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:min-h-0 max-sm:rounded-none",
+          "max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:min-h-0 max-sm:max-h-none max-sm:rounded-none",
         className,
       )}
     >
@@ -125,7 +125,7 @@ export function ChatPanel({
       {/* Conversation surface */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-4"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
         role="log"
         aria-live="polite"
         aria-label={t("ariaLog")}
