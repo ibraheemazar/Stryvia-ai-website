@@ -34,7 +34,7 @@ export function AdminLogin() {
     e.preventDefault();
     setError(null);
     const token = code.trim();
-    if (token.length < 6) return setError("Enter the 6-digit code.");
+    if (token.length < 6) return setError("Enter the code we emailed you.");
     if (!supabase) return;
     setVerifying(true);
     const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
@@ -54,15 +54,15 @@ export function AdminLogin() {
         {sent ? (
           <form onSubmit={onVerify} className="mt-5 space-y-3">
             <p className="text-sv-small text-sv-text-2">
-              Enter the 6-digit code we sent to {email}.
+              Enter the code we sent to {email}.
             </p>
             <input
               inputMode="numeric"
               autoComplete="one-time-code"
-              maxLength={6}
+              maxLength={10}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="000000"
+              placeholder="Enter code"
               className="w-full rounded-sv-sm border border-sv-line bg-sv-surface-3 px-3.5 py-2.5 text-center text-sv-h2 tracking-[0.4em] text-sv-text placeholder:text-sv-text-3 focus:border-sv-green-line focus:outline-none"
             />
             {error && <p className="text-sv-small text-sv-danger">{error}</p>}
