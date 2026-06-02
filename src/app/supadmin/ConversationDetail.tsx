@@ -12,6 +12,14 @@ type Lead = {
   status: string;
   notes: string | null;
 };
+type ConversationAnalysis = {
+  intent: string;
+  requests: string[];
+  objections: string[];
+  sentiment: "positive" | "neutral" | "negative" | "mixed";
+  outcome_reason: string;
+  follow_up: string;
+};
 type Conversation = {
   id: string;
   created_at: string;
@@ -20,6 +28,7 @@ type Conversation = {
   status: string;
   problem_category: string | null;
   summary: string | null;
+  analysis: ConversationAnalysis | null;
 };
 
 // Conversation detail (Decisions §5): full transcript + metadata, plus the
@@ -44,6 +53,8 @@ export function ConversationDetail({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle");
+  const [analysis, setAnalysis] = useState<ConversationAnalysis | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -61,6 +72,7 @@ export function ConversationDetail({
         setLead(data.lead);
         setNotes(data.lead?.notes ?? "");
         setLeadStatus(data.lead?.status ?? "new");
+        setAnalysis((data.conversation?.analysis as ConversationAnalysis) ?? null);
       }
     } catch {
       setLoadError(true);
@@ -100,6 +112,24 @@ export function ConversationDetail({
       setSaveState("error");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function runAnalysis() {
+    if (analyzing) return;
+    setAnalyzing(true);
+    try {
+      const res = await fetch("/api/admin/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, force: !!analysis }),
+      });
+      const data = await res.json().catch(() => ({ ok: false }));
+      if (data.ok && data.analysis) setAnalysis(data.analysis);
+    } catch {
+      /* leave prior analysis in place on failure */
+    } finally {
+      setAnalyzing(false);
     }
   }
 
@@ -153,6 +183,39 @@ export function ConversationDetail({
             {conversation?.summary && (
               <p className="mt-4 text-sv-body text-sv-text-2">{conversation.summary}</p>
             )}
+
+            {/* AI analysis */}
+            <div className="mt-6 rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
+              <div className="flex items-center justify-between gap-3">
+                <p className="sv-label">AI ANALYSIS</p>
+                <button
+                  onClick={runAnalysis}
+                  disabled={analyzing}
+                  className="rounded-sv-sm border border-sv-green-line px-3 py-1 text-sv-label-sm uppercase tracking-wider text-sv-green disabled:opacity-60"
+                >
+                  {analyzing ? "Analysing…" : analysis ? "Re-analyse" : "Analyse"}
+                </button>
+              </div>
+              {analysis ? (
+                <div className="mt-4 space-y-3 text-sv-small">
+                  <AnalysisRow label="INTENT" text={analysis.intent} />
+                  {analysis.requests.length > 0 && (
+                    <AnalysisChips label="REQUESTS" items={analysis.requests} />
+                  )}
+                  {analysis.objections.length > 0 && (
+                    <AnalysisChips label="OBJECTIONS" items={analysis.objections} />
+                  )}
+                  <AnalysisRow label="SENTIMENT" text={analysis.sentiment} />
+                  <AnalysisRow label="WHY" text={analysis.outcome_reason} />
+                  <AnalysisRow label="NEXT BEST ACTION" text={analysis.follow_up} live />
+                </div>
+              ) : (
+                <p className="mt-3 text-sv-small text-sv-text-3">
+                  Run Stryvia Intelligence on this transcript — intent, requests, objections,
+                  why it landed where it did, and the best next move.
+                </p>
+              )}
+            </div>
 
             {/* lead block */}
             {lead && (
@@ -220,6 +283,34 @@ export function ConversationDetail({
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function AnalysisRow({ label, text, live }: { label: string; text: string; live?: boolean }) {
+  if (!text) return null;
+  return (
+    <div>
+      <span className={cn("sv-label-sm sv-label", live && "sv-label--live")}>{label}</span>
+      <p className={cn("mt-0.5 first-letter:uppercase", live ? "text-sv-text" : "text-sv-text-2")}>{text}</p>
+    </div>
+  );
+}
+
+function AnalysisChips({ label, items }: { label: string; items: string[] }) {
+  return (
+    <div>
+      <span className="sv-label-sm sv-label">{label}</span>
+      <div className="mt-1 flex flex-wrap gap-1.5">
+        {items.map((it, i) => (
+          <span
+            key={i}
+            className="rounded-sv-pill border border-sv-line px-2.5 py-0.5 text-sv-small text-sv-text-2"
+          >
+            {it}
+          </span>
+        ))}
       </div>
     </div>
   );

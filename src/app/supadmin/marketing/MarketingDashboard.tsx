@@ -223,6 +223,7 @@ function Intelligence({ api }: { api: Api }) {
         Your sharpest, hardest-to-copy signal: what the market is asking for, in their own words. This
         feeds targeting, content, and messaging no competitor can replicate.
       </p>
+      <UnifiedLearnings api={api} />
       <Panel title="WHAT THE MARKET ASKS FOR — BY CATEGORY">
         <div className="space-y-2">
           {intel.topCategories.map((c) => (
@@ -257,6 +258,126 @@ function Intelligence({ api }: { api: Api }) {
           ))}
         </div>
       </Panel>
+    </div>
+  );
+}
+
+// Unified learnings: one AI-synthesized brief across the whole conversation
+// corpus — top requests, friction, gaps, and prioritised moves.
+function UnifiedLearnings({ api }: { api: Api }) {
+  const [row, setRow] = useState<LearningRow | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  const load = useCallback(async () => {
+    const d = await api("?section=learnings");
+    setRow((d.learning as LearningRow) ?? null);
+    setLoaded(true);
+  }, [api]);
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function generate() {
+    setBusy(true);
+    const d = await api("/learnings", { method: "POST", body: "{}" });
+    if (d.ok && d.learning) setRow(d.learning as LearningRow);
+    setBusy(false);
+  }
+
+  const p = row?.payload;
+
+  return (
+    <Panel
+      title="UNIFIED LEARNINGS — WHAT TO DO BETTER"
+      action={
+        <button
+          onClick={generate}
+          disabled={busy}
+          className="rounded-sv-sm bg-sv-green px-3 py-1 text-sv-label-sm font-medium uppercase tracking-wider text-sv-ink disabled:opacity-60"
+        >
+          {busy ? "Synthesising…" : row ? "Regenerate" : "Generate"}
+        </button>
+      }
+    >
+      {!p ? (
+        <p className="text-sv-small text-sv-text-3">
+          {loaded
+            ? "Synthesise every conversation into one brief — the top requests, the friction costing conversions, messaging and product gaps, and the prioritised moves to do better."
+            : "Loading…"}
+        </p>
+      ) : (
+        <div className="space-y-6">
+          {row && (
+            <p className="text-sv-label-sm text-sv-text-3">
+              {row.conversations_analyzed} conversations · {new Date(row.created_at).toLocaleString()}
+            </p>
+          )}
+          {p.summary && <p className="text-sv-body text-sv-text-2">{p.summary}</p>}
+
+          {p.topRequests && p.topRequests.length > 0 && (
+            <div>
+              <p className="sv-label sv-label-sm mb-2">TOP REQUESTS</p>
+              <div className="space-y-2">
+                {p.topRequests.map((r, i) => (
+                  <div key={i} className="flex items-start gap-3 border-b border-sv-line pb-2">
+                    <span className="w-8 shrink-0 font-mono text-sv-small text-sv-green">{r.count}</span>
+                    <div className="flex-1">
+                      <p className="text-sv-small text-sv-text">{r.request}</p>
+                      {r.note && <p className="text-sv-label-sm text-sv-text-3">{r.note}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            <LearnList title="FRICTION" items={p.friction} />
+            <LearnList title="MESSAGING GAPS" items={p.messagingGaps} />
+            <LearnList title="PRODUCT GAPS" items={p.productGaps} />
+          </div>
+
+          {p.recommendations && p.recommendations.length > 0 && (
+            <div>
+              <p className="sv-label sv-label-sm mb-2">DO BETTER — PRIORITISED</p>
+              <div className="space-y-2">
+                {p.recommendations.map((rec, i) => (
+                  <div key={i} className="rounded-sv-sm border border-sv-line bg-sv-surface-2/40 p-3">
+                    <p
+                      className={cn(
+                        "sv-label-sm sv-label",
+                        rec.priority === "high" && "sv-label--live",
+                        rec.priority === "medium" && "text-sv-warn",
+                      )}
+                    >
+                      {rec.priority} · {rec.title}
+                    </p>
+                    <p className="mt-1 text-sv-small text-sv-text-2">{rec.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Panel>
+  );
+}
+
+function LearnList({ title, items }: { title: string; items?: string[] }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div>
+      <p className="sv-label sv-label-sm mb-2">{title}</p>
+      <ul className="space-y-1.5">
+        {items.map((it, i) => (
+          <li key={i} className="flex gap-2 text-sv-small text-sv-text-2">
+            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-sv-line-strong" />
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -955,3 +1076,17 @@ type RunRow = { id: string; detail: string | null; status: string; created_at: s
 type VariantResult = { variantId: string; label: string; views: number; conversions: number; rate: number; uplift: number | null };
 type LandingRow = { id: string; slug: string; name: string; locale: string; status: string; results?: VariantResult[] };
 type ChannelMetric = { provider: string; label: string; configured: boolean; note?: string; error?: string; metrics?: { spend?: number; impressions?: number; clicks?: number; conversions?: number } };
+type LearningPayload = {
+  summary?: string;
+  topRequests?: { request: string; count: number; note?: string }[];
+  friction?: string[];
+  messagingGaps?: string[];
+  productGaps?: string[];
+  recommendations?: { title: string; body: string; priority: "high" | "medium" | "low" }[];
+};
+type LearningRow = {
+  id: string;
+  conversations_analyzed: number;
+  created_at: string;
+  payload: LearningPayload;
+};
