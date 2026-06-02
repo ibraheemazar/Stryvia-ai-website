@@ -174,6 +174,7 @@
     },
     "cta": "Bâtissons-le ensemble",
     "askElse": "Demander autre chose",
+    "minimize": "Réduire le chat",
     "threshold": "AU-DELÀ DE CE QUE JE DEVRAIS PROMETTRE",
     "thresholdBody": "Celui-ci dépasse ce que je devrais cadrer seul de façon responsable. Le mieux est de faire intervenir une personne de Stryvia. Laissez vos coordonnées et elle vous recontactera.",
     "thresholdAction": "Parler à une personne",
@@ -209,7 +210,8 @@
     "submitting": "Envoi…",
     "success": "Vous êtes sur la liste. Nous reviendrons vers vous.",
     "errorRequired": "Un e-mail est nécessaire pour vous joindre.",
-    "errorEmail": "Cet e-mail ne semble pas correct."
+    "errorEmail": "Cet e-mail ne semble pas correct.",
+    "errorGeneric": "Une erreur s'est produite de notre côté. Veuillez réessayer."
   },
   "common": {
     "backHome": "Retour à l'accueil",

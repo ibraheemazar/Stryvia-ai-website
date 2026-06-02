@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Bracket } from "@/components/ui/Bracket";
@@ -15,6 +15,7 @@ export function InvestorGate({ children }: { children: React.ReactNode }) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const sendingRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,6 +23,8 @@ export function InvestorGate({ children }: { children: React.ReactNode }) {
       setError(t("gateError"));
       return;
     }
+    if (sendingRef.current) return; // guard against a fast double-submit
+    sendingRef.current = true;
     setSending(true);
     try {
       await fetch("/api/early-access", {
@@ -32,6 +35,7 @@ export function InvestorGate({ children }: { children: React.ReactNode }) {
     } catch {
       /* unlock anyway; capture is best-effort */
     }
+    sendingRef.current = false;
     setSending(false);
     setUnlocked(true);
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useChat } from "./ChatProvider";
 import { Button } from "@/components/ui/Button";
@@ -20,6 +20,7 @@ export function HandoffForm() {
   const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const submittingRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,6 +33,8 @@ export function HandoffForm() {
       setError(t("errorEmail"));
       return;
     }
+    if (submittingRef.current) return; // guard against a fast double-submit
+    submittingRef.current = true;
     setSubmitting(true);
     track("lead_submitted", { locale });
     try {
@@ -56,6 +59,7 @@ export function HandoffForm() {
       setError(t("errorGeneric"));
     } finally {
       setSubmitting(false);
+      submittingRef.current = false;
     }
   }
 
@@ -76,7 +80,6 @@ export function HandoffForm() {
   return (
     <form
       onSubmit={onSubmit}
-      onFocus={() => track("lead_started", { locale })}
       className="rounded-sv-md border border-sv-line-strong bg-sv-surface-2 p-5"
       data-sv-mask
     >

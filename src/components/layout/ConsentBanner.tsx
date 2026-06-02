@@ -41,7 +41,12 @@ export function ConsentBanner() {
   }
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-2xl rounded-sv-md border border-sv-line-strong bg-sv-surface-1/95 p-4 backdrop-blur-md sm:inset-x-auto sm:start-5">
+    <div
+      role="region"
+      aria-live="polite"
+      aria-label={t("text")}
+      className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-2xl rounded-sv-md border border-sv-line-strong bg-sv-surface-1/95 p-4 backdrop-blur-md sm:inset-x-auto sm:start-5"
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sv-small text-sv-text-2">
           {t("text")}{" "}

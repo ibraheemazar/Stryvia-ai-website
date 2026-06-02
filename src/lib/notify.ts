@@ -35,7 +35,7 @@ function getSes(): SESv2Client | null {
   return sesClient;
 }
 
-export async function notifyNewLead(args: NotifyArgs): Promise<void> {
+export async function notifyNewLead(args: NotifyArgs): Promise<boolean> {
   const to = process.env.LEAD_NOTIFY_TO;
   const from = process.env.LEAD_NOTIFY_FROM;
 
@@ -64,7 +64,9 @@ export async function notifyNewLead(args: NotifyArgs): Promise<void> {
     console.info(
       `[stryvia] lead notification (SES not configured):\n${subject}\n${body}`,
     );
-    return;
+    // Not delivered to a human — the caller must not treat this as captured
+    // unless the lead was also persisted to the database.
+    return false;
   }
 
   try {
@@ -82,7 +84,9 @@ export async function notifyNewLead(args: NotifyArgs): Promise<void> {
       }),
     );
     console.info(`[stryvia] lead notification sent via SES (from ${from} to ${to})`);
+    return true;
   } catch (err) {
     console.error("[stryvia] lead email (SES) failed:", err);
+    return false;
   }
 }

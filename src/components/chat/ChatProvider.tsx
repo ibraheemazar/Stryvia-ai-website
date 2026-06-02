@@ -173,7 +173,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             console.error("[stryvia] chat error:", meta.status, meta.detail);
           }
         } catch {
-          /* no metadata frame */
+          // A control frame that started but couldn't be parsed means the stream
+          // was cut mid-flight — treat it as an error, not a clean completion.
+          if (metaRaw.trim().length > 0) errored = true;
         }
 
         // A failed model call with no streamed text becomes an error state,

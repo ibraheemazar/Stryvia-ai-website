@@ -32,9 +32,11 @@ export type InstrumentContent = {
 
 const PHASE_MS = 2600;
 
-function useWalkthrough(phaseCount: number): number {
+function useWalkthrough(
+  phaseCount: number,
+  ref: React.RefObject<HTMLElement | null>,
+): number {
   const [step, setStep] = useState(0);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const reduce =
@@ -44,13 +46,34 @@ function useWalkthrough(phaseCount: number): number {
       setStep(phaseCount - 1); // show the fully composed state
       return;
     }
-    timer.current = setInterval(() => {
-      setStep((s) => (s + 1) % phaseCount);
-    }, PHASE_MS);
-    return () => {
-      if (timer.current) clearInterval(timer.current);
+
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (timer) return;
+      timer = setInterval(() => setStep((s) => (s + 1) % phaseCount), PHASE_MS);
     };
-  }, [phaseCount]);
+    const stop = () => {
+      if (timer) clearInterval(timer);
+      timer = null;
+    };
+
+    // Only advance while the preview is actually on screen — no wasted CPU or
+    // battery running the walkthrough behind the fold.
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      start();
+      return stop;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      { threshold: 0.2 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      stop();
+    };
+  }, [phaseCount, ref]);
 
   return step;
 }
@@ -63,7 +86,8 @@ export function InstrumentPreview({
   className?: string;
 }) {
   const { chrome, project, directing, brief, work, choices, phases, note } = content;
-  const step = useWalkthrough(phases.length);
+  const rootRef = useRef<HTMLElement | null>(null);
+  const step = useWalkthrough(phases.length, rootRef);
 
   // Derived visual state from the active phase.
   const builtCount = step <= 0 ? 0 : step === 1 ? 2 : step === 2 ? 3 : work.pieces.length;
@@ -71,7 +95,7 @@ export function InstrumentPreview({
   const approved = step >= 3;
 
   return (
-    <figure className={className}>
+    <figure ref={rootRef} className={className}>
       <div className="relative overflow-hidden rounded-sv-lg border border-sv-line bg-sv-surface-1/70 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-sm sv-glow">
         <Bracket live size={18} inset={8} focusIn />
 

@@ -67,7 +67,14 @@ export async function GET(req: NextRequest) {
   if (locale) q = q.eq("locale", locale);
   if (convIds) q = q.in("id", convIds);
 
-  const { data: conversations } = await q;
+  const { data: conversations, error: listError } = await q;
+  if (listError) {
+    console.error("[stryvia] admin data list query failed:", listError);
+    return NextResponse.json(
+      { ok: false, reason: "query_failed" },
+      { status: 500 },
+    );
+  }
 
   // attach leads for the converted ones
   const ids = (conversations ?? []).filter((c) => c.converted).map((c) => c.id);

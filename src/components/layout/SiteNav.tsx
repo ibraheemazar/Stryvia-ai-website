@@ -80,7 +80,7 @@ export function SiteNav() {
                       {t(link.key)}
                       <span
                         className={cn(
-                          "absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-sv-green transition-transform duration-200 group-hover:scale-x-100",
+                          "absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-sv-green transition-transform duration-200 group-hover:scale-x-100 rtl:origin-right",
                           active && "scale-x-100",
                         )}
                       />

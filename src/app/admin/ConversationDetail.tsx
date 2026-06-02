@@ -42,21 +42,31 @@ export function ConversationDetail({
   const [leadStatus, setLeadStatus] = useState("new");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle");
 
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await fetch(`/api/admin/conversation?id=${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (data.ok) {
-      setConversation(data.conversation);
-      setMessages(data.messages);
-      setLead(data.lead);
-      setNotes(data.lead?.notes ?? "");
-      setLeadStatus(data.lead?.status ?? "new");
+    setLoadError(false);
+    try {
+      const res = await fetch(`/api/admin/conversation?id=${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok || !data.conversation) {
+        setLoadError(true);
+      } else {
+        setConversation(data.conversation);
+        setMessages(data.messages ?? []);
+        setLead(data.lead);
+        setNotes(data.lead?.notes ?? "");
+        setLeadStatus(data.lead?.status ?? "new");
+      }
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [id, token]);
 
   useEffect(() => {
@@ -70,15 +80,27 @@ export function ConversationDetail({
   }, [onClose]);
 
   async function saveLead() {
-    if (!lead) return;
+    if (!lead || saving) return;
     setSaving(true);
-    await fetch("/api/admin/lead", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ id: lead.id, status: leadStatus, notes }),
-    });
-    setSaving(false);
-    onLeadUpdated();
+    setSaveState("idle");
+    try {
+      const res = await fetch("/api/admin/lead", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: lead.id, status: leadStatus, notes }),
+      });
+      const data = await res.json().catch(() => ({ ok: false }));
+      if (!res.ok || !data.ok) {
+        setSaveState("error");
+      } else {
+        setSaveState("saved");
+        onLeadUpdated();
+      }
+    } catch {
+      setSaveState("error");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -96,6 +118,16 @@ export function ConversationDetail({
 
         {loading ? (
           <p className="sv-label p-12 text-center">LOADING</p>
+        ) : loadError ? (
+          <div className="p-12 text-center">
+            <p className="sv-label text-sv-danger">COULDN&apos;T LOAD THIS CONVERSATION</p>
+            <button
+              onClick={load}
+              className="mt-4 rounded-sv-sm border border-sv-line px-4 py-2 text-sv-small text-sv-text-2 hover:text-sv-text"
+            >
+              Try again
+            </button>
+          </div>
         ) : (
           <div className="p-6">
             {/* metadata */}
@@ -148,13 +180,21 @@ export function ConversationDetail({
                   placeholder="Notes on the close…"
                   className="mt-3 min-h-24 w-full rounded-sv-sm border border-sv-line bg-sv-surface-3 px-3 py-2 text-sv-small text-sv-text placeholder:text-sv-text-3 focus:border-sv-green-line focus:outline-none"
                 />
-                <button
-                  onClick={saveLead}
-                  disabled={saving}
-                  className="mt-3 rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60"
-                >
-                  {saving ? "Saving…" : "Save"}
-                </button>
+                <div className="mt-3 flex items-center gap-3">
+                  <button
+                    onClick={saveLead}
+                    disabled={saving}
+                    className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60"
+                  >
+                    {saving ? "Saving…" : "Save"}
+                  </button>
+                  {saveState === "saved" && (
+                    <span className="text-sv-small text-sv-green">✓ Saved</span>
+                  )}
+                  {saveState === "error" && (
+                    <span className="text-sv-small text-sv-danger">Save failed — try again</span>
+                  )}
+                </div>
               </div>
             )}
 

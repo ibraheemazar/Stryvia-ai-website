@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Bracket } from "@/components/ui/Bracket";
@@ -18,12 +18,15 @@ export function EarlyAccessForm({ compact = false }: { compact?: boolean }) {
   const [context, setContext] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
+  const sendingRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email.trim()) return setError(t("errorRequired"));
     if (!isValidEmail(email)) return setError(t("errorEmail"));
+    if (sendingRef.current) return; // guard against a fast double-submit
+    sendingRef.current = true;
     setState("sending");
     track("early_access_submitted", { locale });
     try {
@@ -37,7 +40,9 @@ export function EarlyAccessForm({ compact = false }: { compact?: boolean }) {
       setState("done");
     } catch {
       setState("idle");
-      setError(t("errorRequired"));
+      setError(t("errorGeneric"));
+    } finally {
+      sendingRef.current = false;
     }
   }
 
