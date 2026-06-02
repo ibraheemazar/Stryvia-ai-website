@@ -20,6 +20,9 @@ let initialised = false;
 
 function initGA() {
   if (initialised || typeof window === "undefined") return;
+  // When GTM is configured, GA4 is run as a tag inside GTM instead — so the
+  // direct gtag stands down to avoid double-counting pageviews.
+  if (process.env.NEXT_PUBLIC_GTM_ID) return;
   const id = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   if (!id) return;
   if (getConsent() !== "granted") return;
