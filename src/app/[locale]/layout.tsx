@@ -12,6 +12,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing, localeDirection } from "@/i18n/routing";
 import { fontVariables } from "@/lib/fonts";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { GoogleAnalytics } from "@/components/providers/GoogleAnalytics";
 import { ChatProvider } from "@/components/chat/ChatProvider";
 import { SiteNav } from "@/components/layout/SiteNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -159,6 +160,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
               <SiteFooter />
               <ChatDock />
               <ConsentBanner />
+              <GoogleAnalytics />
             </ChatProvider>
           </PostHogProvider>
         </NextIntlClientProvider>
