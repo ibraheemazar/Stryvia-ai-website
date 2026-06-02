@@ -32,16 +32,18 @@ function pick(variants: Variant[], seed: number): Variant {
 
 function track(slug: string, variantId: string, kind: "view" | "conversion") {
   try {
-    navigator.sendBeacon?.(
+    const sent = navigator.sendBeacon?.(
       "/api/exp/track",
       new Blob([JSON.stringify({ slug, variantId, kind })], { type: "application/json" }),
-    ) ||
+    );
+    if (!sent) {
       fetch("/api/exp/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ slug, variantId, kind }),
         keepalive: true,
       });
+    }
   } catch {
     /* best-effort */
   }
