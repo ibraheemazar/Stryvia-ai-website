@@ -31,4 +31,14 @@ export function track(event: SvEvent, properties?: Record<string, unknown>) {
   } catch {
     // Analytics must never break the experience.
   }
+  // Mirror into the GTM dataLayer so the same funnel events can drive GA4
+  // events and Google/Meta Ads conversions, configured in the GTM UI without a
+  // code change. Consent is enforced upstream by Consent Mode (GTM only fires
+  // tags once analytics/ads consent is granted), so this push is always safe.
+  try {
+    const w = window as Window & { dataLayer?: unknown[] };
+    if (w.dataLayer) w.dataLayer.push({ event, ...properties });
+  } catch {
+    // Never break the experience.
+  }
 }

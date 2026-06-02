@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { MarketingDashboard } from "./marketing/MarketingDashboard";
+import { AdminCopilot } from "./AdminCopilot";
 import { AdminThemePicker } from "./AdminThemePicker";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +60,8 @@ export function AdminShell({
       ) : (
         <MarketingDashboard token={token} />
       )}
+
+      <AdminCopilot token={token} />
     </div>
   );
 }
