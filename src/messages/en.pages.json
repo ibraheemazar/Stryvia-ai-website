@@ -212,6 +212,14 @@
     "moreTitle": "Don't see yours?",
     "moreBody": "The list is illustrative. Bring whatever you have — the intelligence works for any domain.",
     "seeAll": "Capabilities",
+    "directorHeading": "The relationship, in three beats",
+    "directLabel": "YOU DIRECT",
+    "directText": "You bring the problem and make every call that matters — what it is, who it's for, and where it goes next.",
+    "liftLabel": "IT DOES THE HEAVY LIFTING",
+    "liftText": "The building happens around your decisions, drafted as one coherent piece — not a pile of parts for you to assemble.",
+    "ownLabel": "YOU OWN IT",
+    "ownText": "What comes out is yours to use, change, and keep. No lock-in, no dependency.",
+    "relatedHeading": "Related capabilities",
     "cta": "Talk it through"
   },
   "start": {

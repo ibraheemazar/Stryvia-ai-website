@@ -130,9 +130,22 @@ export function HeroGlyph({
         return <circle key={i} cx={n.x} cy={n.y} r={2.5} fill="var(--color-sv-line-strong)" />;
       })}
 
-      {/* The live signal */}
-      <circle cx={live.x} cy={live.y} r={12} stroke="var(--color-sv-green-line)" strokeWidth="1" />
-      <circle cx={live.x} cy={live.y} r={5} fill="var(--color-sv-green)" />
+      {/* The live signal — gently pulsing, with a soft glow */}
+      <circle
+        cx={live.x}
+        cy={live.y}
+        r={12}
+        stroke="var(--color-sv-green-line)"
+        strokeWidth="1"
+        className="sv-pulse-node"
+      />
+      <circle
+        cx={live.x}
+        cy={live.y}
+        r={5}
+        fill="var(--color-sv-green)"
+        style={{ filter: "drop-shadow(0 0 6px var(--color-sv-green-soft))" }}
+      />
     </svg>
   );
 }
