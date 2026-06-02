@@ -50,6 +50,10 @@ export function ThemePicker({ className }: { className?: string }) {
   // this is a first visit — avoids any hydration flash.
   const [hasSeen, setHasSeen] = useState(true);
   const [nudgeReady, setNudgeReady] = useState(false);
+  // Open the panel upward when the trigger is low on the screen (e.g. the
+  // mobile menu, where the picker sits near the bottom) so it never opens
+  // off-screen and out of reach.
+  const [dropUp, setDropUp] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // Sync from the DOM after mount (server already set the attributes).
@@ -74,6 +78,13 @@ export function ThemePicker({ className }: { className?: string }) {
     setHasSeen(true);
     setNudgeReady(false);
   }
+
+  // Decide direction whenever the panel opens, from the live trigger position.
+  useEffect(() => {
+    if (!open || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setDropUp(window.innerHeight - rect.bottom < 280);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -144,7 +155,10 @@ export function ThemePicker({ className }: { className?: string }) {
       {!hasSeen && nudgeReady && !open && (
         <div
           role="status"
-          className="absolute end-0 top-12 z-50 w-60 rounded-sv-md border border-sv-green-line bg-sv-surface-1/95 p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur-md sv-reveal is-visible"
+          className={cn(
+            "absolute end-0 z-50 w-60 rounded-sv-md border border-sv-green-line bg-sv-surface-1/95 p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur-md sv-reveal is-visible",
+            dropUp ? "bottom-full mb-2" : "top-12",
+          )}
         >
           <span
             className="absolute -top-1 end-6 h-2.5 w-2.5 rotate-45 border-s border-t border-sv-green-line bg-sv-surface-1"
@@ -179,7 +193,10 @@ export function ThemePicker({ className }: { className?: string }) {
 
       {open && (
         <div
-          className="absolute end-0 top-11 z-50 w-56 rounded-sv-md border border-sv-line bg-sv-surface-1/95 p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur-md"
+          className={cn(
+            "absolute end-0 z-50 w-56 rounded-sv-md border border-sv-line bg-sv-surface-1/95 p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.85)] backdrop-blur-md",
+            dropUp ? "bottom-full mb-2" : "top-11",
+          )}
           role="dialog"
           aria-label={t("label")}
         >

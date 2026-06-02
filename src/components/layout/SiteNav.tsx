@@ -130,7 +130,7 @@ export function SiteNav() {
 
       {/* mobile full-screen overlay */}
       {open && (
-        <div className="fixed inset-0 z-40 flex flex-col bg-sv-base px-6 pt-20 lg:hidden">
+        <div className="fixed inset-0 z-[45] flex flex-col overflow-y-auto bg-sv-base px-6 pb-8 pt-20 lg:hidden">
           <Bracket inset={16} />
           <ul className="mt-8 flex flex-col gap-2">
             {LINKS.map((link, i) => (
