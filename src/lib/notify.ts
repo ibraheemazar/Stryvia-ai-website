@@ -81,6 +81,7 @@ export async function notifyNewLead(args: NotifyArgs): Promise<void> {
         },
       }),
     );
+    console.info(`[stryvia] lead notification sent via SES (from ${from} to ${to})`);
   } catch (err) {
     console.error("[stryvia] lead email (SES) failed:", err);
   }
