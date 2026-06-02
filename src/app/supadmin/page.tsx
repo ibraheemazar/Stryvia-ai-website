@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallbackRef } from "@/app/admin/use-callback-ref";
+import { useCallbackRef } from "@/app/supadmin/use-callback-ref";
 import { useEffect, useState, useCallback } from "react";
 import { getBrowserSupabase } from "@/lib/supabase-browser";
-import { AdminLogin } from "@/app/admin/AdminLogin";
-import { AdminShell } from "@/app/admin/AdminShell";
+import { AdminLogin } from "@/app/supadmin/AdminLogin";
+import { AdminShell } from "@/app/supadmin/AdminShell";
 
 // Admin entry: gate on a Supabase session, then render the dashboard. The
 // dashboard calls the auth-gated /api/admin routes with the access token.

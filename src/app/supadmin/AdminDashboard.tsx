@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ConversationDetail } from "@/app/admin/ConversationDetail";
+import { ConversationDetail } from "@/app/supadmin/ConversationDetail";
 import { cn } from "@/lib/utils";
 
 type ConversationRow = {
