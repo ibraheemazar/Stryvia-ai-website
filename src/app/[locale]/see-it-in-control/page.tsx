@@ -4,6 +4,7 @@ import { Container, Section } from "@/components/ui/primitives";
 import { PageHero } from "@/components/ui/PageHero";
 import { Bracket } from "@/components/ui/Bracket";
 import { CtaBand } from "@/components/ui/CtaBand";
+import { InstrumentPreview, type InstrumentContent } from "@/components/home/InstrumentPreview";
 
 export async function generateMetadata({
   params,
@@ -24,12 +25,19 @@ export default async function ControlPage({
   setRequestLocale(locale);
   const t = await getTranslations("control");
   const steps = t.raw("steps") as { label: string; text: string }[];
+  const instrument = t.raw("instrument") as InstrumentContent;
 
   return (
     <>
       <PageHero eyebrow={t("eyebrow")} code="/ DIRECTOR" title={t("title")} lead={t("lead")} />
 
-      <Section className="pt-12 lg:pt-16">
+      <Section className="pt-4 lg:pt-8">
+        <Container>
+          <InstrumentPreview content={instrument} className="mx-auto max-w-4xl" />
+        </Container>
+      </Section>
+
+      <Section className="pt-0">
         <Container>
           <div className="grid gap-4 md:grid-cols-2">
             {steps.map((s) => (

@@ -537,7 +537,39 @@
         "text": "If it drifts, you steer it back. Authorship never leaves your hands."
       }
     ],
-    "cta": "Direct your first build"
+    "instrument": {
+    "chrome": "STRYVIA · INSTRUMENT",
+    "project": "Membership product · launch",
+    "directing": "DIRECTING",
+    "brief": {
+      "label": "THE BRIEF",
+      "problem": "A membership product that signs people up, takes payment, and runs the member area.",
+      "decisions": [
+        "Audience: independent studios",
+        "Voice: warm, plain language",
+        "Live in four weeks"
+      ]
+    },
+    "work": {
+      "label": "THE WORK",
+      "building": "The pieces assemble as the decisions land.",
+      "pieces": ["Sign-up flow", "Payments", "Member area", "Admin"]
+    },
+    "choices": {
+      "label": "CHOICES SURFACED",
+      "awaiting": "AWAITING YOU",
+      "items": [
+        { "q": "Billing model", "a": "Monthly, or annual-first with a monthly option" },
+        { "q": "Member onboarding", "a": "Guided setup vs. straight to self-serve" },
+        { "q": "Brand direction", "a": "Bold and loud vs. quiet and precise" }
+      ],
+      "accept": "Approve",
+      "redirect": "Redirect"
+    },
+    "phases": ["UNDERSTANDING", "ORCHESTRATING", "DRAFTING", "READY FOR YOU"],
+    "note": "A preview of the working relationship — a walkthrough, not a live product."
+  },
+  "cta": "Direct your first build"
   },
   "resources": {
     "eyebrow": "RESOURCES",
