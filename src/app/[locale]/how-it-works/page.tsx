@@ -35,8 +35,12 @@ export default async function HowItWorksPage({
             {/* connecting rule */}
             <div className="absolute inset-y-0 start-[7px] w-px bg-sv-line" aria-hidden />
             <ol className="space-y-12">
-              {steps.map((step) => (
-                <li key={step.label} className="relative ps-10">
+              {steps.map((step, i) => (
+                <li
+                  key={step.label}
+                  className="sv-reveal relative ps-10"
+                  style={{ ["--i" as string]: i } as React.CSSProperties}
+                >
                   <span className="absolute start-0 top-1.5 h-3.5 w-3.5 rounded-full border border-sv-green-line bg-sv-base">
                     <span className="absolute inset-1 rounded-full bg-sv-green" />
                   </span>

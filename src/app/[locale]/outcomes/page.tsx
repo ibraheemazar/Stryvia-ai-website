@@ -35,7 +35,7 @@ export default async function OutcomesPage({
       />
       <Section className="pt-16 lg:pt-20">
         <Container>
-          <div className="grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2 lg:grid-cols-3">
+          <div className="sv-reveal grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2 lg:grid-cols-3">
             {outcomes.map((o) => (
               <div key={o.label} className="bg-sv-base p-8">
                 <p className="sv-label sv-label--live">{o.label}</p>

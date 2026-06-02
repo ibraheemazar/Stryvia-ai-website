@@ -132,7 +132,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Without JS, never leave reveal content hidden. */}
         <noscript>
-          <style>{`.sv-reveal,.sv-scene{opacity:1 !important}.sv-word-inner{opacity:1 !important;transform:none !important}`}</style>
+          <style>{`.sv-reveal,.sv-scene,.sv-rise-strong{opacity:1 !important;transform:none !important}.sv-word-inner{opacity:1 !important;transform:none !important}`}</style>
         </noscript>
       </head>
       <body>
