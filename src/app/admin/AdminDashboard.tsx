@@ -120,7 +120,7 @@ export function AdminDashboard({
                   view === v ? "bg-sv-surface-3 text-sv-text" : "text-sv-text-3 hover:text-sv-text",
                 )}
               >
-                {v === "inbox" ? "Inbox" : "All conversations"}
+                {v === "inbox" ? "Leads" : "All conversations"}
               </button>
             ))}
           </div>

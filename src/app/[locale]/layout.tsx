@@ -60,7 +60,7 @@ export async function generateMetadata({
       siteName: "Stryvia",
       title: t("title"),
       description: t("description"),
-      locale: locale === "ar" ? "ar_SA" : "en_US",
+      locale: locale === "ar" ? "ar_SA" : locale === "fr" ? "fr_FR" : "en_US",
     },
     twitter: {
       card: "summary_large_image",

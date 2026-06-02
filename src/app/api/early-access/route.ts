@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
 
   const conversationId = crypto.randomUUID();
   const supabase = getServiceSupabase();
+  let stored = false;
   if (supabase) {
     try {
       // Represent early access as a conversation + lead so it lands in the
@@ -44,19 +45,21 @@ export async function POST(req: NextRequest) {
         problem_category: "other",
         converted: true,
       });
-      await supabase.from("leads").insert({
+      const { error } = await supabase.from("leads").insert({
         conversation_id: conversationId,
         name,
         email,
         status: "new",
         notes: context ? `Early access: ${context}` : "Early access request",
       });
+      stored = !error;
+      if (error) console.error("[stryvia] early access store failed:", error);
     } catch (err) {
       console.error("[stryvia] early access store failed:", err);
     }
   }
 
-  await notifyNewLead({
+  const notified = await notifyNewLead({
     name,
     email,
     summary: context ?? "Early access request",
@@ -65,6 +68,12 @@ export async function POST(req: NextRequest) {
     conversationId,
     messages: context ? [{ role: "user", content: context }] : [],
   });
+
+  // Never report success when the lead was captured nowhere — the visitor would
+  // believe they're on the list while the request is lost.
+  if (!stored && !notified) {
+    return NextResponse.json({ ok: false, error: "unsaved" }, { status: 502 });
+  }
 
   return NextResponse.json({ ok: true });
 }

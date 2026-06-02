@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   const stored = await createLead({ conversationId, name, email, company, phone });
 
   // Immediate notification regardless of DB outcome — the lead must not be lost.
-  await notifyNewLead({
+  const notified = await notifyNewLead({
     name,
     email,
     company,
@@ -71,6 +71,12 @@ export async function POST(req: NextRequest) {
     conversationId,
     messages,
   });
+
+  // If neither the database nor the email captured the lead, tell the visitor
+  // it failed so they can retry — never a false "you're in".
+  if (!stored && !notified) {
+    return NextResponse.json({ ok: false, error: "unsaved" }, { status: 502 });
+  }
 
   // Fire marketing automations for the new lead (non-blocking).
   runAutomations().catch((err) => console.error("[stryvia] automations after lead:", err));

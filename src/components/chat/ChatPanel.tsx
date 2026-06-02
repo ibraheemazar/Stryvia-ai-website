@@ -54,6 +54,26 @@ export function ChatPanel({
     ta.style.height = `${Math.min(ta.scrollHeight, 160)}px`;
   }, [draft]);
 
+  // Move focus into the input when the panel becomes interactive, so the user
+  // can type immediately (especially the mobile takeover) — but never steal
+  // focus from the handoff form once it's showing.
+  useEffect(() => {
+    if (phase === "idle" && !showHandoff && !converted && (variant === "dock" || hasStarted)) {
+      taRef.current?.focus();
+    }
+  }, [phase, hasStarted, variant, showHandoff, converted]);
+
+  // Lock body scroll behind the mobile full-screen takeover so the page can't
+  // scroll underneath the chat.
+  useEffect(() => {
+    if (!mobileFull) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileFull]);
+
   function submit() {
     if (!draft.trim() || phase !== "idle") return;
     const text = draft;
@@ -93,7 +113,7 @@ export function ChatPanel({
             <button
               type="button"
               onClick={() => setMinimized(true)}
-              aria-label={t("askElse")}
+              aria-label={t("minimize")}
               className="ms-2 flex h-7 w-7 items-center justify-center rounded-sv-sm text-sv-text-2 sm:hidden"
             >
               <span className="text-lg leading-none">⌄</span>

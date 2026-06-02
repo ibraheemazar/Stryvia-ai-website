@@ -32,7 +32,13 @@ export async function verifyAdmin(
 
   const email = data.user.email.toLowerCase();
   const allow = adminAllowlist();
-  if (allow.length > 0 && !allow.includes(email)) {
+  // Fail closed: an unset or empty allowlist must deny everyone, never grant
+  // the whole admin to any authenticated Supabase user.
+  if (allow.length === 0) {
+    console.error("[stryvia] ADMIN_EMAIL_ALLOWLIST is empty — denying admin access.");
+    return { ok: false, reason: "no_allowlist" };
+  }
+  if (!allow.includes(email)) {
     return { ok: false, reason: "not_allowlisted" };
   }
   return { ok: true, email };
