@@ -5,6 +5,7 @@ import { seedIntegrations, resolveSegmentLeads } from "@/lib/marketing/actions";
 import { providerConfigured } from "@/lib/marketing/connectors";
 import { getPerformance } from "@/lib/marketing/performance";
 import { INTEGRATIONS } from "@/lib/marketing/integrations";
+import { getLatestLearning } from "@/lib/marketing/learnings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,6 +75,11 @@ export async function GET(req: NextRequest) {
   if (section === "performance") {
     const channels = await getPerformance();
     return NextResponse.json({ ok: true, channels });
+  }
+
+  if (section === "learnings") {
+    const learning = await getLatestLearning();
+    return NextResponse.json({ ok: true, learning });
   }
 
   if (section === "campaigns") {
