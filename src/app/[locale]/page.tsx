@@ -8,6 +8,11 @@ import { HeroCanvas } from "@/components/home/HeroCanvas";
 import { OrchestrationVisual } from "@/components/home/OrchestrationVisual";
 import { ChatSeedButton } from "@/components/chat/ChatSeedButton";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { WordReveal } from "@/components/motion/WordReveal";
+import { Parallax } from "@/components/motion/Parallax";
+import { ScrollScene } from "@/components/motion/ScrollScene";
+import { CountUp } from "@/components/motion/CountUp";
+import { Magnetic } from "@/components/motion/Magnetic";
 import {
   IconProduct,
   IconVenture,
@@ -36,16 +41,16 @@ export default async function HomePage({
         <div className="sv-beam" aria-hidden />
         <Container className="relative z-10">
           <div className="grid items-center gap-12 lg:grid-cols-[7fr_5fr] lg:gap-16">
-            <div className="max-w-2xl">
+            <Parallax speed={28} className="max-w-2xl">
               <Eyebrow className="sv-reveal" code="/ 01" live>
                 {t("scene1.eyebrow")}
               </Eyebrow>
-              <h1
-                className="sv-grad-green sv-reveal mt-6 text-sv-display-xl leading-[0.98] [text-wrap:balance]"
-                style={{ ["--i" as string]: 1 }}
-              >
-                {t("scene1.headline")}
-              </h1>
+              <WordReveal
+                as="h1"
+                gradient
+                text={t("scene1.headline")}
+                className="mt-6 block text-sv-display-xl leading-[0.98] [text-wrap:balance]"
+              />
               <p
                 className="sv-reveal mt-6 max-w-xl text-sv-body-l text-sv-text-2"
                 style={{ ["--i" as string]: 3 }}
@@ -63,7 +68,7 @@ export default async function HomePage({
                   </span>
                 ))}
               </div>
-            </div>
+            </Parallax>
 
             {/* No reveal transform on this wrapper: a lingering transform would
                 become the containing block for the Chat's mobile full-screen
@@ -101,12 +106,18 @@ export default async function HomePage({
       <Section>
         <Container>
           <hr className="sv-rule mb-16 max-w-xs" />
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="sv-grad-text text-sv-display-l">{t("scene3.headline")}</h2>
-            <p className="mx-auto mt-8 max-w-2xl text-sv-body-l text-sv-text-2">
+          <ScrollScene fade={false} rise={70} className="mx-auto max-w-3xl text-center">
+            <WordReveal
+              as="h2"
+              gradient
+              stagger={34}
+              text={t("scene3.headline")}
+              className="block text-sv-display-l"
+            />
+            <p className="sv-reveal mx-auto mt-8 max-w-2xl text-sv-body-l text-sv-text-2">
               {t("scene3.body")}
             </p>
-          </div>
+          </ScrollScene>
         </Container>
       </Section>
 
@@ -167,7 +178,12 @@ export default async function HomePage({
             <div className="rounded-sv-md border border-sv-line bg-sv-surface-2/30 p-7 opacity-70">
               <p className="sv-label">{t("scene6.oldLabel")}</p>
               <p className="mt-6 font-display text-sv-h1 text-sv-text-2">
-                {t("scene6.oldTime")}
+                <CountUp
+                  to={6}
+                  locale={locale}
+                  prefix={`${t("scene6.approx")} `}
+                  suffix={` ${t("scene6.oldUnit")}`}
+                />
               </p>
               <ul className="mt-5 space-y-2 text-sv-small text-sv-text-3">
                 <li>{t("scene6.oldTeam")}</li>
@@ -178,7 +194,12 @@ export default async function HomePage({
               <Bracket live />
               <p className="sv-label sv-label--live">{t("scene6.newLabel")}</p>
               <p className="mt-6 font-display text-sv-h1 text-sv-green">
-                {t("scene6.newTime")}
+                <CountUp
+                  to={6}
+                  locale={locale}
+                  prefix={`${t("scene6.approx")} `}
+                  suffix={` ${t("scene6.newUnit")}`}
+                />
               </p>
               <ul className="mt-5 space-y-2 text-sv-small text-sv-text-2">
                 <li>{t("scene6.newTeam")}</li>
@@ -247,18 +268,25 @@ export default async function HomePage({
       {/* ===== Scene 10: the return ===== */}
       <Section>
         <Container>
-          <div className="mx-auto max-w-2xl text-center">
+          <ScrollScene fade={false} rise={50} className="mx-auto max-w-2xl text-center">
             <span className="sv-label">/ 10</span>
-            <h2 className="mt-6 sv-grad-text text-sv-display-l">{t("scene10.headline")}</h2>
+            <WordReveal
+              as="h2"
+              gradient
+              text={t("scene10.headline")}
+              className="mt-6 block text-sv-display-l"
+            />
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button href="/start" variant="primary">
-                {t("scene10.start")}
-              </Button>
+              <Magnetic>
+                <Button href="/start" variant="primary">
+                  {t("scene10.start")}
+                </Button>
+              </Magnetic>
               <Button href="/early-access" variant="secondary">
                 {t("scene10.earlyAccess")}
               </Button>
             </div>
-          </div>
+          </ScrollScene>
           <div className="mx-auto mt-16 max-w-xl">
             <EarlyAccessForm compact />
           </div>

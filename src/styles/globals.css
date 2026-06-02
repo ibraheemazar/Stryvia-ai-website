@@ -577,6 +577,52 @@
 }
 
 /* ===========================================================================
+   CINEMATIC MOTION — word-assemble headlines, scroll progress rail.
+   Scroll-linked transforms live in JS (lib/scroll.ts); these are the static
+   pieces. All gated by reduced-motion.
+   =========================================================================== */
+
+/* Word-by-word headline assembly. Each word clips its inner span, which rises
+   + fades in. The wrapper keeps natural line-wrapping. */
+/* .sv-words keeps its natural/utility display (block for headings, inline for
+   spans); only the per-word pieces are inline-block so they can clip + rise. */
+.sv-word {
+  display: inline-block; overflow: hidden; vertical-align: top;
+  /* Room for descenders inside the clip mask (g, y, p). */
+  padding-bottom: 0.14em; margin-bottom: -0.14em;
+}
+.sv-word-inner {
+  display: inline-block;
+  transform: translateY(108%) rotate(2deg);
+  opacity: 0;
+  transition: transform 0.72s var(--sv-ease-reveal), opacity 0.72s var(--sv-ease-reveal);
+}
+.sv-word-inner.is-in { transform: translateY(0) rotate(0); opacity: 1; }
+/* Each word carries the headline gradient (white/dark → accent). */
+.sv-words--grad .sv-word-inner {
+  background: linear-gradient(104deg, var(--sv-grad-head) 0%, var(--sv-grad-head) 38%, rgb(var(--sv-accent-rgb)) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-word-inner { transform: none; opacity: 1; transition: none; }
+}
+
+/* Scroll-scene wrapper starts hidden; JS eases it in by scroll position. */
+.sv-scene { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .sv-scene { opacity: 1; } }
+
+/* Scroll progress rail — a thin accent line that fills as you read the page. */
+.sv-progress {
+  position: fixed; inset-inline: 0; top: 0; height: 2px; z-index: 70;
+  transform-origin: left center; transform: scaleX(var(--sv-progress, 0));
+  background: linear-gradient(90deg, rgb(var(--sv-accent-rgb) / 0.2), rgb(var(--sv-accent-rgb)));
+  box-shadow: 0 0 12px rgb(var(--sv-accent-rgb) / 0.6);
+  pointer-events: none;
+}
+[dir="rtl"] .sv-progress { transform-origin: right center; }
+
+/* ===========================================================================
    THEME LAYER — accent palettes + light mode. Applied via [data-accent] and
    [data-theme] on <html>. Acid + dark is the brand default; the alternates
    are tuned to stay premium. One accent at a time; never a rainbow.

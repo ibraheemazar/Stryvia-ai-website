@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ChatDock } from "@/components/chat/ChatDock";
 import { ConsentBanner } from "@/components/layout/ConsentBanner";
 import { ScrollReveal } from "@/components/providers/ScrollReveal";
+import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import "@/styles/globals.css";
 
 export function generateStaticParams() {
@@ -131,7 +132,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Without JS, never leave reveal content hidden. */}
         <noscript>
-          <style>{`.sv-reveal{opacity:1 !important}`}</style>
+          <style>{`.sv-reveal,.sv-scene{opacity:1 !important}.sv-word-inner{opacity:1 !important;transform:none !important}`}</style>
         </noscript>
       </head>
       <body>
@@ -143,6 +144,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <PostHogProvider>
             <ChatProvider>
               <ScrollReveal />
+              <ScrollProgress />
               {/* Atmosphere layers (A.6) sit behind everything, non-interactive */}
               <div className="sv-aurora" aria-hidden="true">
                 <span className="a1" />
