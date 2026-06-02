@@ -188,6 +188,16 @@
         "text": "The result is customized to you and yours to keep, use, and change — with no lock-in, and a human to structure the build when you're ready."
       }
     ],
+    "storyboard": {
+      "label": "ORCHESTRATION · WORKED EXAMPLE",
+      "tag": "MANY MODELS, ONE RESULT",
+      "briefLabel": "ONE BRIEF",
+      "brief": "A 60-second launch film for a new product.",
+      "lanes": ["Script", "Storyboard", "Voiceover", "Footage & visuals", "Music", "Edit & grade"],
+      "resultLabel": "ONE RESULT",
+      "result": "A finished film — coherent because it was orchestrated as one piece, not stitched together from six separate tools.",
+      "note": "Illustrative. The orchestration is the moat, not the underlying models — and it works the same way on any kind of problem."
+    },
     "investorLink": "See the investor thesis",
     "cta": "Bring your own problem"
   },
