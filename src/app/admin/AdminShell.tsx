@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { MarketingDashboard } from "./marketing/MarketingDashboard";
+import { AdminCopilot } from "./AdminCopilot";
 import { cn } from "@/lib/utils";
 
 // Top-level admin shell: a single header with Leads / Marketing tabs, owning
@@ -57,6 +58,8 @@ export function AdminShell({
       ) : (
         <MarketingDashboard token={token} />
       )}
+
+      <AdminCopilot token={token} />
     </div>
   );
 }

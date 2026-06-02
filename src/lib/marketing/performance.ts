@@ -16,7 +16,7 @@ export type ChannelMetric = {
 };
 
 // ---- Google service-account auth (GA4, Search Console) -------------------
-async function googleAccessToken(scope: string): Promise<string | null> {
+export async function googleAccessToken(scope: string): Promise<string | null> {
   const raw = process.env.GA4_CREDENTIALS_JSON || process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!raw) return null;
   let creds: { client_email: string; private_key: string };

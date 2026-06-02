@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { INTEGRATIONS, CATEGORY_LABELS, type IntegrationCategory } from "@/lib/marketing/integrations";
+import { AnalyticsView } from "@/app/admin/insights/AnalyticsView";
 
 type Tab =
   | "overview"
@@ -72,7 +73,7 @@ export function MarketingDashboard({ token }: { token: string }) {
       {tab === "email" && <EmailCampaigns api={api} />}
       {tab === "automations" && <Automations api={api} />}
       {tab === "landing" && <Landing api={api} />}
-      {tab === "performance" && <Performance api={api} />}
+      {tab === "performance" && <Performance api={api} token={token} />}
       {tab === "channels" && <Channels api={api} />}
     </div>
   );
@@ -799,8 +800,9 @@ function Landing({ api }: { api: Api }) {
 }
 
 // ---------------------------------------------------------------- Performance
-function Performance({ api }: { api: Api }) {
+function Performance({ api, token }: { api: Api; token: string }) {
   const [channels, setChannels] = useState<ChannelMetric[] | null>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   useEffect(() => {
     api("?section=performance").then((d) => setChannels((d.channels as ChannelMetric[]) || []));
   }, [api]);
@@ -810,30 +812,52 @@ function Performance({ api }: { api: Api }) {
     <div className="space-y-4">
       <p className="max-w-2xl text-sv-small text-sv-text-2">
         Live spend and performance per platform. Each card pulls real data once its credentials are in
-        the environment — until then it waits, never showing invented numbers.
+        the environment — until then it waits, never showing invented numbers. Open the Analytics card
+        for the full deep-dive and the AI advisor.
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {channels.map((c) => (
-          <div key={c.provider} className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
-            <div className="flex items-center justify-between">
-              <p className="sv-label">{c.label}</p>
-              <span className={cn("h-2 w-2 rounded-full", c.configured ? (c.error ? "bg-sv-danger" : "bg-sv-green") : "bg-sv-line-strong")} />
+        {channels.map((c) => {
+          const isGa4 = c.provider === "ga4";
+          const openable = isGa4 && c.configured && !c.error;
+          return (
+            <div
+              key={c.provider}
+              role={openable ? "button" : undefined}
+              tabIndex={openable ? 0 : undefined}
+              onClick={openable ? () => setShowAnalytics(true) : undefined}
+              onKeyDown={openable ? (e) => (e.key === "Enter" || e.key === " ") && setShowAnalytics(true) : undefined}
+              className={cn(
+                "rounded-sv-md border border-sv-line bg-sv-surface-1 p-5",
+                openable && "cursor-pointer transition-colors hover:border-sv-green-line",
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <p className="sv-label">{c.label}</p>
+                <span className={cn("h-2 w-2 rounded-full", c.configured ? (c.error ? "bg-sv-danger" : "bg-sv-green") : "bg-sv-line-strong")} />
+              </div>
+              {!c.configured ? (
+                <p className="mt-3 text-sv-label-sm text-sv-text-3">Awaiting credentials.</p>
+              ) : c.error ? (
+                <p className="mt-3 text-sv-label-sm text-sv-danger">Connected, but the last fetch errored.</p>
+              ) : (
+                <dl className="mt-3 space-y-1 text-sv-small">
+                  {c.metrics?.spend !== undefined && <Row k="Spend (30d)" v={`$${Math.round(c.metrics.spend).toLocaleString()}`} />}
+                  {c.metrics?.impressions !== undefined && <Row k="Impressions" v={c.metrics.impressions.toLocaleString()} />}
+                  {c.metrics?.clicks !== undefined && <Row k={c.note?.includes("session") ? "Sessions" : "Clicks"} v={c.metrics.clicks.toLocaleString()} />}
+                  {c.metrics?.conversions !== undefined && <Row k="Conversions" v={c.metrics.conversions.toLocaleString()} />}
+                </dl>
+              )}
+              {openable && (
+                <p className="mt-3 font-mono text-sv-label-sm uppercase tracking-[0.14em] text-sv-green">
+                  Open analytics →
+                </p>
+              )}
             </div>
-            {!c.configured ? (
-              <p className="mt-3 text-sv-label-sm text-sv-text-3">Awaiting credentials.</p>
-            ) : c.error ? (
-              <p className="mt-3 text-sv-label-sm text-sv-danger">Connected, but the last fetch errored.</p>
-            ) : (
-              <dl className="mt-3 space-y-1 text-sv-small">
-                {c.metrics?.spend !== undefined && <Row k="Spend (30d)" v={`$${Math.round(c.metrics.spend).toLocaleString()}`} />}
-                {c.metrics?.impressions !== undefined && <Row k="Impressions" v={c.metrics.impressions.toLocaleString()} />}
-                {c.metrics?.clicks !== undefined && <Row k={c.note?.includes("session") ? "Sessions" : "Clicks"} v={c.metrics.clicks.toLocaleString()} />}
-                {c.metrics?.conversions !== undefined && <Row k="Conversions" v={c.metrics.conversions.toLocaleString()} />}
-              </dl>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {showAnalytics && <AnalyticsView token={token} onClose={() => setShowAnalytics(false)} />}
     </div>
   );
 }
