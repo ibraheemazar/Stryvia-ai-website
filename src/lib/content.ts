@@ -114,6 +114,9 @@ export const ARTICLE_SLUGS = [
   "build-without-a-team",
   "ai-without-an-agency",
   "knowing-the-limits",
+  "idea-to-working-product",
+  "orchestration-vs-ai-tools",
+  "who-owns-what-you-build",
 ] as const;
 
 export type ArticleSlug = (typeof ARTICLE_SLUGS)[number];

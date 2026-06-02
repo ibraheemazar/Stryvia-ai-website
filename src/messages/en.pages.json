@@ -188,6 +188,16 @@
         "text": "The result is customized to you and yours to keep, use, and change — with no lock-in, and a human to structure the build when you're ready."
       }
     ],
+    "storyboard": {
+      "label": "ORCHESTRATION · WORKED EXAMPLE",
+      "tag": "MANY MODELS, ONE RESULT",
+      "briefLabel": "ONE BRIEF",
+      "brief": "A 60-second launch film for a new product.",
+      "lanes": ["Script", "Storyboard", "Voiceover", "Footage & visuals", "Music", "Edit & grade"],
+      "resultLabel": "ONE RESULT",
+      "result": "A finished film — coherent because it was orchestrated as one piece, not stitched together from six separate tools.",
+      "note": "Illustrative. The orchestration is the moat, not the underlying models — and it works the same way on any kind of problem."
+    },
     "investorLink": "See the investor thesis",
     "cta": "Bring your own problem"
   },
@@ -202,6 +212,14 @@
     "moreTitle": "Don't see yours?",
     "moreBody": "The list is illustrative. Bring whatever you have — the intelligence works for any domain.",
     "seeAll": "Capabilities",
+    "directorHeading": "The relationship, in three beats",
+    "directLabel": "YOU DIRECT",
+    "directText": "You bring the problem and make every call that matters — what it is, who it's for, and where it goes next.",
+    "liftLabel": "IT DOES THE HEAVY LIFTING",
+    "liftText": "The building happens around your decisions, drafted as one coherent piece — not a pile of parts for you to assemble.",
+    "ownLabel": "YOU OWN IT",
+    "ownText": "What comes out is yours to use, change, and keep. No lock-in, no dependency.",
+    "relatedHeading": "Related capabilities",
     "cta": "Talk it through"
   },
   "start": {
@@ -537,7 +555,39 @@
         "text": "If it drifts, you steer it back. Authorship never leaves your hands."
       }
     ],
-    "cta": "Direct your first build"
+    "instrument": {
+    "chrome": "STRYVIA · INSTRUMENT",
+    "project": "Membership product · launch",
+    "directing": "DIRECTING",
+    "brief": {
+      "label": "THE BRIEF",
+      "problem": "A membership product that signs people up, takes payment, and runs the member area.",
+      "decisions": [
+        "Audience: independent studios",
+        "Voice: warm, plain language",
+        "Live in four weeks"
+      ]
+    },
+    "work": {
+      "label": "THE WORK",
+      "building": "The pieces assemble as the decisions land.",
+      "pieces": ["Sign-up flow", "Payments", "Member area", "Admin"]
+    },
+    "choices": {
+      "label": "CHOICES SURFACED",
+      "awaiting": "AWAITING YOU",
+      "items": [
+        { "q": "Billing model", "a": "Monthly, or annual-first with a monthly option" },
+        { "q": "Member onboarding", "a": "Guided setup vs. straight to self-serve" },
+        { "q": "Brand direction", "a": "Bold and loud vs. quiet and precise" }
+      ],
+      "accept": "Approve",
+      "redirect": "Redirect"
+    },
+    "phases": ["UNDERSTANDING", "ORCHESTRATING", "DRAFTING", "READY FOR YOU"],
+    "note": "A preview of the working relationship — a walkthrough, not a live product."
+  },
+  "cta": "Direct your first build"
   },
   "resources": {
     "eyebrow": "RESOURCES",

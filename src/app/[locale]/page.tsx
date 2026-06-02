@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { HeroChat } from "@/components/home/HeroChat";
 import { HeroCanvas } from "@/components/home/HeroCanvas";
 import { OrchestrationVisual } from "@/components/home/OrchestrationVisual";
+import { InstrumentPreview, type InstrumentContent } from "@/components/home/InstrumentPreview";
 import { ChatSeedButton } from "@/components/chat/ChatSeedButton";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { WordReveal } from "@/components/motion/WordReveal";
@@ -31,6 +32,8 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
+  const tc = await getTranslations("control");
+  const instrument = tc.raw("instrument") as InstrumentContent;
 
   return (
     <>
@@ -146,6 +149,27 @@ export default async function HomePage({
                 {t("scene4.nodeOutput")}
               </p>
             </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* ===== Scene · the director's view (the instrument) ===== */}
+      <Section>
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <Eyebrow live code="/ DIRECTOR" className="justify-center">
+              {tc("eyebrow")}
+            </Eyebrow>
+            <h2 className="mt-6 sv-grad-text text-sv-display-l">{tc("title")}</h2>
+            <p className="mt-6 text-sv-body-l text-sv-text-2">{tc("lead")}</p>
+          </div>
+          <ScrollScene fade={false} rise={50} className="mt-12">
+            <InstrumentPreview content={instrument} className="mx-auto max-w-4xl" />
+          </ScrollScene>
+          <div className="mt-10 flex justify-center">
+            <Button href="/see-it-in-control" variant="ghost" arrow>
+              {tc("cta")}
+            </Button>
           </div>
         </Container>
       </Section>

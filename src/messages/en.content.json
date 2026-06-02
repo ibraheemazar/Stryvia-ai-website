@@ -1042,6 +1042,39 @@
     }
   ],
   "articles": {
+    "idea-to-working-product": {
+      "title": "From idea to a working product in weeks, not months",
+      "lead": "The gap between an idea and a real thing used to be measured in headcount and quarters. Here is how it closes to weeks when you direct the work instead of staffing it.",
+      "body": [
+        "An idea becomes a product the moment someone can use it. Everything before that — the deck, the wireframe, the backlog — is preparation for the thing, not the thing. The fastest path is to aim straight at a working version and let the preparation fall out of it.",
+        "Begin by describing the outcome in plain language: what should be true for the person who opens it on day one. Not a feature list — a clear picture of the job it does. That description is the brief, and it is the part only you can supply.",
+        "From there the heavy lifting happens around your decisions. The interface, the data model, the logic, the flows — drafted as one coherent piece, surfaced back to you at each consequential fork so you can choose rather than supervise.",
+        "Weeks, not months, is not a slogan. It is what happens when the slow parts — coordinating people, waiting on handoffs, reconciling five tools — are removed, and the only thing pacing the work is how quickly you make the calls.",
+        "What you end up with is yours: a working product you can use, change, and grow, with no dependency baked in. The idea finally caught up to the ambition behind it."
+      ]
+    },
+    "orchestration-vs-ai-tools": {
+      "title": "Why one orchestrated intelligence beats a drawer full of AI tools",
+      "lead": "Stitching together a dozen single-purpose AI tools feels productive and produces a mess. Orchestration is the difference between motion and a finished result.",
+      "body": [
+        "A single-purpose tool does one slice well and leaves the seams to you. Use ten of them and you become the integration layer — copying between tabs, reconciling formats, holding the whole picture in your head so the pieces line up.",
+        "That coordination is exactly where quality leaks out. A campaign written in one tool, designed in another, and edited in a third reads like three different minds, because it was. Coherence is not something you can paste together at the end.",
+        "Orchestration flips it. One intelligence understands the whole problem, then directs the right capabilities at the right moments and assembles their output into a single coherent result — the way a director gets one film out of a crew, not six clips.",
+        "This is also where the durability sits. The defensibility is not any single model, which everyone can rent. It is the method that approaches any problem in structured layers and makes many models work as one — which is why it generalises across every kind of work.",
+        "The practical test is simple: did you get a finished thing, or a pile of parts and a new coordination job? You bring the problem and make the calls; the orchestration carries the rest."
+      ]
+    },
+    "who-owns-what-you-build": {
+      "title": "Who owns what you build with Stryvia",
+      "lead": "Control and ownership are the whole point. Here is exactly who decides, who owns the result, and why there is no lock-in.",
+      "body": [
+        "You decide. At every consequential step, the intelligence surfaces the choice and the honest trade-offs, and you make the call. Direction never leaves your hands — that is what it means to be the director rather than a client waiting on a delivery.",
+        "You own the result. What gets built is yours to use, change, and keep. There is no arrangement where the work lives behind someone else's account or depends on a relationship continuing for you to keep using it.",
+        "No lock-in is a design choice, not a courtesy. The output is structured so you can take it forward with us, with someone else, or on your own. Ownership you cannot exercise is not ownership.",
+        "Control also means knowing the limits. When something sits outside what should be decided by an intelligence alone, it says so and routes the judgement back to you, rather than overreaching quietly.",
+        "The short version: you bring the problem, you direct the work, the intelligence does the heavy lifting, and what comes out is unmistakably yours."
+      ]
+    },
     "build-without-a-team": {
       "title": "How to build a product when you don't have a team",
       "lead": "The old answer was: hire developers, designers, and a PM, then wait. There's a faster way that leaves you owning the result.",

@@ -5,6 +5,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { Link } from "@/i18n/navigation";
 import { IntelligenceExplorer } from "@/components/intelligence/IntelligenceExplorer";
+import { OrchestrationStoryboard } from "@/components/intelligence/OrchestrationStoryboard";
 
 export async function generateMetadata({
   params,
@@ -40,6 +41,12 @@ export default async function IntelligencePage({
               </div>
             ))}
           </div>
+        </Container>
+      </Section>
+
+      <Section className="pt-4 lg:pt-6">
+        <Container>
+          <OrchestrationStoryboard />
         </Container>
       </Section>
 
