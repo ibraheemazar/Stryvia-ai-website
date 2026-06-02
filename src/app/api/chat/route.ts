@@ -25,6 +25,11 @@ function rateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = HITS.get(ip);
   if (!entry || now > entry.reset) {
+    // Opportunistically purge expired entries so the map can't grow unbounded
+    // on a long-lived instance.
+    if (HITS.size > 5000) {
+      for (const [k, v] of HITS) if (now > v.reset) HITS.delete(k);
+    }
     HITS.set(ip, { count: 1, reset: now + WINDOW_MS });
     return false;
   }
