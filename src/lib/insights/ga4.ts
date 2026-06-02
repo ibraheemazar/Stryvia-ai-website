@@ -56,7 +56,18 @@ async function runReport(
       body: JSON.stringify(body),
     },
   );
-  if (!res.ok) throw new Error(`GA4 report ${res.status}`);
+  if (!res.ok) {
+    // Surface Google's actual message (permission vs API-disabled vs bad
+    // property) so the admin banner says why, not just the status code.
+    const detail = await res.text().catch(() => "");
+    let reason = "";
+    try {
+      reason = (JSON.parse(detail) as { error?: { message?: string } }).error?.message ?? "";
+    } catch {
+      reason = detail;
+    }
+    throw new Error(`GA4 report ${res.status}${reason ? `: ${reason.replace(/\s+/g, " ").slice(0, 280)}` : ""}`);
+  }
   return (await res.json()) as GaResponse;
 }
 
