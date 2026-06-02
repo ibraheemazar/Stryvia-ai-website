@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { MarketingDashboard } from "./marketing/MarketingDashboard";
 import { AdminCopilot } from "./AdminCopilot";
+import { AdminThemePicker } from "./AdminThemePicker";
 import { cn } from "@/lib/utils";
 
 // Top-level admin shell: a single header with Leads / Marketing tabs, owning
@@ -44,6 +45,7 @@ export function AdminShell({
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden text-sv-small text-sv-text-3 sm:block">{email}</span>
+          <AdminThemePicker />
           <button
             onClick={onSignOut}
             className="text-sv-small text-sv-text-2 transition-colors hover:text-sv-text"

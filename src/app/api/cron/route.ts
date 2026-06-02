@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAutomations } from "@/lib/marketing/actions";
-import { markAbandoned, sendDailyDigest } from "@/lib/marketing/jobs";
+import { markAbandoned, sendDailyDigest, enrichConversations } from "@/lib/marketing/jobs";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,7 +25,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, task, digestSent: sent });
   }
 
-  // default "tick": run automations + sweep abandoned conversations
+  // default "tick": run automations + sweep abandoned conversations, then
+  // backfill digests. markAbandoned runs first so freshly-abandoned chats are
+  // eligible for enrichment in the same tick.
   const [actioned, abandoned] = await Promise.all([runAutomations(), markAbandoned()]);
-  return NextResponse.json({ ok: true, task, actioned, abandoned });
+  const enriched = await enrichConversations();
+  return NextResponse.json({ ok: true, task, actioned, abandoned, enriched });
 }

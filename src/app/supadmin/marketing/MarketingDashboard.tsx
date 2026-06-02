@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { INTEGRATIONS, CATEGORY_LABELS, type IntegrationCategory } from "@/lib/marketing/integrations";
-import { AnalyticsView } from "@/app/admin/insights/AnalyticsView";
+import { AnalyticsView } from "@/app/supadmin/insights/AnalyticsView";
 
 type Tab =
   | "overview"

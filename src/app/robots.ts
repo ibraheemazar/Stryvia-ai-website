@@ -7,8 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // The admin and the gated investor surface stay out of the index.
-        disallow: ["/admin", "/api/", "/investors"],
+        // The gated investor surface stays out of the index. The admin is kept
+        // out via a noindex meta tag (in its layout) rather than listed here —
+        // publishing its path in robots.txt would defeat keeping it unguessable.
+        disallow: ["/api/", "/investors"],
       },
     ],
     sitemap: `${base}/sitemap.xml`,
