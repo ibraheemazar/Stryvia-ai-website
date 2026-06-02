@@ -4,6 +4,17 @@
     "description": "Bring a problem. Direct the work. The intelligence does the heavy lifting, and what comes out is yours. Stryvia gives you the capability to build, create, and solve at the speed a team used to require.",
     "ogAlt": "Stryvia — the intelligence you build with"
   },
+  "theme": {
+    "label": "Appearance",
+    "mode": "Mode",
+    "dark": "Dark",
+    "light": "Light",
+    "accent": "Accent",
+    "acid": "Acid",
+    "azure": "Azure",
+    "violet": "Violet",
+    "ember": "Ember"
+  },
   "nav": {
     "skipToContent": "Skip to content",
     "home": "Home",
@@ -88,6 +99,9 @@
       "oldTeam": "A team of five, assembled",
       "oldTime": "≈ 6 months",
       "oldCost": "Salaries, overhead, coordination",
+      "approx": "≈",
+      "oldUnit": "months",
+      "newUnit": "weeks",
       "newLabel": "WITH STRYVIA",
       "newTeam": "You, directing",
       "newTime": "≈ 6 weeks",

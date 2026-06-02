@@ -29,7 +29,7 @@ export default async function PricingPage({
       <PageHero eyebrow={t("eyebrow")} code="/ PRICING" title={t("title")} lead={t("lead")} />
       <Section className="pt-16 lg:pt-20">
         <Container>
-          <div className="grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2">
+          <div className="sv-reveal grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2">
             {points.map((p) => (
               <div key={p.label} className="bg-sv-base p-8">
                 <p className="sv-label sv-label--live">{p.label}</p>

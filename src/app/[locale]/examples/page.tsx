@@ -43,7 +43,8 @@ export default async function ExamplesPage({
                 <Link
                   key={sid}
                   href={`/examples/${sid}`}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 transition-colors duration-200 hover:border-sv-green-line"
+                  style={{ ["--i" as string]: i } as React.CSSProperties}
+                  className="sv-card sv-rise-strong group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
                 >
                   <span className="sv-scan-line" aria-hidden />
                   <Bracket />

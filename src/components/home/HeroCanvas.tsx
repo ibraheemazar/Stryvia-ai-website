@@ -25,8 +25,24 @@ export function HeroCanvas() {
     type Node = { x: number; y: number; vx: number; vy: number; green: boolean };
     let nodes: Node[] = [];
 
-    const GREEN = "192,250,32";
-    const WHITE = "244,246,244";
+    // Colors follow the active accent + light/dark mode (read from CSS vars),
+    // and re-read when the theme picker dispatches a change.
+    let GREEN = "192,250,32";
+    let WHITE = "244,246,244";
+    function readColors() {
+      const cs = getComputedStyle(document.documentElement);
+      const accent = cs.getPropertyValue("--sv-accent-rgb").trim();
+      if (accent) GREEN = accent.replace(/\s+/g, ",");
+      WHITE =
+        document.documentElement.dataset.theme === "light"
+          ? "18,21,15"
+          : "244,246,244";
+    }
+    readColors();
+
+    // Pointer in canvas-local coords; -1 means "no pointer" (idle).
+    const mouse = { x: -1, y: -1 };
+    const MOUSE_R = 180;
 
     function resize() {
       const parent = canvas!.parentElement!;
@@ -71,6 +87,30 @@ export function HeroCanvas() {
         }
       }
 
+      // cursor web — a bright accent net the intelligence weaves toward the
+      // pointer, plus a soft glow at the cursor itself.
+      if (mouse.x >= 0) {
+        for (const n of nodes) {
+          const dx = n.x - mouse.x,
+            dy = n.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < MOUSE_R) {
+            const alpha = (1 - dist / MOUSE_R) * 0.85;
+            ctx!.strokeStyle = `rgba(${GREEN},${alpha})`;
+            ctx!.lineWidth = 1;
+            ctx!.beginPath();
+            ctx!.moveTo(mouse.x, mouse.y);
+            ctx!.lineTo(n.x, n.y);
+            ctx!.stroke();
+          }
+        }
+        const g = ctx!.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 60);
+        g.addColorStop(0, `rgba(${GREEN},0.18)`);
+        g.addColorStop(1, `rgba(${GREEN},0)`);
+        ctx!.fillStyle = g;
+        ctx!.fillRect(mouse.x - 60, mouse.y - 60, 120, 120);
+      }
+
       // nodes
       for (const n of nodes) {
         ctx!.beginPath();
@@ -90,6 +130,26 @@ export function HeroCanvas() {
     function loop() {
       if (!running) return;
       for (const n of nodes) {
+        // Gentle pull toward the cursor (the field leans in to "listen").
+        if (mouse.x >= 0) {
+          const dx = mouse.x - n.x,
+            dy = mouse.y - n.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < MOUSE_R && dist > 0.5) {
+            const f = (1 - dist / MOUSE_R) * 0.035;
+            n.vx += (dx / dist) * f;
+            n.vy += (dy / dist) * f;
+          }
+        }
+        // Friction keeps the pull from accumulating into chaos.
+        n.vx *= 0.985;
+        n.vy *= 0.985;
+        // Keep a baseline drift so the field never stalls.
+        const sp = Math.hypot(n.vx, n.vy);
+        if (sp < 0.12) {
+          n.vx += (Math.random() - 0.5) * 0.05;
+          n.vy += (Math.random() - 0.5) * 0.05;
+        }
         n.x += n.vx;
         n.y += n.vy;
         if (n.x < 0 || n.x > w) n.vx *= -1;
@@ -109,6 +169,29 @@ export function HeroCanvas() {
 
     const onResize = () => resize();
     window.addEventListener("resize", onResize);
+    const onTheme = () => {
+      readColors();
+      if (reduce) render();
+    };
+    window.addEventListener("sv:themechange", onTheme);
+
+    // Pointer interaction (hover-capable devices only; canvas-local coords).
+    const hoverable =
+      !reduce && window.matchMedia("(hover: hover)").matches;
+    const onPointerMove = (e: PointerEvent) => {
+      const r = canvas!.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    };
+    const onPointerLeave = () => {
+      mouse.x = -1;
+      mouse.y = -1;
+    };
+    if (hoverable) {
+      const host = canvas!.parentElement!;
+      host.addEventListener("pointermove", onPointerMove);
+      host.addEventListener("pointerleave", onPointerLeave);
+    }
     const io = new IntersectionObserver((e) => {
       if (reduce) return;
       const wasRunning = running;
@@ -121,6 +204,12 @@ export function HeroCanvas() {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("sv:themechange", onTheme);
+      if (hoverable) {
+        const host = canvas!.parentElement!;
+        host.removeEventListener("pointermove", onPointerMove);
+        host.removeEventListener("pointerleave", onPointerLeave);
+      }
       io.disconnect();
     };
   }, []);

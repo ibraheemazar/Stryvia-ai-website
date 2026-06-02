@@ -40,7 +40,8 @@ export default async function IndustriesPage({
                 <Link
                   key={slug}
                   href={`/industries/${slug}`}
-                  className="sv-card group relative flex flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
+                  style={{ ["--i" as string]: i } as React.CSSProperties}
+                  className="sv-card sv-rise-strong group relative flex flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6"
                 >
                   <span className="sv-scan-line" aria-hidden />
                   <Bracket />

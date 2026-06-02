@@ -32,7 +32,7 @@ export default async function IntelligencePage({
 
       <Section className="pt-16 lg:pt-20">
         <Container>
-          <div className="grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2">
+          <div className="sv-reveal grid gap-px overflow-hidden rounded-sv-md border border-sv-line bg-sv-line sm:grid-cols-2">
             {pillars.map((p) => (
               <div key={p.label} className="bg-sv-base p-8">
                 <p className="sv-label sv-label--live">{p.label}</p>

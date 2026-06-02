@@ -6,6 +6,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemePicker } from "./ThemePicker";
 import { Bracket } from "@/components/ui/Bracket";
 import { cn } from "@/lib/utils";
 
@@ -89,6 +90,7 @@ export function SiteNav() {
               })}
             </ul>
             <LanguageSwitcher />
+            <ThemePicker />
             <Button href="/start" variant="primary" className="px-4 py-2">
               {t("start")}
             </Button>
@@ -144,6 +146,7 @@ export function SiteNav() {
           </ul>
           <div className="mt-8 flex items-center justify-between">
             <LanguageSwitcher />
+            <ThemePicker />
           </div>
           <div className="mt-6">
             <Button href="/start" variant="primary" className="w-full">

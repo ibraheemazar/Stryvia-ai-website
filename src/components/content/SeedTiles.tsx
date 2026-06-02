@@ -40,7 +40,8 @@ export function SeedTiles({
           key={i}
           type="button"
           onClick={() => start(tile)}
-          className="sv-card group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 text-start"
+          style={{ ["--i" as string]: i } as React.CSSProperties}
+          className="sv-card sv-rise-strong group relative flex h-full flex-col overflow-hidden rounded-sv-md border border-sv-line bg-sv-surface-2 p-6 text-start"
         >
           <span className="sv-scan-line" aria-hidden />
           <Bracket />

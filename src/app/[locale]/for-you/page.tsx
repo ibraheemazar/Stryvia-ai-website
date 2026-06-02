@@ -36,7 +36,11 @@ export default async function ForYouPage({
             {AUDIENCE_SLUGS.map((slug, i) => {
               const a = tc.raw(`audienceData.${slug}`) as Audience;
               return (
-                <li key={slug}>
+                <li
+                  key={slug}
+                  className="sv-reveal"
+                  style={{ ["--i" as string]: i } as React.CSSProperties}
+                >
                   <Link
                     href={`/for-you/${slug}`}
                     className="group flex items-center gap-5 py-5 transition-colors duration-200"

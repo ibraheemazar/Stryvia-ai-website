@@ -13,7 +13,7 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    "sv-btn-glow bg-sv-green text-sv-ink hover:-translate-y-px " +
+    "sv-btn-glow bg-sv-green text-sv-on-accent hover:-translate-y-px " +
     "active:translate-y-0 active:bg-sv-green-press disabled:bg-sv-surface-3 disabled:text-sv-text-3 disabled:shadow-none",
   secondary:
     "border border-sv-line-strong text-sv-text hover:border-sv-green-line hover:text-sv-green " +

@@ -6,6 +6,7 @@ import posthog from "posthog-js";
 export type SvEvent =
   | "page_view"
   | "language_switched"
+  | "theme_changed"
   | "chat_opened"
   | "chat_first_message"
   | "chat_scope_returned"
