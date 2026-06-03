@@ -11,8 +11,10 @@ type Tab =
   | "content"
   | "audiences"
   | "email"
+  | "broadcast"
   | "automations"
   | "landing"
+  | "links"
   | "performance"
   | "channels";
 
@@ -22,8 +24,10 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "content", label: "Content studio" },
   { id: "audiences", label: "Audiences" },
   { id: "email", label: "Email" },
+  { id: "broadcast", label: "Broadcast" },
   { id: "automations", label: "Automations" },
   { id: "landing", label: "Landing & A/B" },
+  { id: "links", label: "Links" },
   { id: "performance", label: "Performance" },
   { id: "channels", label: "Channels" },
 ];
@@ -71,8 +75,10 @@ export function MarketingDashboard({ token }: { token: string }) {
       {tab === "content" && <ContentStudio api={api} />}
       {tab === "audiences" && <Audiences api={api} />}
       {tab === "email" && <EmailCampaigns api={api} />}
+      {tab === "broadcast" && <Broadcast api={api} />}
       {tab === "automations" && <Automations api={api} />}
       {tab === "landing" && <Landing api={api} />}
+      {tab === "links" && <LinkBuilder />}
       {tab === "performance" && <Performance api={api} token={token} />}
       {tab === "channels" && <Channels api={api} />}
     </div>
@@ -690,6 +696,121 @@ function EmailCampaigns({ api }: { api: Api }) {
   );
 }
 
+// ---------------------------------------------------------------- Broadcast
+function Broadcast({ api }: { api: Api }) {
+  const [channel, setChannel] = useState("email");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [category, setCategory] = useState("");
+  const [converted, setConverted] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+
+  function rules() {
+    const r: Record<string, unknown> = {};
+    if (category) r.category = category;
+    if (converted) r.converted = converted === "yes";
+    return r;
+  }
+  async function send() {
+    setBusy(true);
+    setStatus(null);
+    const d = await api("/broadcast", {
+      method: "POST",
+      body: JSON.stringify({ channel, subject, message, rules: rules() }),
+    });
+    if (d.ok) setStatus(`Sent ${d.sent}/${d.audience} via ${d.channel}${d.skipped ? ` · ${d.skipped} skipped (no phone)` : ""}${d.failed ? ` · ${d.failed} failed` : ""}.`);
+    else setStatus(d.reason?.toString().includes("not_configured") ? `Connect ${channel} first.` : `Couldn't send: ${d.reason}`);
+    setBusy(false);
+  }
+
+  return (
+    <Panel title="BROADCAST — ONE-OFF TO A SEGMENT">
+      <div className="max-w-2xl space-y-3">
+        <p className="text-sv-small text-sv-text-3">Send a single message to everyone in an audience over the chosen channel. SMS/WhatsApp need a phone on the lead and the channel connected.</p>
+        <div className="flex flex-wrap gap-2">
+          <Select value={channel} onChange={setChannel} options={[["email", "Email"], ["sms", "SMS"], ["whatsapp", "WhatsApp"]]} />
+          <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category (optional)" className={inputCls} />
+          <Select value={converted} onChange={setConverted} options={[["", "All leads"], ["yes", "Converted"], ["no", "Not converted"]]} />
+        </div>
+        {channel === "email" && (
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" className={cn(inputCls, "w-full")} />
+        )}
+        <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message…" className={cn(inputCls, "min-h-32 w-full resize-none")} />
+        <button onClick={send} disabled={busy || !message || (channel === "email" && !subject)} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
+          {busy ? "Sending…" : "Send broadcast"}
+        </button>
+        {status && <p className="text-sv-small text-sv-text-2">{status}</p>}
+      </div>
+    </Panel>
+  );
+}
+
+// ---------------------------------------------------------------- Link builder
+function LinkBuilder() {
+  const [base, setBase] = useState("https://stryvia.ai");
+  const [source, setSource] = useState("");
+  const [medium, setMedium] = useState("");
+  const [campaign, setCampaign] = useState("");
+  const [term, setTerm] = useState("");
+  const [content, setContent] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const built = (() => {
+    if (!base.trim()) return "";
+    let url: URL;
+    try {
+      url = new URL(base.trim());
+    } catch {
+      return "";
+    }
+    const add = (k: string, v: string) => v.trim() && url.searchParams.set(k, v.trim());
+    add("utm_source", source);
+    add("utm_medium", medium);
+    add("utm_campaign", campaign);
+    add("utm_term", term);
+    add("utm_content", content);
+    return url.toString();
+  })();
+
+  async function copy() {
+    if (!built) return;
+    try {
+      await navigator.clipboard.writeText(built);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked */
+    }
+  }
+
+  return (
+    <Panel title="CAMPAIGN LINK BUILDER — UTM">
+      <div className="max-w-2xl space-y-3">
+        <p className="text-sv-small text-sv-text-3">
+          Build tracked links. The <span className="font-mono">utm_source</span> shows up in your funnel attribution (Command center → By source).
+        </p>
+        <input value={base} onChange={(e) => setBase(e.target.value)} placeholder="Destination URL" className={cn(inputCls, "w-full")} />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="Source (e.g. meta, google, newsletter)" className={inputCls} />
+          <input value={medium} onChange={(e) => setMedium(e.target.value)} placeholder="Medium (e.g. cpc, email, social)" className={inputCls} />
+          <input value={campaign} onChange={(e) => setCampaign(e.target.value)} placeholder="Campaign (e.g. launch_q3)" className={inputCls} />
+          <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Term (optional — paid keyword)" className={inputCls} />
+          <input value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content (optional — ad/variant)" className={cn(inputCls, "sm:col-span-2")} />
+        </div>
+        {built && (
+          <div className="flex items-center gap-2 rounded-sv-sm border border-sv-line bg-sv-surface-2/40 p-3">
+            <span className="flex-1 break-all font-mono text-sv-small text-sv-text-2">{built}</span>
+            <button onClick={copy} className="shrink-0 rounded-sv-sm bg-sv-green px-3 py-1.5 text-sv-label-sm font-medium uppercase tracking-wider text-sv-ink">
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+        )}
+      </div>
+    </Panel>
+  );
+}
+
 // ---------------------------------------------------------------- Automations
 function Automations({ api }: { api: Api }) {
   const [list, setList] = useState<AutomationRow[]>([]);
@@ -1102,11 +1223,19 @@ function Landing({ api }: { api: Api }) {
               {p.results && p.results.length > 0 && (
                 <div className="mt-3 space-y-1">
                   {p.results.map((r) => (
-                    <div key={r.variantId} className="flex items-center gap-3 text-sv-small">
-                      <span className="w-16 text-sv-text-2">{r.label}</span>
+                    <div key={r.variantId} className="flex flex-wrap items-center gap-3 text-sv-small">
+                      <span className="w-16 text-sv-text-2">
+                        {r.label}
+                        {r.winner && <span className="ms-1 text-sv-green">★</span>}
+                      </span>
                       <span className="w-28 text-sv-text-3">{r.views} views · {r.conversions} conv</span>
                       <span className="w-16 font-mono text-sv-green">{r.rate}%</span>
-                      {r.uplift !== null && <span className={cn("font-mono text-sv-label-sm", r.uplift >= 0 ? "text-sv-green" : "text-sv-danger")}>{r.uplift >= 0 ? "+" : ""}{r.uplift}% vs A</span>}
+                      {r.uplift !== null && <span className={cn("w-20 font-mono text-sv-label-sm", r.uplift >= 0 ? "text-sv-green" : "text-sv-danger")}>{r.uplift >= 0 ? "+" : ""}{r.uplift}% vs A</span>}
+                      {r.confidence !== null && (
+                        <span className={cn("font-mono text-sv-label-sm", r.confidence >= 95 ? "text-sv-green" : "text-sv-text-3")}>
+                          {r.confidence}% conf{r.winner ? " · winner" : r.confidence >= 95 ? "" : " · keep running"}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1278,7 +1407,7 @@ type AutoSpec = {
   rationale?: string;
 };
 type RunRow = { id: string; detail: string | null; status: string; created_at: string };
-type VariantResult = { variantId: string; label: string; views: number; conversions: number; rate: number; uplift: number | null };
+type VariantResult = { variantId: string; label: string; views: number; conversions: number; rate: number; uplift: number | null; confidence: number | null; winner: boolean };
 type LandingRow = { id: string; slug: string; name: string; locale: string; status: string; results?: VariantResult[] };
 type ChannelMetric = { provider: string; label: string; configured: boolean; note?: string; error?: string; metrics?: { spend?: number; impressions?: number; clicks?: number; conversions?: number } };
 type LearningPayload = {

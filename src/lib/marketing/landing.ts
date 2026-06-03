@@ -70,7 +70,39 @@ export type VariantResult = {
   conversions: number;
   rate: number;
   uplift: number | null;
+  // Statistical confidence the variant differs from the control (0–100). Null
+  // for the control itself or when there isn't enough data yet.
+  confidence: number | null;
+  winner: boolean;
 };
+
+// Standard normal CDF via an erf approximation (Abramowitz & Stegun 7.1.26).
+function normalCdf(z: number): number {
+  const x = z / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y =
+    1 -
+    ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) *
+      t *
+      Math.exp(-x * x);
+  const erf = x >= 0 ? y : -y;
+  return 0.5 * (1 + erf);
+}
+
+// Two-proportion z-test → two-sided confidence the variant differs from control.
+function confidenceVsControl(
+  cConv: number,
+  cViews: number,
+  vConv: number,
+  vViews: number,
+): number | null {
+  if (cViews < 30 || vViews < 30) return null; // too little data to claim anything
+  const p = (cConv + vConv) / (cViews + vViews);
+  const se = Math.sqrt(p * (1 - p) * (1 / cViews + 1 / vViews));
+  if (se === 0) return null;
+  const z = Math.abs(vConv / vViews - cConv / cViews) / se;
+  return Math.max(0, Math.min(100, Math.round((2 * normalCdf(z) - 1) * 100)));
+}
 
 export async function getResults(page: LandingPage): Promise<VariantResult[]> {
   const svc = getServiceSupabase();
@@ -91,22 +123,30 @@ export async function getResults(page: LandingPage): Promise<VariantResult[]> {
   }
 
   const control = page.variants[0];
-  const controlRate =
-    control && agg[control.id]?.views ? agg[control.id].conversions / agg[control.id].views : 0;
+  const ctl = control ? agg[control.id] ?? { views: 0, conversions: 0 } : { views: 0, conversions: 0 };
+  const controlRate = ctl.views ? ctl.conversions / ctl.views : 0;
 
-  return page.variants.map((v) => {
+  const results = page.variants.map((v) => {
     const a = agg[v.id] || { views: 0, conversions: 0 };
     const rate = a.views ? a.conversions / a.views : 0;
+    const isControl = v.id === control?.id;
     return {
       variantId: v.id,
       label: v.label,
       views: a.views,
       conversions: a.conversions,
       rate: Math.round(rate * 1000) / 10,
-      uplift:
-        v.id === control?.id || !controlRate
-          ? null
-          : Math.round(((rate - controlRate) / controlRate) * 1000) / 10,
+      uplift: isControl || !controlRate ? null : Math.round(((rate - controlRate) / controlRate) * 1000) / 10,
+      confidence: isControl ? null : confidenceVsControl(ctl.conversions, ctl.views, a.conversions, a.views),
+      winner: false,
     };
   });
+
+  // Declare a winner only at ≥95% confidence with a positive lift over control.
+  const best = results
+    .filter((r) => r.confidence !== null && r.confidence >= 95 && (r.uplift ?? 0) > 0)
+    .sort((x, y) => y.rate - x.rate)[0];
+  if (best) best.winner = true;
+
+  return results;
 }
