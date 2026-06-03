@@ -571,12 +571,37 @@ function EmailCampaigns({ api }: { api: Api }) {
   const [converted, setConverted] = useState("yes");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // AI copywriter
+  const [brief, setBrief] = useState("");
+  const [tone, setTone] = useState("");
+  const [drafting, setDrafting] = useState(false);
+  const [subjects, setSubjects] = useState<string[]>([]);
+  // test send
+  const [testTo, setTestTo] = useState("");
+  const [testing, setTesting] = useState(false);
 
   function rules() {
     const r: Record<string, unknown> = {};
     if (category) r.category = category;
     if (converted) r.converted = converted === "yes";
     return r;
+  }
+  async function draft() {
+    setDrafting(true);
+    setStatus(null);
+    const d = await api("/email", {
+      method: "POST",
+      body: JSON.stringify({ action: "draft", brief, tone, rules: rules() }),
+    });
+    if (d.ok) {
+      const subs = (d.subjects as string[]) || [];
+      setSubjects(subs);
+      if (subs[0]) setSubject(subs[0]);
+      setBodyText((d.body as string) || "");
+    } else {
+      setStatus("Couldn't draft — add ANTHROPIC_API_KEY or try a clearer brief.");
+    }
+    setDrafting(false);
   }
   async function send() {
     setBusy(true);
@@ -589,23 +614,79 @@ function EmailCampaigns({ api }: { api: Api }) {
     else setStatus(d.reason === "ses_not_configured" ? "Connect SES to send." : `Couldn't send: ${d.reason}`);
     setBusy(false);
   }
+  async function testSend() {
+    setTesting(true);
+    setStatus(null);
+    const d = await api("/email", {
+      method: "POST",
+      body: JSON.stringify({ action: "test", subject, body: bodyText, to: testTo }),
+    });
+    setStatus(d.ok ? `Test sent to ${testTo}.` : `Test failed: ${d.reason || "error"}.`);
+    setTesting(false);
+  }
 
   return (
-    <Panel title="EMAIL CAMPAIGN">
-      <div className="max-w-2xl space-y-3">
-        <p className="text-sv-small text-sv-text-3">Sends via Amazon SES to leads matching the audience.</p>
-        <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" className={cn(inputCls, "w-full")} />
-        <textarea value={bodyText} onChange={(e) => setBodyText(e.target.value)} placeholder="Email body…" className={cn(inputCls, "min-h-40 w-full resize-none")} />
-        <div className="flex flex-wrap items-center gap-2">
-          <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category filter (optional)" className={inputCls} />
-          <Select value={converted} onChange={setConverted} options={[["yes", "Converted leads"], ["", "All leads"]]} />
-          <button onClick={send} disabled={busy || !subject || !bodyText} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
-            {busy ? "Sending…" : "Send campaign"}
+    <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
+      <Panel title="AI COPYWRITER — DRAFT FROM A BRIEF">
+        <div className="space-y-3">
+          <textarea
+            value={brief}
+            onChange={(e) => setBrief(e.target.value)}
+            placeholder="What's this email for? The offer, the audience, the goal…"
+            className={cn(inputCls, "min-h-28 w-full resize-none")}
+          />
+          <div className="flex flex-wrap gap-2">
+            <input value={tone} onChange={(e) => setTone(e.target.value)} placeholder="Tone (optional: warm, direct…)" className={inputCls} />
+            <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category (optional)" className={inputCls} />
+            <Select value={converted} onChange={setConverted} options={[["yes", "Converted leads"], ["", "All leads"]]} />
+          </div>
+          <button
+            onClick={draft}
+            disabled={drafting || !brief.trim()}
+            className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60"
+          >
+            {drafting ? "Drafting…" : "Draft with AI"}
           </button>
+          {subjects.length > 0 && (
+            <div>
+              <p className="sv-label sv-label-sm mb-1.5">SUBJECT OPTIONS — pick one</p>
+              <div className="flex flex-wrap gap-1.5">
+                {subjects.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSubject(s)}
+                    className={cn(
+                      "rounded-sv-pill border px-2.5 py-1 text-sv-small",
+                      subject === s ? "border-sv-green-line text-sv-green" : "border-sv-line text-sv-text-2 hover:text-sv-text",
+                    )}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        {status && <p className="text-sv-small text-sv-text-2">{status}</p>}
-      </div>
-    </Panel>
+      </Panel>
+
+      <Panel title="EMAIL CAMPAIGN">
+        <div className="space-y-3">
+          <p className="text-sv-small text-sv-text-3">Sends via Amazon SES to leads matching the audience.</p>
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" className={cn(inputCls, "w-full")} />
+          <textarea value={bodyText} onChange={(e) => setBodyText(e.target.value)} placeholder="Email body…" className={cn(inputCls, "min-h-48 w-full resize-none")} />
+          <div className="flex flex-wrap items-center gap-2">
+            <input value={testTo} onChange={(e) => setTestTo(e.target.value)} placeholder="you@stryvia.ai" className={inputCls} />
+            <button onClick={testSend} disabled={testing || !subject || !bodyText || !testTo} className="rounded-sv-sm border border-sv-line px-3 py-2 text-sv-small text-sv-text-2 disabled:opacity-60">
+              {testing ? "Sending…" : "Test send"}
+            </button>
+            <button onClick={send} disabled={busy || !subject || !bodyText} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
+              {busy ? "Sending…" : "Send campaign"}
+            </button>
+          </div>
+          {status && <p className="text-sv-small text-sv-text-2">{status}</p>}
+        </div>
+      </Panel>
+    </div>
   );
 }
 
@@ -622,6 +703,11 @@ function Automations({ api }: { api: Api }) {
   const [actSms, setActSms] = useState("");
   const [actSlack, setActSlack] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
+  // AI builder
+  const [goal, setGoal] = useState("");
+  const [building, setBuilding] = useState(false);
+  const [suggestions, setSuggestions] = useState<AutoSpec[]>([]);
+  const [suggesting, setSuggesting] = useState(false);
 
   const load = useCallback(async () => {
     const d = await api("?section=automations");
@@ -631,6 +717,42 @@ function Automations({ api }: { api: Api }) {
   useEffect(() => {
     load();
   }, [load]);
+
+  function applySpec(spec: AutoSpec) {
+    setName(spec.name || "");
+    setCategory(spec.trigger?.filters?.category || "");
+    setActEmailSubject("");
+    setActEmailBody("");
+    setActWhatsapp("");
+    setActSms("");
+    setActSlack("");
+    setActStatus("");
+    for (const a of spec.actions || []) {
+      const p = a.params || {};
+      if (a.type === "send_email") {
+        setActEmailSubject(String(p.subject || ""));
+        setActEmailBody(String(p.body || ""));
+      } else if (a.type === "send_whatsapp") setActWhatsapp(String(p.message || ""));
+      else if (a.type === "send_sms") setActSms(String(p.message || ""));
+      else if (a.type === "slack_notify") setActSlack(String(p.message || ""));
+      else if (a.type === "set_lead_status") setActStatus(String(p.status || ""));
+    }
+    setMsg("Drafted below — review and Create & enable.");
+  }
+  async function aiBuild() {
+    setBuilding(true);
+    setMsg(null);
+    const d = await api("/automations", { method: "POST", body: JSON.stringify({ action: "ai_build", goal }) });
+    if (d.ok && d.spec) applySpec(d.spec as AutoSpec);
+    else setMsg("Couldn't build — add ANTHROPIC_API_KEY or rephrase the goal.");
+    setBuilding(false);
+  }
+  async function suggest() {
+    setSuggesting(true);
+    const d = await api("/automations", { method: "POST", body: JSON.stringify({ action: "suggest" }) });
+    setSuggestions((d.specs as AutoSpec[]) || []);
+    setSuggesting(false);
+  }
 
   async function create() {
     const actions: { type: string; params: Record<string, unknown> }[] = [];
@@ -666,6 +788,42 @@ function Automations({ api }: { api: Api }) {
 
   return (
     <div className="space-y-8">
+      <Panel
+        title="DESCRIBE IT — AI BUILDS IT"
+        action={
+          <button onClick={suggest} disabled={suggesting} className="rounded-sv-sm border border-sv-green-line px-3 py-1 text-sv-label-sm uppercase tracking-wider text-sv-green disabled:opacity-60">
+            {suggesting ? "Thinking…" : "Suggest automations"}
+          </button>
+        }
+      >
+        <div className="space-y-3">
+          <textarea
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+            placeholder="e.g. When a finance lead comes in, send a tailored intro email and Slack the team."
+            className={cn(inputCls, "min-h-20 w-full resize-none")}
+          />
+          <button onClick={aiBuild} disabled={building || !goal.trim()} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
+            {building ? "Building…" : "Build automation"}
+          </button>
+          {suggestions.length > 0 && (
+            <div className="space-y-2 pt-1">
+              {suggestions.map((s, i) => (
+                <div key={i} className="flex items-start justify-between gap-3 rounded-sv-sm border border-sv-line bg-sv-surface-2/40 p-3">
+                  <div>
+                    <p className="text-sv-small text-sv-text">{s.name}</p>
+                    {s.rationale && <p className="text-sv-label-sm text-sv-text-3">{s.rationale}</p>}
+                  </div>
+                  <button onClick={() => applySpec(s)} className="shrink-0 rounded-sv-sm border border-sv-line px-2.5 py-1 text-sv-label-sm uppercase tracking-wider text-sv-text-2 hover:text-sv-text">
+                    Use
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Panel>
+
       <Panel title="NEW AUTOMATION" action={<button onClick={runNow} className="rounded-sv-sm border border-sv-green-line px-3 py-1 text-sv-label-sm uppercase tracking-wider text-sv-green">Run now</button>}>
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-3">
@@ -810,11 +968,42 @@ function Landing({ api }: { api: Api }) {
   const [a, setA] = useState<VariantForm>(emptyVariant("A"));
   const [b, setB] = useState<VariantForm>(emptyVariant("B"));
   const [msg, setMsg] = useState<string | null>(null);
+  // AI experiment generator
+  const [generating, setGenerating] = useState(false);
+  const [hypothesis, setHypothesis] = useState("");
 
   const load = useCallback(async () => {
     const d = await api("/landing");
     setPages((d.pages as LandingRow[]) || []);
   }, [api]);
+
+  async function genVariants() {
+    setGenerating(true);
+    setMsg(null);
+    const d = await api("/landing", {
+      method: "POST",
+      body: JSON.stringify({ action: "ai_variants", goal, locale }),
+    });
+    if (d.ok && Array.isArray(d.variants)) {
+      const vs = d.variants as { label?: string; eyebrow?: string; headline?: string; subhead?: string; body?: string; ctaText?: string }[];
+      const toForm = (v: (typeof vs)[number], label: string): VariantForm => ({
+        label,
+        weight: "50",
+        eyebrow: v.eyebrow || "",
+        headline: v.headline || "",
+        subhead: v.subhead || "",
+        body: v.body || "",
+        ctaText: v.ctaText || "Start a conversation",
+      });
+      if (vs[0]) setA(toForm(vs[0], "A"));
+      if (vs[1]) setB(toForm(vs[1], "B"));
+      setHypothesis((d.hypothesis as string) || "");
+      if (!name) setName("AI experiment");
+    } else {
+      setMsg("Couldn't generate — add ANTHROPIC_API_KEY or set a clearer goal.");
+    }
+    setGenerating(false);
+  }
   useEffect(() => {
     load();
   }, [load]);
@@ -871,7 +1060,17 @@ function Landing({ api }: { api: Api }) {
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Page name" className={cn(inputCls, "flex-1")} />
             <Select value={locale} onChange={setLocale} options={[["en", "EN"], ["ar", "AR"], ["fr", "FR"]]} />
           </div>
-          <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Conversion goal / seed sent to the Chat on CTA click" className={cn(inputCls, "w-full")} />
+          <div className="flex flex-wrap items-center gap-2">
+            <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Conversion goal / seed sent to the Chat on CTA click" className={cn(inputCls, "flex-1")} />
+            <button onClick={genVariants} disabled={generating || !goal.trim()} className="rounded-sv-sm border border-sv-green-line px-3 py-2 text-sv-small text-sv-green disabled:opacity-60">
+              {generating ? "Generating…" : "Generate variants with AI"}
+            </button>
+          </div>
+          {hypothesis && (
+            <p className="rounded-sv-sm border border-sv-line bg-sv-surface-2/40 p-2.5 text-sv-small text-sv-text-2">
+              <span className="sv-label sv-label-sm sv-label--live">HYPOTHESIS</span> {hypothesis}
+            </p>
+          )}
           <div className="grid gap-3 md:grid-cols-2">
             {vfield(a, setA)}
             {vfield(b, setB)}
@@ -1072,6 +1271,12 @@ type RecentAsk = { summary: string; category: string; locale: string; converted:
 type ContentRow = { id: string; type: string; channel: string | null; locale: string; status: string; body: string };
 type SegmentRow = { id: string; name: string; rules: Record<string, unknown>; count: number };
 type AutomationRow = { id: string; name: string; enabled: boolean; run_count: number; actions: unknown[] };
+type AutoSpec = {
+  name: string;
+  trigger: { event: string; filters: { category?: string } };
+  actions: { type: string; params: Record<string, unknown> }[];
+  rationale?: string;
+};
 type RunRow = { id: string; detail: string | null; status: string; created_at: string };
 type VariantResult = { variantId: string; label: string; views: number; conversions: number; rate: number; uplift: number | null };
 type LandingRow = { id: string; slug: string; name: string; locale: string; status: string; results?: VariantResult[] };

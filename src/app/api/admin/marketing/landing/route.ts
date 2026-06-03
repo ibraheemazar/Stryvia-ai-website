@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdmin, requireService } from "@/lib/admin-auth";
 import { getResults, type LandingPage } from "@/lib/marketing/landing";
+import { generateExperiment } from "@/lib/marketing/aiassist";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 60);
@@ -31,6 +33,18 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ ok: false }, { status: 400 });
+
+  // AI: generate two distinct A/B variant angles + a test hypothesis.
+  if (body.action === "ai_variants") {
+    const out = await generateExperiment({
+      goal: String(body.goal || ""),
+      locale: body.locale ? String(body.locale) : "en",
+      category: body.category ? String(body.category) : undefined,
+    });
+    if (!out) return NextResponse.json({ ok: false, reason: "generate_failed" }, { status: 200 });
+    return NextResponse.json({ ok: true, ...out });
+  }
+
   const svc = requireService();
 
   if (body.action === "create") {
