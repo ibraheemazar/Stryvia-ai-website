@@ -14,6 +14,7 @@ type ConversationRow = {
   problem_category: string | null;
   summary: string | null;
   converted: boolean;
+  score: number;
   lead: { name: string; email: string; company: string | null; status: string } | null;
 };
 
@@ -38,6 +39,7 @@ export function AdminDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [hottest, setHottest] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -71,6 +73,8 @@ export function AdminDashboard({
   useEffect(() => {
     load();
   }, [load]);
+
+  const sortedRows = hottest ? [...rows].sort((a, b) => b.score - a.score) : rows;
 
   const topCategories = insights
     ? Object.entries(insights.categoryCounts).sort((a, b) => b[1] - a[1]).slice(0, 6)
@@ -144,6 +148,16 @@ export function AdminDashboard({
             <option value="escalated">Escalated</option>
             <option value="abandoned">Abandoned</option>
           </select>
+          <button
+            onClick={() => setHottest((v) => !v)}
+            aria-pressed={hottest}
+            className={cn(
+              "rounded-sv-sm border px-3 py-2 text-sv-small transition-colors",
+              hottest ? "border-sv-green-line text-sv-green" : "border-sv-line text-sv-text-3 hover:text-sv-text",
+            )}
+          >
+            Hottest first
+          </button>
         </div>
 
         {/* list */}
@@ -157,12 +171,21 @@ export function AdminDashboard({
             </p>
           ) : (
             <div className="divide-y divide-sv-line border-y border-sv-line">
-              {rows.map((row) => (
+              {sortedRows.map((row) => (
                 <button
                   key={row.id}
                   onClick={() => setOpenId(row.id)}
                   className="flex w-full items-center gap-4 py-4 text-start transition-colors hover:bg-sv-surface-1"
                 >
+                  <span
+                    title={`Lead score ${row.score}`}
+                    className={cn(
+                      "w-9 shrink-0 text-center font-mono text-sv-label-sm",
+                      row.score >= 70 ? "text-sv-green" : row.score >= 40 ? "text-sv-text-2" : "text-sv-text-3",
+                    )}
+                  >
+                    {row.score}
+                  </span>
                   <span
                     className={cn(
                       "h-1.5 w-1.5 shrink-0 rounded-full",

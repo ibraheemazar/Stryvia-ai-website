@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdmin, requireService } from "@/lib/admin-auth";
+import { scoreConversation } from "@/lib/marketing/scoring";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
 
   let q = svc
     .from("conversations")
-    .select("id, created_at, updated_at, locale, page_context, status, problem_category, summary, converted")
+    .select("id, created_at, updated_at, locale, page_context, status, problem_category, summary, converted, analysis")
     .order("updated_at", { ascending: false })
     .limit(200);
 
@@ -93,9 +94,11 @@ export async function GET(req: NextRequest) {
       categoryCounts,
       statusCounts,
     },
-    conversations: (conversations ?? []).map((c) => ({
-      ...c,
-      lead: leadsByConv[c.id] ?? null,
-    })),
+    conversations: (conversations ?? []).map((c) => {
+      const score = scoreConversation(c as Parameters<typeof scoreConversation>[0]);
+      const row = { ...c } as Record<string, unknown>;
+      delete row.analysis; // keep the list payload lean; full analysis is on the detail route
+      return { ...row, lead: leadsByConv[c.id] ?? null, score };
+    }),
   });
 }
