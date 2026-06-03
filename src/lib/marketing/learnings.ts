@@ -2,6 +2,7 @@ import "server-only";
 import { getAnthropic, ANTHROPIC_MODEL, hasAnthropic } from "@/lib/anthropic";
 import { getServiceSupabase } from "@/lib/supabase";
 import { BRAND_GUARDRAIL } from "./brand";
+import { extractJson } from "./json";
 import type { ChatMessage } from "@/lib/chat/types";
 
 // AI learnings: per-conversation deep analysis and a unified cross-conversation
@@ -65,7 +66,8 @@ export async function analyzeConversation(
         "Base everything strictly on the transcript. Be concrete. No code fences.",
       messages: [{ role: "user", content: transcript }],
     });
-    return normalizeAnalysis(JSON.parse(textOf(res).trim()));
+    const parsed = extractJson<Record<string, unknown>>(textOf(res));
+    return parsed ? normalizeAnalysis(parsed) : null;
   } catch (err) {
     console.error("[stryvia] analyzeConversation failed:", err);
     return null;
@@ -159,7 +161,9 @@ export async function generateUnifiedLearnings(
         "No fabrication. No code fences.",
       messages: [{ role: "user", content: JSON.stringify(corpus).slice(0, 180000) }],
     });
-    payload = JSON.parse(textOf(res).trim());
+    const parsed = extractJson<Record<string, unknown>>(textOf(res));
+    if (!parsed) return { count: 0, learning: null };
+    payload = parsed;
   } catch (err) {
     console.error("[stryvia] generateUnifiedLearnings failed:", err);
     return { count: 0, learning: null };

@@ -3,6 +3,7 @@ import { getAnthropic, ANTHROPIC_MODEL, hasAnthropic } from "@/lib/anthropic";
 import { BRAND_GUARDRAIL } from "./brand";
 import { getLatestLearning } from "./learnings";
 import { getMarketingOverview } from "./data";
+import { extractJson } from "./json";
 
 // AI marketing assistants: turn a one-line goal into ready-to-review email copy,
 // automations, and landing experiments. Everything runs on Stryvia Intelligence
@@ -14,13 +15,6 @@ function textOf(res: { content: { type: string }[] }): string {
   return block?.text ?? "";
 }
 
-function stripFences(s: string): string {
-  return s
-    .trim()
-    .replace(/^```(?:json)?/i, "")
-    .replace(/```$/i, "")
-    .trim();
-}
 
 // A compact, real-demand context the models can ground in: top requests,
 // friction, and the headline takeaway from the latest unified learnings.
@@ -78,7 +72,8 @@ export async function draftEmail(args: {
         "Speak to the real demand above. No code fences.",
       messages: [{ role: "user", content: args.brief.slice(0, 2000) || "Write a strong outreach email." }],
     });
-    const parsed = JSON.parse(stripFences(textOf(res))) as { subjects?: unknown; body?: unknown };
+    const parsed = extractJson<{ subjects?: unknown; body?: unknown }>(textOf(res));
+    if (!parsed) return null;
     const subjects = Array.isArray(parsed.subjects)
       ? parsed.subjects.map((s) => String(s).slice(0, 140)).filter(Boolean).slice(0, 3)
       : [];
@@ -144,7 +139,8 @@ export async function buildAutomation(goal: string): Promise<AutomationSpec | nu
         AUTOMATION_SCHEMA,
       messages: [{ role: "user", content: goal.slice(0, 1000) }],
     });
-    return normalizeAutomation(JSON.parse(stripFences(textOf(res))));
+    const parsed = extractJson<Record<string, unknown>>(textOf(res));
+    return parsed ? normalizeAutomation(parsed) : null;
   } catch (err) {
     console.error("[stryvia] buildAutomation failed:", err);
     return null;
@@ -170,9 +166,12 @@ export async function suggestAutomations(): Promise<AutomationSpec[]> {
         },
       ],
     });
-    const arr = JSON.parse(stripFences(textOf(res)));
+    const arr = extractJson<unknown[]>(textOf(res));
     if (!Array.isArray(arr)) return [];
-    return arr.map((a) => normalizeAutomation(a)).filter((a): a is AutomationSpec => !!a).slice(0, 3);
+    return arr
+      .map((a) => normalizeAutomation(a as Record<string, unknown>))
+      .filter((a): a is AutomationSpec => !!a)
+      .slice(0, 3);
   } catch (err) {
     console.error("[stryvia] suggestAutomations failed:", err);
     return [];
@@ -216,10 +215,8 @@ export async function generateExperiment(args: {
         },
       ],
     });
-    const parsed = JSON.parse(stripFences(textOf(res))) as {
-      hypothesis?: string;
-      variants?: Record<string, unknown>[];
-    };
+    const parsed = extractJson<{ hypothesis?: string; variants?: Record<string, unknown>[] }>(textOf(res));
+    if (!parsed) return null;
     const variants = (parsed.variants ?? []).slice(0, 2).map((v, i) => ({
       label: String(v.label ?? String.fromCharCode(65 + i)).slice(0, 8),
       eyebrow: String(v.eyebrow ?? "").slice(0, 120),

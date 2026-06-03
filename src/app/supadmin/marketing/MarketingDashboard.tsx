@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { INTEGRATIONS, CATEGORY_LABELS, type IntegrationCategory } from "@/lib/marketing/integrations";
 import { AnalyticsView } from "@/app/supadmin/insights/AnalyticsView";
@@ -180,7 +180,7 @@ function Overview({ api }: { api: Api }) {
             disabled={busy}
             className="rounded-sv-sm bg-sv-green px-3 py-1 text-sv-label-sm font-medium uppercase tracking-wider text-sv-ink disabled:opacity-60"
           >
-            {busy ? "Analysing…" : "Generate recommendations"}
+            {busy ? "Analysing… (~20s)" : "Generate recommendations"}
           </button>
         }
       >
@@ -302,7 +302,7 @@ function UnifiedLearnings({ api }: { api: Api }) {
           disabled={busy}
           className="rounded-sv-sm bg-sv-green px-3 py-1 text-sv-label-sm font-medium uppercase tracking-wider text-sv-ink disabled:opacity-60"
         >
-          {busy ? "Synthesising…" : row ? "Regenerate" : "Generate"}
+          {busy ? "Synthesising… (~30s)" : row ? "Regenerate" : "Generate"}
         </button>
       }
     >
@@ -651,7 +651,7 @@ function EmailCampaigns({ api }: { api: Api }) {
             disabled={drafting || !brief.trim()}
             className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60"
           >
-            {drafting ? "Drafting…" : "Draft with AI"}
+            {drafting ? "Drafting… (~15s)" : "Draft with AI"}
           </button>
           {subjects.length > 0 && (
             <div>
@@ -829,6 +829,7 @@ function Automations({ api }: { api: Api }) {
   const [building, setBuilding] = useState(false);
   const [suggestions, setSuggestions] = useState<AutoSpec[]>([]);
   const [suggesting, setSuggesting] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     const d = await api("?section=automations");
@@ -858,7 +859,8 @@ function Automations({ api }: { api: Api }) {
       else if (a.type === "slack_notify") setActSlack(String(p.message || ""));
       else if (a.type === "set_lead_status") setActStatus(String(p.status || ""));
     }
-    setMsg("Drafted below — review and Create & enable.");
+    setMsg("✓ Drafted below — review and Create & enable.");
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   }
   async function aiBuild() {
     setBuilding(true);
@@ -913,7 +915,7 @@ function Automations({ api }: { api: Api }) {
         title="DESCRIBE IT — AI BUILDS IT"
         action={
           <button onClick={suggest} disabled={suggesting} className="rounded-sv-sm border border-sv-green-line px-3 py-1 text-sv-label-sm uppercase tracking-wider text-sv-green disabled:opacity-60">
-            {suggesting ? "Thinking…" : "Suggest automations"}
+            {suggesting ? "Thinking… (~20s)" : "Suggest automations"}
           </button>
         }
       >
@@ -925,7 +927,7 @@ function Automations({ api }: { api: Api }) {
             className={cn(inputCls, "min-h-20 w-full resize-none")}
           />
           <button onClick={aiBuild} disabled={building || !goal.trim()} className="rounded-sv-sm bg-sv-green px-4 py-2 text-sv-small font-medium text-sv-ink disabled:opacity-60">
-            {building ? "Building…" : "Build automation"}
+            {building ? "Building… (~20s)" : "Build automation"}
           </button>
           {suggestions.length > 0 && (
             <div className="space-y-2 pt-1">
@@ -945,6 +947,7 @@ function Automations({ api }: { api: Api }) {
         </div>
       </Panel>
 
+      <div ref={formRef} />
       <Panel title="NEW AUTOMATION" action={<button onClick={runNow} className="rounded-sv-sm border border-sv-green-line px-3 py-1 text-sv-label-sm uppercase tracking-wider text-sv-green">Run now</button>}>
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-3">
@@ -1184,7 +1187,7 @@ function Landing({ api }: { api: Api }) {
           <div className="flex flex-wrap items-center gap-2">
             <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Conversion goal / seed sent to the Chat on CTA click" className={cn(inputCls, "flex-1")} />
             <button onClick={genVariants} disabled={generating || !goal.trim()} className="rounded-sv-sm border border-sv-green-line px-3 py-2 text-sv-small text-sv-green disabled:opacity-60">
-              {generating ? "Generating…" : "Generate variants with AI"}
+              {generating ? "Generating… (~25s)" : "Generate variants with AI"}
             </button>
           </div>
           {hypothesis && (
