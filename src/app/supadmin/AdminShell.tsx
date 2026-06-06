@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { MarketingDashboard } from "./marketing/MarketingDashboard";
+import { PromptsView } from "./prompts/PromptsView";
 import { AdminCopilot } from "./AdminCopilot";
 import { AdminThemePicker } from "./AdminThemePicker";
 import { cn } from "@/lib/utils";
@@ -18,7 +19,7 @@ export function AdminShell({
   email: string | null;
   onSignOut: () => void;
 }) {
-  const [view, setView] = useState<"leads" | "marketing">("leads");
+  const [view, setView] = useState<"leads" | "marketing" | "prompts">("leads");
 
   return (
     <div className="min-h-dvh bg-sv-base text-sv-text">
@@ -29,7 +30,7 @@ export function AdminShell({
             <span className="sv-label sv-label--live">STRYVIA ADMIN</span>
           </div>
           <nav className="flex rounded-sv-sm border border-sv-line p-0.5">
-            {(["leads", "marketing"] as const).map((v) => (
+            {(["leads", "marketing", "prompts"] as const).map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
@@ -57,8 +58,10 @@ export function AdminShell({
 
       {view === "leads" ? (
         <AdminDashboard token={token} />
-      ) : (
+      ) : view === "marketing" ? (
         <MarketingDashboard token={token} />
+      ) : (
+        <PromptsView token={token} />
       )}
 
       <AdminCopilot token={token} />
