@@ -37,7 +37,11 @@ Guidelines for the prompt you write:
   actual content (structure, intent, style).
 - Be specific and well-structured; include role, task, constraints, and desired
   output format when useful.
-- Keep it to a single fenced \`prompt\` block. Do not add commentary inside the block.
+- Do not add commentary inside a \`prompt\` block — only the prompt text.
+- If the user asks for SEPARATE prompts (e.g. one per attached image/file),
+  output ONE fenced \`prompt\` block per prompt, each preceded by a short title
+  line saying which file it is for. The user saves each block individually.
+- Otherwise, return a single \`prompt\` block.
 - If the user asks to tweak the previous draft, return the full updated prompt
   in a new \`prompt\` block.`;
 

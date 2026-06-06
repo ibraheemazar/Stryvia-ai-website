@@ -94,6 +94,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
   const [busy, setBusy] = useState(false);
   const [recording, setRecording] = useState(false);
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [savedKeys, setSavedKeys] = useState<Set<string>>(new Set());
   const [saveError, setSaveError] = useState<string | null>(null);
   const sendingRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -213,6 +214,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
       const json = await res.json().catch(() => null);
       if (json?.ok && json.prompt) {
         onSaved(json.prompt as Prompt);
+        setSavedKeys((s) => new Set(s).add(key));
       } else {
         setSaveError(json?.error || json?.reason || `Save failed (HTTP ${res.status}).`);
       }
@@ -299,14 +301,20 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                             {seg.complete && (
                               <div className="flex items-center gap-2 border-t border-sv-line bg-sv-surface-2/60 px-3 py-2">
                                 <CopyButton text={seg.value} variables={extractVariables(seg.value)} />
-                                <button
-                                  type="button"
-                                  onClick={() => void save(seg.value, `${i}-${j}`)}
-                                  disabled={savingKey === `${i}-${j}`}
-                                  className="rounded-sv-sm border border-sv-line px-3 py-1.5 text-sv-small text-sv-text-2 transition-colors hover:border-sv-green-line hover:text-sv-green disabled:opacity-40"
-                                >
-                                  {savingKey === `${i}-${j}` ? "Saving…" : "Save to library"}
-                                </button>
+                                {savedKeys.has(`${i}-${j}`) ? (
+                                  <span className="inline-flex items-center gap-1.5 rounded-sv-sm border border-sv-green-line px-3 py-1.5 text-sv-small text-sv-green">
+                                    ✓ Saved
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => void save(seg.value, `${i}-${j}`)}
+                                    disabled={savingKey === `${i}-${j}`}
+                                    className="rounded-sv-sm border border-sv-line px-3 py-1.5 text-sv-small text-sv-text-2 transition-colors hover:border-sv-green-line hover:text-sv-green disabled:opacity-40"
+                                  >
+                                    {savingKey === `${i}-${j}` ? "Saving…" : "Save to library"}
+                                  </button>
+                                )}
                                 {saveError && <span className="text-xs text-sv-danger">{saveError}</span>}
                               </div>
                             )}
