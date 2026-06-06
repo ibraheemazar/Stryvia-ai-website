@@ -64,7 +64,9 @@ export function AdminShell({
         <PromptsView token={token} />
       )}
 
-      <AdminCopilot token={token} />
+      {/* The Prompts tab is its own chat surface, so the floating Copilot is
+          hidden there to avoid overlapping its composer. */}
+      {view !== "prompts" && <AdminCopilot token={token} />}
     </div>
   );
 }

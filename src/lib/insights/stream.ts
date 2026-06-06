@@ -1,11 +1,15 @@
 import "server-only";
+import type Anthropic from "@anthropic-ai/sdk";
 import { getAnthropic, ANTHROPIC_MODEL, hasAnthropic } from "@/lib/anthropic";
 import type { ChatMessage } from "@/lib/chat/types";
 
-// Streams a Claude completion as plain text for the admin AI surfaces. The data
-// context is injected as a system block; the conversation is the operator's
-// turns. Errors are surfaced inline so the UI never hangs silently.
-export function streamClaude(system: string, messages: ChatMessage[]): Response {
+// Core: stream a Claude completion as plain text from already-built message
+// params (which may carry image / document content blocks). Errors surface
+// inline so the UI never hangs silently.
+export function streamClaudeMessages(
+  system: string,
+  messages: Anthropic.Messages.MessageParam[],
+): Response {
   if (!hasAnthropic()) {
     return new Response(
       "The intelligence isn't connected yet — add ANTHROPIC_API_KEY to enable it.",
@@ -23,7 +27,7 @@ export function streamClaude(system: string, messages: ChatMessage[]): Response 
           model: ANTHROPIC_MODEL,
           max_tokens: 2000,
           system,
-          messages: messages.map((m) => ({ role: m.role, content: m.content })),
+          messages,
         });
         for await (const event of s) {
           if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
@@ -47,6 +51,14 @@ export function streamClaude(system: string, messages: ChatMessage[]): Response 
       "Cache-Control": "no-cache, no-transform",
     },
   });
+}
+
+// Streams a Claude completion from plain-text admin turns (analytics, copilot).
+export function streamClaude(system: string, messages: ChatMessage[]): Response {
+  return streamClaudeMessages(
+    system,
+    messages.map((m) => ({ role: m.role, content: m.content })),
+  );
 }
 
 const RANGES = ["7d", "30d", "90d"] as const;
