@@ -78,5 +78,7 @@ export async function POST(req: NextRequest) {
     params.push({ role: "user", content: [...blocks, { type: "text", text: lastText }] });
   }
 
-  return streamClaudeMessages(MAKER_SYSTEM, params);
+  // A generous budget so several prompts (e.g. one per attached image) all fit
+  // in one response without the last block being truncated.
+  return streamClaudeMessages(MAKER_SYSTEM, params, { maxTokens: 8000 });
 }

@@ -59,10 +59,11 @@ async function fileToAttachment(file: File): Promise<MakerAttachment | null> {
   return null;
 }
 
-// Split an assistant message into prose + ```prompt blocks. The last block may
-// still be streaming (no closing fence yet), in which case it shows as text
-// without actions until it completes.
-function parseSegments(text: string): Segment[] {
+// Split an assistant message into prose + ```prompt blocks. A trailing block
+// with no closing fence is only "incomplete" while the response is still
+// streaming; once streaming has finished (`done`) it is treated as a complete,
+// saveable prompt so the last block always gets Copy / Save actions.
+function parseSegments(text: string, done: boolean): Segment[] {
   const segs: Segment[] = [];
   const re = /```prompt[^\n]*\n([\s\S]*?)```/g;
   let last = 0;
@@ -77,7 +78,8 @@ function parseSegments(text: string): Segment[] {
   if (open) {
     const before = rest.slice(0, open.index ?? 0);
     if (before.trim()) segs.push({ type: "text", value: before });
-    segs.push({ type: "prompt", value: open[1], complete: false });
+    // Drop any stray trailing fence chars if the model half-closed the block.
+    segs.push({ type: "prompt", value: open[1].replace(/```\s*$/, "").replace(/\n+$/, ""), complete: done });
   } else if (rest.trim()) {
     segs.push({ type: "text", value: rest });
   }
@@ -288,7 +290,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                     {m.content === "" ? (
                       <span className="sv-label">THINKING…</span>
                     ) : (
-                      parseSegments(m.content).map((seg, j) =>
+                      parseSegments(m.content, !(busy && i === messages.length - 1)).map((seg, j) =>
                         seg.type === "text" ? (
                           <div key={j} className="text-sv-body text-sv-text-2">
                             <Markdown text={seg.value} />
