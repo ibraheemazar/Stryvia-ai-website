@@ -81,7 +81,10 @@ export function PromptsView({ token }: { token: string }) {
     setMode("chat");
   }
 
-  function onSaved(p: Prompt) {
+  // Add or update a prompt in the library list, without changing what's on
+  // screen. Used by the AI maker so saving one draft doesn't navigate away and
+  // lose the other drafts still in the chat.
+  function upsertPrompt(p: Prompt) {
     setPrompts((list) => {
       const i = list.findIndex((x) => x.id === p.id);
       if (i === -1) return [p, ...list];
@@ -89,6 +92,11 @@ export function PromptsView({ token }: { token: string }) {
       next[i] = p;
       return next;
     });
+  }
+
+  // Save from the editor: update the list and keep the saved prompt open.
+  function onEditorSaved(p: Prompt) {
+    upsertPrompt(p);
     setEditing(p);
     setSelectedId(p.id);
     setMode("editor");
@@ -205,9 +213,9 @@ export function PromptsView({ token }: { token: string }) {
       {/* Main area */}
       <section className="flex min-h-0 min-w-0 flex-1 flex-col">
         {mode === "chat" ? (
-          <PromptMaker token={token} onSaved={onSaved} />
+          <PromptMaker token={token} onSaved={upsertPrompt} />
         ) : (
-          <PromptEditor key={selectedId ?? "new"} token={token} prompt={editing} onSaved={onSaved} onDeleted={onDeleted} />
+          <PromptEditor key={selectedId ?? "new"} token={token} prompt={editing} onSaved={onEditorSaved} onDeleted={onDeleted} />
         )}
       </section>
     </div>
