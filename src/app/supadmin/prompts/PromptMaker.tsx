@@ -204,6 +204,13 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
     }
   }
 
+  // Opt-in refinement: only runs when the user clicks Optimize on a block.
+  function optimize(promptBody: string) {
+    void send(
+      `Optimize this prompt — keep it reusable and generic with {{variables}}, don't bake in specifics. Return the full improved prompt:\n\n${promptBody}`,
+    );
+  }
+
   async function save(promptBody: string, key: string) {
     setSavingKey(key);
     setSaveError(null);
@@ -243,10 +250,11 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
           {isEmpty ? (
             <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center">
               <div className="space-y-2">
-                <p className="text-sv-h2 font-display text-sv-text">Make a prompt with AI</p>
+                <p className="text-sv-h2 font-display text-sv-text">Add a prompt</p>
                 <p className="mx-auto max-w-md text-sv-small text-sv-text-2">
-                  Describe what you want, paste a rough prompt, attach a file, or dictate. Claude drafts a
-                  clean, reusable version with {"{{variables}}"} — then save it in one click.
+                  Paste a prompt, attach a file or image, or dictate — it&apos;s captured exactly as you
+                  give it, then save in one click. Hit <span className="text-sv-text">Optimize</span> only
+                  if you want the AI to refine it. Or describe a prompt to have one written.
                 </p>
               </div>
               <div className="flex w-full max-w-lg flex-col gap-2">
@@ -317,6 +325,15 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                                     {savingKey === `${i}-${j}` ? "Saving…" : "Save to library"}
                                   </button>
                                 )}
+                                <button
+                                  type="button"
+                                  onClick={() => void optimize(seg.value)}
+                                  disabled={busy}
+                                  title="Ask AI to improve this prompt (optional)"
+                                  className="rounded-sv-sm border border-sv-line px-3 py-1.5 text-sv-small text-sv-text-2 transition-colors hover:border-sv-green-line hover:text-sv-green disabled:opacity-40"
+                                >
+                                  ✦ Optimize
+                                </button>
                                 {saveError && <span className="text-xs text-sv-danger">{saveError}</span>}
                               </div>
                             )}
