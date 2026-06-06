@@ -26,6 +26,7 @@ export function PromptEditor({
   const [tagsText, setTagsText] = useState("");
   const [favorite, setFavorite] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<Classification | null>(null);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export function PromptEditor({
   async function save() {
     if (!body.trim()) return;
     setBusy(true);
+    setError(null);
     try {
       const res = await fetch("/api/admin/prompts", {
         method: prompt ? "PATCH" : "POST",
@@ -53,8 +55,14 @@ export function PromptEditor({
             : { title, body, category, tags, classify: true, improve: false },
         ),
       });
-      const json = await res.json();
-      if (json?.ok && json.prompt) onSaved(json.prompt as Prompt);
+      const json = await res.json().catch(() => null);
+      if (json?.ok && json.prompt) {
+        onSaved(json.prompt as Prompt);
+      } else {
+        setError(json?.error || json?.reason || `Save failed (HTTP ${res.status}).`);
+      }
+    } catch {
+      setError("Couldn't reach the server. Check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -179,6 +187,12 @@ export function PromptEditor({
               </span>
             ))}
           </div>
+        )}
+
+        {error && (
+          <p className="rounded-sv-sm border border-sv-danger/40 bg-sv-danger/10 px-3 py-2 text-sv-small text-sv-danger">
+            {error}
+          </p>
         )}
 
         <div className="flex flex-wrap items-center gap-2 border-t border-sv-line pt-4">

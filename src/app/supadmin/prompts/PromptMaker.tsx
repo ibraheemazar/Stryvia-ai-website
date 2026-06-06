@@ -94,6 +94,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
   const [busy, setBusy] = useState(false);
   const [recording, setRecording] = useState(false);
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const sendingRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -202,14 +203,21 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
 
   async function save(promptBody: string, key: string) {
     setSavingKey(key);
+    setSaveError(null);
     try {
       const res = await fetch("/api/admin/prompts", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ body: promptBody, classify: true, improve: false }),
       });
-      const json = await res.json();
-      if (json?.ok && json.prompt) onSaved(json.prompt as Prompt);
+      const json = await res.json().catch(() => null);
+      if (json?.ok && json.prompt) {
+        onSaved(json.prompt as Prompt);
+      } else {
+        setSaveError(json?.error || json?.reason || `Save failed (HTTP ${res.status}).`);
+      }
+    } catch {
+      setSaveError("Couldn't reach the server. Try again.");
     } finally {
       setSavingKey(null);
     }
@@ -299,6 +307,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                                 >
                                   {savingKey === `${i}-${j}` ? "Saving…" : "Save to library"}
                                 </button>
+                                {saveError && <span className="text-xs text-sv-danger">{saveError}</span>}
                               </div>
                             )}
                           </div>

@@ -19,11 +19,13 @@ export function PromptsView({ token }: { token: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<Prompt | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(
     async (q: string, cat: string | null) => {
       setLoading(true);
+      setLoadError(null);
       try {
         const params = new URLSearchParams();
         if (q.trim()) params.set("q", q.trim());
@@ -31,8 +33,11 @@ export function PromptsView({ token }: { token: string }) {
         const res = await fetch(`/api/admin/prompts?${params.toString()}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const json = await res.json();
+        const json = await res.json().catch(() => null);
         if (json?.ok) setPrompts(json.prompts as Prompt[]);
+        else setLoadError(json?.error || json?.reason || `Couldn't load prompts (HTTP ${res.status}).`);
+      } catch {
+        setLoadError("Couldn't reach the server.");
       } finally {
         setLoading(false);
       }
@@ -158,6 +163,10 @@ export function PromptsView({ token }: { token: string }) {
         <div className="min-h-0 flex-1 overflow-y-auto p-2">
           {loading ? (
             <p className="p-3 text-sv-small text-sv-text-3">Loading…</p>
+          ) : loadError ? (
+            <p className="m-2 rounded-sv-sm border border-sv-danger/40 bg-sv-danger/10 p-3 text-sv-small text-sv-danger">
+              {loadError}
+            </p>
           ) : prompts.length === 0 ? (
             <p className="p-3 text-sv-small text-sv-text-3">
               {query || category ? "No matches." : "No prompts yet — make one with the AI Maker."}
