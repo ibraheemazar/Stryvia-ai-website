@@ -14,6 +14,9 @@ const eslintConfig = [
       ".next/**",
       "node_modules/**",
       "next-env.d.ts",
+      // admin-core is an isolated, portable starter kit (its own package with
+      // its own peer deps); it is not part of this app's build or lint.
+      "admin-core/**",
     ],
   },
 ];

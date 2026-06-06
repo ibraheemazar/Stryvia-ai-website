@@ -1,0 +1,24 @@
+{
+  "name": "@stryvia/admin-core",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Reusable admin-panel chassis (auth, shell, AI copilot, connectors) + pluggable modules for Next.js sites.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./modules/crm": "./src/modules/crm/index.ts"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.30",
+    "@supabase/supabase-js": ">=2.40",
+    "next": ">=14",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-sesv2": { "optional": true }
+  },
+  "optionalDependencies": {
+    "@aws-sdk/client-sesv2": ">=3"
+  }
+}
