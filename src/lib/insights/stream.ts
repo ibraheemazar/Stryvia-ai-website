@@ -9,6 +9,7 @@ import type { ChatMessage } from "@/lib/chat/types";
 export function streamClaudeMessages(
   system: string,
   messages: Anthropic.Messages.MessageParam[],
+  opts?: { maxTokens?: number },
 ): Response {
   if (!hasAnthropic()) {
     return new Response(
@@ -25,7 +26,7 @@ export function streamClaudeMessages(
       try {
         const s = anthropic.messages.stream({
           model: ANTHROPIC_MODEL,
-          max_tokens: 2000,
+          max_tokens: opts?.maxTokens ?? 2000,
           system,
           messages,
         });

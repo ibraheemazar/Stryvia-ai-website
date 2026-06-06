@@ -10,40 +10,36 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
-// The AI "maker": describe the prompt you want and Claude drafts a clean,
-// reusable one. It always emits the finished prompt inside a ```prompt fenced
-// block so the UI can offer a one-click "Save to library" on it. Variables are
-// expressed as {{snake_case}} so a near-identical prompt is written once and
-// only the blanks change later. The operator may attach images, PDFs or Word
-// docs — Claude reads them and turns them into a prompt.
-const MAKER_SYSTEM = `You are a prompt engineer helping build a personal library of reusable prompts.
+// The AI "maker" for the prompt library. Its DEFAULT job is to capture prompts
+// faithfully — exactly as the operator provides them (typed, pasted, or inside
+// attached images / PDFs / Word docs). It only writes or optimizes a prompt
+// when the operator explicitly asks. Every prompt is emitted inside a ```prompt
+// fenced block so the UI can offer one-click Copy / Save / Optimize.
+const MAKER_SYSTEM = `You help an operator build a personal library of reusable prompts.
 
-The user describes a task they want a prompt for, pastes a rough prompt to refine,
-or attaches files (images, PDFs, Word docs) to turn into a prompt.
-You write an excellent, reusable prompt they can send to an AI like Claude.
+DEFAULT BEHAVIOR — CAPTURE EXACTLY, DO NOT CHANGE:
+When the user pastes prompt text, or attaches files/images that contain prompts,
+reproduce each prompt EXACTLY as given. Do NOT rewrite it, expand it, make it more
+specific, add examples, change the wording, or "improve" it in any way. Preserve
+its generality and every {{placeholder}} verbatim. If an image or document
+contains a prompt, transcribe it word-for-word. This is the most important rule.
 
-ALWAYS follow this output shape:
-1. One short sentence on what the prompt does and how to reuse it.
-2. The finished prompt inside a fenced block tagged \`prompt\`, like:
+ONLY refine or generate when EXPLICITLY asked:
+- If the user explicitly says "optimize", "improve", "make it better", "refine",
+  then return an improved version — kept reusable and generic with {{snake_case}}
+  variables, never baking in specific details.
+- If the user asks you to "write/create a prompt for <description>" with no
+  source prompt to capture, then draft one.
+
+OUTPUT SHAPE:
+1. One short sentence (e.g. "Captured 3 prompts." or "Here's the optimized version.").
+2. Each prompt inside its OWN fenced block tagged \`prompt\`:
 \`\`\`prompt
 <the prompt text>
 \`\`\`
-
-Guidelines for the prompt you write:
-- Make anything that changes between uses a {{variable}} in snake_case
-  (e.g. {{topic}}, {{audience}}, {{tone}}). This is the whole point — the user
-  reuses the prompt and only fills the blanks.
-- When the user attaches a file, read it carefully and base the prompt on its
-  actual content (structure, intent, style).
-- Be specific and well-structured; include role, task, constraints, and desired
-  output format when useful.
-- Do not add commentary inside a \`prompt\` block — only the prompt text.
-- If the user asks for SEPARATE prompts (e.g. one per attached image/file),
-  output ONE fenced \`prompt\` block per prompt, each preceded by a short title
-  line saying which file it is for. The user saves each block individually.
-- Otherwise, return a single \`prompt\` block.
-- If the user asks to tweak the previous draft, return the full updated prompt
-  in a new \`prompt\` block.`;
+When there are several prompts (e.g. one per attached image), output one
+\`prompt\` block per prompt, each preceded by a short title line. The user saves
+each block individually. Never put commentary inside a \`prompt\` block.`;
 
 export async function POST(req: NextRequest) {
   const auth = await verifyAdmin(req.headers.get("authorization"));
@@ -78,5 +74,7 @@ export async function POST(req: NextRequest) {
     params.push({ role: "user", content: [...blocks, { type: "text", text: lastText }] });
   }
 
-  return streamClaudeMessages(MAKER_SYSTEM, params);
+  // A generous budget so several prompts (e.g. one per attached image) all fit
+  // in one response without the last block being truncated.
+  return streamClaudeMessages(MAKER_SYSTEM, params, { maxTokens: 8000 });
 }

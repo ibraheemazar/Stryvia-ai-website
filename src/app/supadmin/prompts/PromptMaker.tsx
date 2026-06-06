@@ -59,10 +59,11 @@ async function fileToAttachment(file: File): Promise<MakerAttachment | null> {
   return null;
 }
 
-// Split an assistant message into prose + ```prompt blocks. The last block may
-// still be streaming (no closing fence yet), in which case it shows as text
-// without actions until it completes.
-function parseSegments(text: string): Segment[] {
+// Split an assistant message into prose + ```prompt blocks. A trailing block
+// with no closing fence is only "incomplete" while the response is still
+// streaming; once streaming has finished (`done`) it is treated as a complete,
+// saveable prompt so the last block always gets Copy / Save actions.
+function parseSegments(text: string, done: boolean): Segment[] {
   const segs: Segment[] = [];
   const re = /```prompt[^\n]*\n([\s\S]*?)```/g;
   let last = 0;
@@ -77,7 +78,8 @@ function parseSegments(text: string): Segment[] {
   if (open) {
     const before = rest.slice(0, open.index ?? 0);
     if (before.trim()) segs.push({ type: "text", value: before });
-    segs.push({ type: "prompt", value: open[1], complete: false });
+    // Drop any stray trailing fence chars if the model half-closed the block.
+    segs.push({ type: "prompt", value: open[1].replace(/```\s*$/, "").replace(/\n+$/, ""), complete: done });
   } else if (rest.trim()) {
     segs.push({ type: "text", value: rest });
   }
@@ -202,6 +204,13 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
     }
   }
 
+  // Opt-in refinement: only runs when the user clicks Optimize on a block.
+  function optimize(promptBody: string) {
+    void send(
+      `Optimize this prompt — keep it reusable and generic with {{variables}}, don't bake in specifics. Return the full improved prompt:\n\n${promptBody}`,
+    );
+  }
+
   async function save(promptBody: string, key: string) {
     setSavingKey(key);
     setSaveError(null);
@@ -241,10 +250,11 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
           {isEmpty ? (
             <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center">
               <div className="space-y-2">
-                <p className="text-sv-h2 font-display text-sv-text">Make a prompt with AI</p>
+                <p className="text-sv-h2 font-display text-sv-text">Add a prompt</p>
                 <p className="mx-auto max-w-md text-sv-small text-sv-text-2">
-                  Describe what you want, paste a rough prompt, attach a file, or dictate. Claude drafts a
-                  clean, reusable version with {"{{variables}}"} — then save it in one click.
+                  Paste a prompt, attach a file or image, or dictate — it&apos;s captured exactly as you
+                  give it, then save in one click. Hit <span className="text-sv-text">Optimize</span> only
+                  if you want the AI to refine it. Or describe a prompt to have one written.
                 </p>
               </div>
               <div className="flex w-full max-w-lg flex-col gap-2">
@@ -288,7 +298,7 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                     {m.content === "" ? (
                       <span className="sv-label">THINKING…</span>
                     ) : (
-                      parseSegments(m.content).map((seg, j) =>
+                      parseSegments(m.content, !(busy && i === messages.length - 1)).map((seg, j) =>
                         seg.type === "text" ? (
                           <div key={j} className="text-sv-body text-sv-text-2">
                             <Markdown text={seg.value} />
@@ -315,6 +325,15 @@ export function PromptMaker({ token, onSaved }: { token: string; onSaved: (p: Pr
                                     {savingKey === `${i}-${j}` ? "Saving…" : "Save to library"}
                                   </button>
                                 )}
+                                <button
+                                  type="button"
+                                  onClick={() => void optimize(seg.value)}
+                                  disabled={busy}
+                                  title="Ask AI to improve this prompt (optional)"
+                                  className="rounded-sv-sm border border-sv-line px-3 py-1.5 text-sv-small text-sv-text-2 transition-colors hover:border-sv-green-line hover:text-sv-green disabled:opacity-40"
+                                >
+                                  ✦ Optimize
+                                </button>
                                 {saveError && <span className="text-xs text-sv-danger">{saveError}</span>}
                               </div>
                             )}
