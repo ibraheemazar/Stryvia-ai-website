@@ -7,14 +7,20 @@ import { PromptMaker } from "./PromptMaker";
 import { cn } from "@/lib/utils";
 
 type Mode = "chat" | "editor";
+type Sort = "updated" | "used" | "az";
 
-// The Prompt library. A simple two-pane workspace: a left sidebar to store,
-// search and pick saved prompts, and a main area that is either the AI maker
-// chat (build a new prompt) or the editor (view / edit / copy a prompt).
+// The Prompt library. A two-pane workspace: a left sidebar to store, search,
+// filter and pick saved prompts, and a main area that is either the AI maker
+// chat or the editor. Keyword search runs on the server; category, tag,
+// favorite, variable and sort filters run instantly on the loaded set.
 export function PromptsView({ token }: { token: string }) {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [varsOnly, setVarsOnly] = useState(false);
+  const [sort, setSort] = useState<Sort>("updated");
   const [mode, setMode] = useState<Mode>("chat");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<Prompt | null>(null);
@@ -23,13 +29,12 @@ export function PromptsView({ token }: { token: string }) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(
-    async (q: string, cat: string | null) => {
+    async (q: string) => {
       setLoading(true);
       setLoadError(null);
       try {
         const params = new URLSearchParams();
         if (q.trim()) params.set("q", q.trim());
-        if (cat) params.set("category", cat);
         const res = await fetch(`/api/admin/prompts?${params.toString()}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -45,24 +50,56 @@ export function PromptsView({ token }: { token: string }) {
     [token],
   );
 
-  useEffect(() => {
-    void load("", null);
-  }, [load]);
-
-  // Debounced search-as-you-type.
+  // Debounced keyword search; the first run fires with an empty query.
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => void load(query, category), 250);
+    debounceRef.current = setTimeout(() => void load(query), 250);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query, category, load]);
+  }, [query, load]);
 
   const categories = useMemo(() => {
     const set = new Set<string>();
     for (const p of prompts) if (p.category) set.add(p.category);
     return [...set].sort();
   }, [prompts]);
+
+  const allTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of prompts) for (const t of p.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([t]) => t);
+  }, [prompts]);
+
+  // Apply the client-side filters + sort to the loaded set.
+  const visible = useMemo(() => {
+    let list = prompts.filter((p) => {
+      if (category && p.category !== category) return false;
+      if (favoritesOnly && !p.favorite) return false;
+      if (varsOnly && p.variables.length === 0) return false;
+      if (activeTags.length && !activeTags.every((t) => p.tags.includes(t))) return false;
+      return true;
+    });
+    list = [...list].sort((a, b) => {
+      if (sort === "used") return b.use_count - a.use_count;
+      if (sort === "az") return a.title.localeCompare(b.title);
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
+    return list;
+  }, [prompts, category, favoritesOnly, varsOnly, activeTags, sort]);
+
+  const filtersActive = Boolean(category || activeTags.length || favoritesOnly || varsOnly);
+
+  function clearFilters() {
+    setCategory(null);
+    setActiveTags([]);
+    setFavoritesOnly(false);
+    setVarsOnly(false);
+  }
+
+  function toggleTag(t: string) {
+    setActiveTags((tags) => (tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t]));
+  }
 
   function openPrompt(p: Prompt) {
     setEditing(p);
@@ -81,9 +118,8 @@ export function PromptsView({ token }: { token: string }) {
     setMode("chat");
   }
 
-  // Add or update a prompt in the library list, without changing what's on
-  // screen. Used by the AI maker so saving one draft doesn't navigate away and
-  // lose the other drafts still in the chat.
+  // Add or update a prompt in the list without changing what's on screen — so
+  // saving from the maker doesn't lose the other drafts still in the chat.
   function upsertPrompt(p: Prompt) {
     setPrompts((list) => {
       const i = list.findIndex((x) => x.id === p.id);
@@ -94,7 +130,6 @@ export function PromptsView({ token }: { token: string }) {
     });
   }
 
-  // Save from the editor: update the list and keep the saved prompt open.
   function onEditorSaved(p: Prompt) {
     upsertPrompt(p);
     setEditing(p);
@@ -109,9 +144,15 @@ export function PromptsView({ token }: { token: string }) {
     setMode("chat");
   }
 
+  const chip = (active: boolean) =>
+    cn(
+      "rounded-sv-pill border px-2 py-0.5 text-xs transition-colors",
+      active ? "border-sv-green-line text-sv-green" : "border-sv-line text-sv-text-3 hover:text-sv-text",
+    );
+
   return (
     <div className="flex h-[calc(100dvh-65px)] min-h-0">
-      {/* Sidebar: search + library */}
+      {/* Sidebar: search + filters + library */}
       <aside className="flex w-72 shrink-0 flex-col border-r border-sv-line">
         <div className="space-y-3 border-b border-sv-line p-3">
           <div className="flex gap-2">
@@ -133,38 +174,73 @@ export function PromptsView({ token }: { token: string }) {
               + Blank
             </button>
           </div>
+
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search keywords or phrases…"
             className="w-full rounded-sv-sm border border-sv-line bg-sv-surface-3 px-3 py-2 text-sv-small text-sv-text placeholder:text-sv-text-3 focus:border-sv-green-line focus:outline-none"
           />
+
+          {/* Quick toggles + sort */}
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setFavoritesOnly((v) => !v)}
+              className={chip(favoritesOnly)}
+              title="Show favorites only"
+            >
+              ★ Favorites
+            </button>
+            <button
+              type="button"
+              onClick={() => setVarsOnly((v) => !v)}
+              className={chip(varsOnly)}
+              title="Show prompts with variables only"
+            >
+              {"{{ }}"}
+            </button>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as Sort)}
+              title="Sort"
+              className="ml-auto rounded-sv-sm border border-sv-line bg-sv-surface-3 px-2 py-1 text-xs text-sv-text-2 focus:border-sv-green-line focus:outline-none"
+            >
+              <option value="updated">Recent</option>
+              <option value="used">Most used</option>
+              <option value="az">A–Z</option>
+            </select>
+          </div>
+
+          {/* Categories */}
           {categories.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              <button
-                type="button"
-                onClick={() => setCategory(null)}
-                className={cn(
-                  "rounded-sv-pill border px-2 py-0.5 text-xs transition-colors",
-                  category === null ? "border-sv-green-line text-sv-green" : "border-sv-line text-sv-text-3 hover:text-sv-text",
-                )}
-              >
+              <button type="button" onClick={() => setCategory(null)} className={chip(category === null)}>
                 All
               </button>
               {categories.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setCategory(c === category ? null : c)}
-                  className={cn(
-                    "rounded-sv-pill border px-2 py-0.5 text-xs transition-colors",
-                    category === c ? "border-sv-green-line text-sv-green" : "border-sv-line text-sv-text-3 hover:text-sv-text",
-                  )}
-                >
+                <button key={c} type="button" onClick={() => setCategory(c === category ? null : c)} className={chip(category === c)}>
                   {c}
                 </button>
               ))}
             </div>
+          )}
+
+          {/* Tags */}
+          {allTags.length > 0 && (
+            <div className="flex max-h-24 flex-wrap gap-1.5 overflow-y-auto">
+              {allTags.map((t) => (
+                <button key={t} type="button" onClick={() => toggleTag(t)} className={chip(activeTags.includes(t))}>
+                  #{t}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {filtersActive && (
+            <button type="button" onClick={clearFilters} className="text-xs text-sv-text-3 underline hover:text-sv-text">
+              Clear filters
+            </button>
           )}
         </div>
 
@@ -175,13 +251,13 @@ export function PromptsView({ token }: { token: string }) {
             <p className="m-2 rounded-sv-sm border border-sv-danger/40 bg-sv-danger/10 p-3 text-sv-small text-sv-danger">
               {loadError}
             </p>
-          ) : prompts.length === 0 ? (
+          ) : visible.length === 0 ? (
             <p className="p-3 text-sv-small text-sv-text-3">
-              {query || category ? "No matches." : "No prompts yet — make one with the AI Maker."}
+              {query || filtersActive ? "No matches." : "No prompts yet — add one with the AI Maker."}
             </p>
           ) : (
             <ul className="space-y-1">
-              {prompts.map((p) => (
+              {visible.map((p) => (
                 <li key={p.id}>
                   <button
                     type="button"
@@ -198,6 +274,7 @@ export function PromptsView({ token }: { token: string }) {
                     <div className="mt-0.5 flex items-center gap-2 text-xs text-sv-text-3">
                       {p.category && <span className="truncate">{p.category}</span>}
                       {p.variables.length > 0 && <span className="font-mono">· {p.variables.length} var</span>}
+                      {p.use_count > 0 && <span>· used {p.use_count}×</span>}
                     </div>
                   </button>
                 </li>
@@ -206,7 +283,9 @@ export function PromptsView({ token }: { token: string }) {
           )}
         </div>
         <div className="border-t border-sv-line px-3 py-2 text-xs text-sv-text-3">
-          {prompts.length} prompt{prompts.length === 1 ? "" : "s"}
+          {visible.length === prompts.length
+            ? `${prompts.length} prompt${prompts.length === 1 ? "" : "s"}`
+            : `${visible.length} of ${prompts.length}`}
         </div>
       </aside>
 
