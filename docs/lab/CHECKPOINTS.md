@@ -31,10 +31,16 @@ Honest status per phase (brief §11): what was built, what was tested and how, w
 
 **Built.** Voice: three provider adapters + transcribe route + browser dictation fallback; comparison doc + bench script. Resume page, delete-my-data flow, print/PDF brief page, progress rail, retry-without-losing-transcript, busy-lock handling, budget warning, language switch mid-session, finish-early. Screenshot script for iPhone 13 + desktop in AR/EN.
 
-**Tested.** Screenshots in `checkpoint-3/` (see the note there on what they show). Voice adapters are typed and shaped after each vendor's documented API but **not executed** (no keys). The Web Speech fallback is the same mechanism the admin Prompt Maker already uses.
+**Tested.** Screenshots in `checkpoint-3/` (dark scheme, reduced motion, iPhone 13 + desktop, EN + AR: landing, resume, delete-my-data, interview). Session hydration now fails loudly with a Retry instead of a spinner when the network drops (found by the screenshot run through the sandbox proxy). Voice adapters are typed and shaped after each vendor's documented API but **not executed** (no keys). The Web Speech fallback is the same mechanism the admin Prompt Maker already uses.
 
 **Untested.** Real-phone walkthrough; provider transcription accuracy (bench needs keys and clips).
 
 ## Checkpoint 4 — Quality gate
 
-See `QUALITY_GATE_REPORT.md`.
+**Built.** Persona harness (30 personas), judge prompt, preview-only harness endpoint, review-round exporter, retention/sweep/spend cron jobs, cron auth hardening, delete-my-data flow, adversarial unit tests.
+
+**Tested.** Harness plumbing run with the mock provider on the preview: 3 personas completed start → 8 turns → submit → assessment → judge → report (`harness-mock/REPORT.md`; all three "FAIL" on `ladder_ok` because the mock visitor never reacts to ladder steps — expected, and a useful proof that the checks are real). Cron tasks are wired in `vercel.json` and unit-covered where pure; the retention job has **not** run against real data yet (first scheduled run happens after the production deploy).
+
+**Untested.** Everything that needs the real model (see `QUALITY_GATE_REPORT.md` §3) and the founder review round.
+
+See `QUALITY_GATE_REPORT.md` for the sign-off table.

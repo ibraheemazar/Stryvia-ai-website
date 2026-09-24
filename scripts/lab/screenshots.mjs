@@ -18,18 +18,37 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 
+async function gotoRetry(page, url, tries = 4) {
+  for (let i = 1; i <= tries; i += 1) {
+    try {
+      await page.goto(url, { waitUntil: "load", timeout: 45_000 });
+      await page.waitForTimeout(1200);
+      return true;
+    } catch (err) {
+      console.log(`  retry ${i}/${tries} for ${url}: ${String(err).split("\n")[0]}`);
+      await page.waitForTimeout(1500 * i);
+    }
+  }
+  return false;
+}
+
 async function shoot(ctx, url, name, opts = {}) {
   const page = await ctx.newPage();
-  await page.goto(`${BASE}${url}`, { waitUntil: "networkidle" });
-  if (opts.after) await opts.after(page);
-  await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: opts.fullPage ?? true });
-  await page.close();
-  console.log(`✓ ${name}`);
+  try {
+    if (!(await gotoRetry(page, `${BASE}${url}`))) return console.log(`! ${name} skipped (navigation failed)`);
+    if (opts.after) await opts.after(page);
+    await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: opts.fullPage ?? true });
+    console.log(`✓ ${name}`);
+  } catch (err) {
+    console.log(`! ${name}: ${String(err).split("\n")[0]}`);
+  } finally {
+    await page.close();
+  }
 }
 
 for (const [label, device] of [["iphone13", devices["iPhone 13"]], ["desktop", { viewport: { width: 1280, height: 900 } }]]) {
   for (const lang of ["en", "ar"]) {
-    const ctx = await browser.newContext({ ...device, locale: lang === "ar" ? "ar-SA" : "en-US" });
+    const ctx = await browser.newContext({ ...device, locale: lang === "ar" ? "ar-SA" : "en-US", ignoreHTTPSErrors: true, colorScheme: "dark", reducedMotion: "reduce" });
     await ctx.addCookies([{ name: "NEXT_LOCALE", value: lang, url: BASE }]);
     const prefix = lang === "ar" ? "/ar" : "";
     await shoot(ctx, `${prefix}/lab`, `${label}-${lang}-landing`);
@@ -45,7 +64,12 @@ for (const [label, device] of [["iphone13", devices["iPhone 13"]], ["desktop", {
     });
     const started = await start.json();
     if (started.ok) {
-      await page.goto(`${BASE}${started.url}`, { waitUntil: "networkidle" });
+      if (!(await gotoRetry(page, `${BASE}${started.url}`))) {
+        console.log(`! ${label}-${lang}-interview skipped (navigation failed)`);
+        await page.close();
+        await ctx.close();
+        continue;
+      }
       await page.screenshot({ path: path.join(OUT, `${label}-${lang}-interview-empty.png`), fullPage: false });
       const ta = page.getByRole("textbox").first();
       await ta.fill(lang === "ar" ? "أدير مكتب ترجمة صغير في الرياض والطلبات تأتي على WhatsApp ونسعّرها يدويًا." : "I run a small translation office in Riyadh; requests arrive on WhatsApp and we quote by hand.");

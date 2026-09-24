@@ -40,9 +40,16 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
   const openedRef = useRef(false);
 
   const hydrate = useCallback(async () => {
-    const { status, data } = await labFetch<{ ok: boolean; session: SessionView; messages: MessageView[]; brief: BriefView | null; error?: string }>(
-      `/api/lab/session/${sessionId}`,
-    );
+    let status = 0;
+    let data: { ok: boolean; session: SessionView; messages: MessageView[]; brief: BriefView | null; error?: string };
+    try {
+      ({ status, data } = await labFetch<{ ok: boolean; session: SessionView; messages: MessageView[]; brief: BriefView | null; error?: string }>(
+        `/api/lab/session/${sessionId}`,
+      ));
+    } catch {
+      // Network failure: never leave the visitor on a spinner.
+      return setLoad({ state: "unavailable" });
+    }
     if (status === 401 || status === 404) return setLoad({ state: "denied" });
     if (status === 503) return setLoad({ state: "unavailable" });
     if (!data.ok) return setLoad({ state: "unavailable" });
@@ -186,6 +193,9 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
         <div className="mx-auto max-w-xl">
           <h1 className="font-display text-sv-h1 text-sv-text">{t("unavailable")}</h1>
           <p className="mt-4 text-sv-body-l text-sv-text-2">{t("unavailableBody")}</p>
+          <div className="mt-8">
+            <Button variant="secondary" onClick={() => { setLoad({ state: "loading" }); void hydrate(); }}>{t("retry")}</Button>
+          </div>
         </div>
       </Container>
     );
