@@ -686,3 +686,13 @@
 [data-theme="light"] .sv-aurora span { mix-blend-mode: multiply; opacity: 0.18; filter: blur(110px); }
 [data-theme="light"] .sv-aurora .a2 { opacity: 0.13; }
 [data-theme="light"] .sv-aurora .a3 { opacity: 0.11; }
+
+/* RTL typography (RTL.md §4): Arabic headings keep the Arabic face, never the
+   Latin display face; Arabic has no letter-spacing and needs taller leading. */
+[dir="rtl"] :is(h1, h2, h3, h4, .font-display) {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+[dir="rtl"] .sv-label { letter-spacing: 0; }
+

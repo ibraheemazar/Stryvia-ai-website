@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 // collapsed, expanding to a docked panel on desktop and a full-screen takeover
 // on mobile. Hidden where the Chat already occupies the page.
 const HIDE_ON = ["/", "/start"];
+const HIDE_PREFIX = ["/lab"];
 
 export function ChatDock() {
   const t = useTranslations("chat");
@@ -17,7 +18,7 @@ export function ChatDock() {
   const pathname = usePathname();
   const { isOpen, open, close } = useChat();
 
-  if (HIDE_ON.includes(pathname)) return null;
+  if (HIDE_ON.includes(pathname) || HIDE_PREFIX.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
 
   return (
     <>
