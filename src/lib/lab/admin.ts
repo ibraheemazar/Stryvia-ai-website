@@ -58,7 +58,9 @@ export type ListRow = {
   language: string;
   visitor_name: string;
   email: string;
+  phone_e164: string;
   company: string | null;
+  role: string | null;
   country: string;
   turn_count: number;
   cost_usd: number;
@@ -67,13 +69,15 @@ export type ListRow = {
   weighted_score: number | null;
   assessment_status: string;
   has_decision: boolean;
+  /** Latest decision kind, when one exists. */
+  decision: string | null;
   awaiting_decision: boolean;
 };
 
 export async function listSessions(f: ListFilters): Promise<ListRow[]> {
   let q = db()
     .from("lab_sessions")
-    .select("id, created_at, submitted_at, status, phase, language, visitor_name, email, company, country, turn_count, token_usage, assessment_status")
+    .select("id, created_at, submitted_at, status, phase, language, visitor_name, email, phone_e164, company, role, country, turn_count, token_usage, assessment_status")
     .neq("status", "deleted")
     .order("created_at", { ascending: false })
     .limit(Math.min(f.limit ?? 200, 500));
@@ -84,14 +88,14 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
   if (f.q) q = q.or(`visitor_name.ilike.%${f.q}%,email.ilike.%${f.q}%,company.ilike.%${f.q}%`);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
-  const sessions = (data ?? []) as Array<Pick<LabSessionRow, "id" | "created_at" | "submitted_at" | "status" | "phase" | "language" | "visitor_name" | "email" | "company" | "country" | "turn_count" | "token_usage" | "assessment_status">>;
+  const sessions = (data ?? []) as Array<Pick<LabSessionRow, "id" | "created_at" | "submitted_at" | "status" | "phase" | "language" | "visitor_name" | "email" | "phone_e164" | "company" | "role" | "country" | "turn_count" | "token_usage" | "assessment_status">>;
   if (sessions.length === 0) return [];
   const ids = sessions.map((s) => s.id);
 
   const [{ data: states }, { data: assessments }, { data: decisions }] = await Promise.all([
     db().from("lab_idea_state").select("session_id, slots").in("session_id", ids),
     db().from("lab_assessments").select("session_id, verdict, weighted_score, created_at").in("session_id", ids).order("created_at", { ascending: false }),
-    db().from("lab_decisions").select("session_id").in("session_id", ids),
+    db().from("lab_decisions").select("session_id, decision, decided_at").in("session_id", ids).order("decided_at", { ascending: false }),
   ]);
   const industryBy = new Map<string, string | null>();
   for (const s of (states ?? []) as Array<{ session_id: string; slots: { industry?: { value?: string } } }>) {
@@ -101,7 +105,10 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
   for (const a of (assessments ?? []) as Array<{ session_id: string; verdict: string; weighted_score: number }>) {
     if (!latestAssessment.has(a.session_id)) latestAssessment.set(a.session_id, a);
   }
-  const decided = new Set(((decisions ?? []) as Array<{ session_id: string }>).map((d) => d.session_id));
+  const latestDecision = new Map<string, string>();
+  for (const d of (decisions ?? []) as Array<{ session_id: string; decision: string }>) {
+    if (!latestDecision.has(d.session_id)) latestDecision.set(d.session_id, d.decision);
+  }
 
   let rows: ListRow[] = sessions.map((s) => {
     const a = latestAssessment.get(s.id);
@@ -114,7 +121,9 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
       language: s.language,
       visitor_name: s.visitor_name,
       email: s.email,
+      phone_e164: s.phone_e164,
       company: s.company,
+      role: s.role,
       country: s.country,
       turn_count: s.turn_count,
       cost_usd: Number(s.token_usage?.cost_usd ?? 0),
@@ -122,8 +131,9 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
       verdict: a?.verdict ?? null,
       weighted_score: a ? Number(a.weighted_score) : null,
       assessment_status: s.assessment_status,
-      has_decision: decided.has(s.id),
-      awaiting_decision: s.status === "submitted" && !decided.has(s.id),
+      has_decision: latestDecision.has(s.id),
+      decision: latestDecision.get(s.id) ?? null,
+      awaiting_decision: s.status === "submitted" && !latestDecision.has(s.id),
     };
   });
   if (f.verdict) rows = rows.filter((r) => r.verdict === f.verdict);

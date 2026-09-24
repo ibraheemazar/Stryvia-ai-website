@@ -11,7 +11,9 @@ export type ListRow = {
   language: string;
   visitor_name: string;
   email: string;
+  phone_e164: string;
   company: string | null;
+  role: string | null;
   country: string;
   turn_count: number;
   cost_usd: number;
@@ -20,6 +22,7 @@ export type ListRow = {
   weighted_score: number | null;
   assessment_status: string;
   has_decision: boolean;
+  decision: string | null;
   awaiting_decision: boolean;
 };
 
@@ -121,7 +124,35 @@ export async function adminFetch<T>(token: string, url: string, init?: RequestIn
 export function fmtDate(s: string | null | undefined): string {
   if (!s) return "—";
   const d = new Date(s);
-  return d.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+// CSV of the rows currently on screen: contact + outcome columns, quoted,
+// with a BOM so Excel opens Arabic names correctly.
+export function rowsToCsv(rows: ListRow[]): string {
+  const cols: Array<[string, (r: ListRow) => string | number | null]> = [
+    ["name", (r) => r.visitor_name],
+    ["email", (r) => r.email],
+    ["phone", (r) => r.phone_e164],
+    ["company", (r) => r.company],
+    ["role", (r) => r.role],
+    ["country", (r) => r.country],
+    ["industry", (r) => r.industry],
+    ["language", (r) => r.language],
+    ["status", (r) => r.status],
+    ["verdict", (r) => r.verdict],
+    ["score", (r) => (r.weighted_score == null ? null : r.weighted_score.toFixed(2))],
+    ["decision", (r) => r.decision],
+    ["turns", (r) => r.turn_count],
+    ["cost_usd", (r) => r.cost_usd.toFixed(2)],
+    ["started_at", (r) => r.created_at],
+    ["submitted_at", (r) => r.submitted_at],
+    ["admin_url", (r) => `/supadmin/lab/${r.id}`],
+  ];
+  const esc = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [cols.map(([h]) => esc(h)).join(",")];
+  for (const r of rows) lines.push(cols.map(([, f]) => esc(f(r))).join(","));
+  return "\ufeff" + lines.join("\r\n");
 }
 
 export function verdictTone(v: string | null): string {
