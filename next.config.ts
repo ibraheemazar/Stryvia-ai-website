@@ -16,11 +16,12 @@ const csp = [
   "object-src 'none'",
   "frame-ancestors 'self'",
   "form-action 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.posthog.com https://*.i.posthog.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://*.posthog.com https://*.i.posthog.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.posthog.com https://*.i.posthog.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://*.google.com https://*.doubleclick.net",
+  "frame-src 'self' https://challenges.cloudflare.com",
+  "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co wss://*.supabase.co https://*.posthog.com https://*.i.posthog.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://*.google.com https://*.doubleclick.net",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "upgrade-insecure-requests",
@@ -48,7 +49,18 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["posthog-js"],
   },
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    // The Idea Lab (/lab, /ar/lab, /fr/lab) records voice notes, so it alone
+    // may use the microphone. Later entries win for the same header key.
+    const labHeaders = securityHeaders.map((h) =>
+      h.key === "Permissions-Policy" ? { ...h, value: "camera=(), microphone=(self), geolocation=()" } : h,
+    );
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      { source: "/lab/:path*", headers: labHeaders },
+      { source: "/lab", headers: labHeaders },
+      { source: "/:locale(ar|fr)/lab/:path*", headers: labHeaders },
+      { source: "/:locale(ar|fr)/lab", headers: labHeaders },
+    ];
   },
 };
 

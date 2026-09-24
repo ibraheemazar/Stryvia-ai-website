@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LAB_AI_PROVIDER: mock
+      LAB_MAIL_PROVIDER: log
+      LAB_COOKIE_SECRET: ci-only-cookie-secret
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci
+      SUPABASE_SERVICE_ROLE_KEY: ci
+      ANTHROPIC_API_KEY: ci
+      NEXT_PUBLIC_SITE_URL: https://stryvia.ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

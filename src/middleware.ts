@@ -8,6 +8,6 @@ export const config = {
   // file-based metadata routes (icon/og/twitter images, sitemap, robots), Next
   // internals, and static files. The admin is locale-agnostic (English-only).
   matcher: [
-    "/((?!api|supadmin|icon|apple-icon|opengraph-image|twitter-image|sitemap.xml|robots.txt|_next|_vercel|.*\\..*).*)",
+    "/((?!api|supadmin|admin|icon|apple-icon|opengraph-image|twitter-image|sitemap.xml|robots.txt|_next|_vercel|.*\\..*).*)",
   ],
 };

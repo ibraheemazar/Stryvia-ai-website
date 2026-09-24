@@ -199,25 +199,53 @@
         {
           "tab": "Product",
           "brief": "A web app that signs members up, takes payment, and runs the member area.",
-          "lanes": ["User flows", "Interface design", "Data & logic", "Payments", "Copy", "QA & launch"],
+          "lanes": [
+            "User flows",
+            "Interface design",
+            "Data & logic",
+            "Payments",
+            "Copy",
+            "QA & launch"
+          ],
           "result": "A working product — built as one coherent system, not assembled by hand from disconnected tools."
         },
         {
           "tab": "Campaign",
           "brief": "A launch campaign across web, social, and email for a new offer.",
-          "lanes": ["Positioning", "Core message", "Landing page", "Ad creative", "Email sequence", "Media plan"],
+          "lanes": [
+            "Positioning",
+            "Core message",
+            "Landing page",
+            "Ad creative",
+            "Email sequence",
+            "Media plan"
+          ],
           "result": "One campaign that says the same thing everywhere — coherent because a single mind shaped all of it."
         },
         {
           "tab": "Film",
           "brief": "A 60-second launch film for a new product.",
-          "lanes": ["Script", "Storyboard", "Voiceover", "Footage & visuals", "Music", "Edit & grade"],
+          "lanes": [
+            "Script",
+            "Storyboard",
+            "Voiceover",
+            "Footage & visuals",
+            "Music",
+            "Edit & grade"
+          ],
           "result": "A finished film — coherent because it was orchestrated as one piece, not stitched together from six separate tools."
         },
         {
           "tab": "Research",
           "brief": "A market-entry study for moving into a new region.",
-          "lanes": ["Market sizing", "Competitor scan", "Customer signals", "Pricing model", "Risk map", "Recommendation"],
+          "lanes": [
+            "Market sizing",
+            "Competitor scan",
+            "Customer signals",
+            "Pricing model",
+            "Risk map",
+            "Recommendation"
+          ],
           "result": "A decision-ready study — one coherent argument, not six disconnected analyses left for you to reconcile."
         }
       ]
@@ -580,43 +608,234 @@
       }
     ],
     "instrument": {
-    "chrome": "STRYVIA · INSTRUMENT",
-    "project": "Membership product · launch",
-    "directing": "DIRECTING",
-    "brief": {
-      "label": "THE BRIEF",
-      "problem": "A membership product that signs people up, takes payment, and runs the member area.",
-      "decisions": [
-        "Audience: independent studios",
-        "Voice: warm, plain language",
-        "Live in four weeks"
-      ]
-    },
-    "work": {
-      "label": "THE WORK",
-      "building": "The pieces assemble as the decisions land.",
-      "pieces": ["Sign-up flow", "Payments", "Member area", "Admin"]
-    },
-    "choices": {
-      "label": "CHOICES SURFACED",
-      "awaiting": "AWAITING YOU",
-      "items": [
-        { "q": "Billing model", "a": "Monthly, or annual-first with a monthly option" },
-        { "q": "Member onboarding", "a": "Guided setup vs. straight to self-serve" },
-        { "q": "Brand direction", "a": "Bold and loud vs. quiet and precise" }
+      "chrome": "STRYVIA · INSTRUMENT",
+      "project": "Membership product · launch",
+      "directing": "DIRECTING",
+      "brief": {
+        "label": "THE BRIEF",
+        "problem": "A membership product that signs people up, takes payment, and runs the member area.",
+        "decisions": [
+          "Audience: independent studios",
+          "Voice: warm, plain language",
+          "Live in four weeks"
+        ]
+      },
+      "work": {
+        "label": "THE WORK",
+        "building": "The pieces assemble as the decisions land.",
+        "pieces": [
+          "Sign-up flow",
+          "Payments",
+          "Member area",
+          "Admin"
+        ]
+      },
+      "choices": {
+        "label": "CHOICES SURFACED",
+        "awaiting": "AWAITING YOU",
+        "items": [
+          {
+            "q": "Billing model",
+            "a": "Monthly, or annual-first with a monthly option"
+          },
+          {
+            "q": "Member onboarding",
+            "a": "Guided setup vs. straight to self-serve"
+          },
+          {
+            "q": "Brand direction",
+            "a": "Bold and loud vs. quiet and precise"
+          }
+        ],
+        "accept": "Approve",
+        "redirect": "Redirect"
+      },
+      "phases": [
+        "UNDERSTANDING",
+        "ORCHESTRATING",
+        "DRAFTING",
+        "READY FOR YOU"
       ],
-      "accept": "Approve",
-      "redirect": "Redirect"
+      "note": "A preview of the working relationship — a walkthrough, not a live product."
     },
-    "phases": ["UNDERSTANDING", "ORCHESTRATING", "DRAFTING", "READY FOR YOU"],
-    "note": "A preview of the working relationship — a walkthrough, not a live product."
-  },
-  "cta": "Direct your first build"
+    "cta": "Direct your first build"
   },
   "resources": {
     "eyebrow": "RESOURCES",
     "title": "How to think about building with an intelligence.",
     "lead": "Substantial, practical pieces on getting from a problem to a solution you own. Each ends where everything here does — a conversation.",
     "readMore": "Read"
+  },
+  "lab": {
+    "meta": {
+      "title": "Stryvia Idea Lab",
+      "description": "A guided conversation with Stryvia's AI that shapes your idea into a brief and puts it in front of Stryvia."
+    },
+    "eyebrow": "STRYVIA IDEA LAB",
+    "code": "/ LAB",
+    "title": "Bring the idea. Leave with a brief worth reading.",
+    "lead": "A guided conversation with Stryvia's AI. It asks the questions an experienced founder would ask, helps you see what your idea could become, and writes a brief you will be proud of. Then Stryvia reads it.",
+    "facts": {
+      "time": {
+        "label": "TIME",
+        "text": "About 15 to 20 minutes. Stop anytime and come back with the link we email you."
+      },
+      "get": {
+        "label": "WHAT YOU GET",
+        "text": "A polished brief of your idea in two parts: what you came with, and what it could become."
+      },
+      "private": {
+        "label": "PRIVATE",
+        "text": "Your information is used only to evaluate your idea. It is never shared, and you can ask us to delete it at any time."
+      }
+    },
+    "form": {
+      "heading": "Start the conversation",
+      "sub": "We ask for a little about you so Stryvia can get back to the right person.",
+      "name": "Full name",
+      "email": "Email",
+      "emailHint": "We send you a link to resume later, and a copy of your brief.",
+      "phone": "Phone",
+      "phoneHint": "With country code. This is how Stryvia will reach you if your idea is a fit.",
+      "country": "Country",
+      "company": "Company or organisation",
+      "role": "Your role",
+      "optional": "optional",
+      "language": "Conversation language",
+      "start": "Start",
+      "starting": "Starting…",
+      "errors": {
+        "name": "Please enter your full name.",
+        "email": "That email does not look right.",
+        "phone": "That phone number does not look valid for the selected country.",
+        "country": "Please choose your country.",
+        "consent": "Please read and accept the terms to continue.",
+        "bot": "We could not verify you are human. Please try again.",
+        "tooMany": "You have started several sessions today. Please continue an existing one from the link in your email, or try again tomorrow.",
+        "rate": "Too many attempts. Please wait a few minutes.",
+        "generic": "Something went wrong. Please try again."
+      }
+    },
+    "consent": {
+      "version": "2026-09-v1",
+      "label": "I have read and accept the terms.",
+      "title": "Before we start — the short version",
+      "items": [
+        "You are talking to Stryvia's AI, not to Ibrahim. Ibrahim reads the finished briefs.",
+        "No obligation is created for either side. Stryvia may decline, and you may walk away.",
+        "Ideas discussed and expanded here create no ownership claim by either party over the other. Stryvia may build similar things independently; you keep your brief and your idea.",
+        "Your details and this conversation are private, used only to evaluate your idea, and deleted on request. Voice notes are transcribed by a speech service and the audio is not stored."
+      ],
+      "pdpl": "Handled in line with Saudi Arabia's Personal Data Protection Law (PDPL). Read our privacy policy or request deletion at any time."
+    },
+    "session": {
+      "loading": "Opening your conversation…",
+      "notYours": "This conversation is not open on this device.",
+      "notYoursBody": "Request a new link to your email and we will bring you right back.",
+      "requestLink": "Request a link",
+      "unavailable": "The Idea Lab is taking a short break.",
+      "unavailableBody": "Please try again in a few minutes.",
+      "phase": {
+        "intro": "GETTING STARTED",
+        "understand": "A · WHAT EXISTS TODAY",
+        "expand": "B · WHAT IT COULD BECOME",
+        "commit": "C · WHAT YOU BRING & EXPECT",
+        "review": "YOUR BRIEF",
+        "done": "DONE"
+      },
+      "progress": "{percent}% complete",
+      "you": "You",
+      "ai": "STRYVIA AI",
+      "thinking": "Thinking…",
+      "placeholder": "Type your answer…",
+      "send": "Send",
+      "retry": "Retry",
+      "errorTurn": "The connection dropped. Your message is saved — press Retry.",
+      "busy": "Give me a second, I am still writing.",
+      "budgetWarning": "We are close to the end of this session — one or two more answers and we will move to your brief.",
+      "finish": "Finish and see my brief",
+      "finishing": "Writing your brief…",
+      "finishHint": "You can finish early. The more you share, the stronger your brief.",
+      "voiceStart": "Record a voice note",
+      "voiceStop": "Stop recording",
+      "voiceUnsupported": "Voice input is not available in this browser.",
+      "voiceReview": "Check the transcript, then send.",
+      "languageToggle": "Switch conversation to",
+      "ended": "This session has ended.",
+      "endedBody": "Thank you for your time."
+    },
+    "brief": {
+      "title": "Your brief",
+      "sub": "Read it, edit anything, or ask Stryvia's AI to revise. When it reads right, submit it.",
+      "part1": "What you came with",
+      "part2": "What it could become",
+      "part2Note": "Ideas explored together with Stryvia's AI — not commitments from either side.",
+      "edit": "Edit text",
+      "saveEdits": "Save edits",
+      "cancel": "Cancel",
+      "reviseLabel": "Ask Stryvia's AI to revise",
+      "revisePlaceholder": "e.g. Make part one shorter, and mention the two branches in Jeddah.",
+      "revise": "Revise",
+      "revising": "Revising…",
+      "translate": "Also generate in {language}",
+      "english": "English",
+      "arabic": "Arabic",
+      "submit": "Submit to Stryvia",
+      "submitting": "Submitting…",
+      "submitNote": "Submitting sends your brief to Stryvia for review. You will get a copy by email.",
+      "version": "Version {n}",
+      "edited": "edited by you",
+      "saved": "Saved",
+      "fields": {
+        "problem": "The problem",
+        "who": "Who is affected",
+        "process": "How it works today",
+        "frequency": "Frequency and volume",
+        "cost": "What it costs today",
+        "tried": "What you have tried",
+        "tools": "Tools in use",
+        "outcome": "What you want",
+        "automate": "1 · Automate it",
+        "intelligence": "2 · Add intelligence",
+        "productize": "3 · Productize it",
+        "scale": "4 · Scale it",
+        "ceiling": "An honest note on the ceiling",
+        "bring": "What you bring",
+        "expect": "What you expect",
+        "constraints": "Constraints and regulation",
+        "next": "What happens next"
+      }
+    },
+    "confirmation": {
+      "eyebrow": "SUBMITTED",
+      "title": "Thank you. Your brief is with Stryvia.",
+      "body": "Stryvia will review it and respond within {days} working days. No commitments have been made by either side — this is a reading, not a promise.",
+      "emailed": "A copy of your brief is on its way to your inbox.",
+      "print": "Open printable brief",
+      "home": "Back to stryvia.ai"
+    },
+    "resume": {
+      "eyebrow": "RESUME",
+      "title": "Continue where you left off",
+      "lead": "Enter the email you used and we will send you a fresh link. Links work once and expire after 7 days.",
+      "email": "Email",
+      "send": "Send me a link",
+      "sending": "Sending…",
+      "sent": "If we have a conversation for that email, the link is on its way. Check your inbox and spam folder."
+    },
+    "privacy": {
+      "eyebrow": "YOUR DATA",
+      "title": "Delete my Idea Lab data",
+      "lead": "Enter your email and we will send a confirmation link. Once you confirm, everything linked to that email in the Idea Lab is permanently deleted: conversations, briefs and contact details.",
+      "email": "Email",
+      "send": "Send confirmation link",
+      "sending": "Sending…",
+      "sent": "If we hold data for that email, a confirmation link is on its way.",
+      "retention": "Without a request, Idea Lab data is deleted automatically {months} months after your last activity."
+    },
+    "unavailable": {
+      "title": "The Idea Lab is not open yet.",
+      "body": "Please check back soon."
+    }
   }
 }

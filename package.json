@@ -9,29 +9,43 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "smoke:marketing": "node scripts/marketing-smoke.mjs"
+    "smoke:marketing": "node scripts/marketing-smoke.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lab:personas": "node scripts/lab/personas.mjs",
+    "lab:stt-bench": "node scripts/lab/stt-bench.mjs",
+    "lab:review-export": "node scripts/lab/export-review-round.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.65.0",
+    "@anthropic-ai/sdk": "^0.128.0",
     "@aws-sdk/client-sesv2": "^3.1057.0",
     "@supabase/supabase-js": "^2.58.0",
+    "libphonenumber-js": "^1.13.14",
     "mammoth": "^1.12.0",
     "next": "^15.5.0",
     "next-intl": "^4.3.0",
     "posthog-js": "^1.260.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.1.0",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^22.10.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.5.0",
+    "jsdom": "^30.1.1",
     "tailwindcss": "^4.1.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^5.0.1"
   },
   "overrides": {
     "postcss": ">=8.5.10"
