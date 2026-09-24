@@ -144,7 +144,7 @@ export type Verdict = "productize" | "paid_build" | "priority_call" | "refer_or_
 export const VERDICT_LABELS: Record<Verdict, string> = {
   productize: "Productize — repeatable, Stryvia product candidate",
   paid_build: "Paid build — valuable one-off, custom build quote",
-  priority_call: "Priority call — book with Ibrahim",
+  priority_call: "Priority call — book a call with the team",
   refer_or_pass: "Refer or pass — polite decline, they keep their brief",
 };
 

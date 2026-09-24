@@ -88,8 +88,8 @@ const detail = {
     created_at: "2026-09-24T10:21:00Z",
   },
   assessments: [],
-  decisions: [{ id: "d", session_id: "s", decision: "hold", notes: "later", decided_by: "ibrahim@stryvia.ai", decided_at: "2026-09-24T11:00:00Z", outbound_email_subject: null, outbound_email_body: null, outbound_email_sent_at: null }],
-  notes: [{ id: "n", session_id: "s", author: "ibrahim@stryvia.ai", body: "call next week", created_at: "2026-09-24T11:01:00Z" }],
+  decisions: [{ id: "d", session_id: "s", decision: "hold", notes: "later", decided_by: "reviewer@stryvia.ai", decided_at: "2026-09-24T11:00:00Z", outbound_email_subject: null, outbound_email_body: null, outbound_email_sent_at: null }],
+  notes: [{ id: "n", session_id: "s", author: "reviewer@stryvia.ai", body: "call next week", created_at: "2026-09-24T11:01:00Z" }],
 } as unknown as SessionDetail;
 
 describe("review packet", () => {

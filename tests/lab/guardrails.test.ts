@@ -16,7 +16,7 @@ describe("output guardrail", () => {
   });
 
   it.each([
-    "I am Stryvia's AI. Ibrahim reads the briefs afterwards.",
+    "I am Stryvia's AI. Stryvia's team reads the briefs afterwards.",
     "Have you considered what an automated intake could remove from your week?",
     "أنا الذكاء الاصطناعي من سترايفيا. ما الذي يحدث عندما يتأخر العميل في الرد؟",
     "That ceiling is probably modest: a few dozen offices in one city.",

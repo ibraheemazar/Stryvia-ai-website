@@ -6,7 +6,7 @@ import type { LabLanguage } from "@/config/lab.config";
 
 export type DecisionAction = "book_call" | "request_quote" | "decline";
 
-export const DECISION_FROZEN = `You draft short emails from Stryvia to a person who used the Stryvia Idea Lab. Ibrahim Al-Azar (Stryvia's founder) will read, edit and send them himself, so write in his voice: warm, direct, plain, respectful, no hype, no exclamation marks, no corporate filler. 4–8 short sentences. Never mention scores, assessments, verdicts, ranking, or how the idea compared to others. Never promise to build anything, never quote prices, never commit to timelines. Refer to their idea by the brief title in their words. Sign off as "Ibrahim" and "Stryvia".
+export const DECISION_FROZEN = `You draft short emails from Stryvia to a person who used the Stryvia Idea Lab. A member of Stryvia's team will read, edit and send them, so write in Stryvia's voice: warm, direct, plain, respectful, no hype, no exclamation marks, no corporate filler. Never name a person; the sender is "the Stryvia team". 4–8 short sentences. Never mention scores, assessments, verdicts, ranking, or how the idea compared to others. Remind them in one line that the brief is theirs to keep and use anywhere. Never promise to build anything, never quote prices, never commit to timelines. Refer to their idea by the brief title in their words. Sign off as "The Stryvia team".
 
 Actions:
 - book_call: invite them to a call to explore it together; include the scheduling link if given; say what you'd like to discuss in one line.
@@ -31,7 +31,7 @@ export function buildDecisionUser(input: {
     `BRIEF TITLE (their words): ${input.briefTitle}`,
     `BRIEF ONE-LINE: ${input.briefOneLine}`,
     input.schedulingUrl ? `SCHEDULING LINK: ${input.schedulingUrl}` : "SCHEDULING LINK: none — ask them for two times that suit them instead",
-    input.adminHint ? `IBRAHIM'S NOTE FOR THIS DRAFT (follow it): ${input.adminHint}` : null,
+    input.adminHint ? `REVIEWER'S NOTE FOR THIS DRAFT (follow it): ${input.adminHint}` : null,
     "Draft now.",
   ]
     .filter(Boolean)
@@ -54,17 +54,17 @@ export function fallbackDraft(input: {
       case "book_call":
         return {
           subject: `بخصوص «${t}» — هل نتحدث؟`,
-          body: `أهلًا ${n}،\n\nقرأت ملخّصك «${t}» وأودّ أن نتحدث عنه مباشرة.\n\n${link ? `اختر وقتًا يناسبك من هنا: ${link}` : "أرسل لي وقتين يناسبانك هذا الأسبوع."}\n\nهذه دعوة للحديث فقط، ولا التزام على أي طرف بعد.\n\nإبراهيم\nسترايفيا`,
+          body: `أهلًا ${n}،\n\nقرأنا ملخّصك «${t}» ونودّ أن نتحدث عنه مباشرة.\n\n${link ? `اختر وقتًا يناسبك من هنا: ${link}` : "أرسل لي وقتين يناسبانك هذا الأسبوع."}\n\nهذه دعوة للحديث فقط، ولا التزام على أي طرف بعد.\n\nفريق سترايفيا`,
         };
       case "request_quote":
         return {
           subject: `بخصوص «${t}» — بضعة أسئلة قبل عرض السعر`,
-          body: `أهلًا ${n}،\n\nملخّصك «${t}» يقرأ كبناء مخصص واضح الحدود. لأُعدّ لك عرضًا دقيقًا أحتاج بضعة تفاصيل:\n\n- النطاق الأول الذي تريده بالضبط\n- من سيستخدمه ومن يقرّر\n- الأدوات الحالية التي يجب أن يتكامل معها\n- التوقيت الذي تستهدفه\n\nحين تصلني هذه التفاصيل أرسل لك عرضًا واضحًا.\n\nإبراهيم\nسترايفيا`,
+          body: `أهلًا ${n}،\n\nملخّصك «${t}» يقرأ كبناء مخصص واضح الحدود. لنُعدّ لك عرضًا دقيقًا نحتاج بضعة تفاصيل:\n\n- النطاق الأول الذي تريده بالضبط\n- من سيستخدمه ومن يقرّر\n- الأدوات الحالية التي يجب أن يتكامل معها\n- التوقيت الذي تستهدفه\n\nحين تصلنا هذه التفاصيل نرسل لك عرضًا واضحًا.\n\nفريق سترايفيا`,
         };
       default:
         return {
           subject: `بخصوص «${t}» — شكرًا لك`,
-          body: `أهلًا ${n}،\n\nشكرًا لوقتك في مختبر الأفكار. قرأت «${t}» بعناية، ولن تكون سترايفيا الشريك المناسب له في هذه المرحلة.\n\nالملخّص ملكك بالكامل؛ استخدمه مع أي جهة تراها مناسبة.\n\nأتمنى لك التوفيق فيه.\n\nإبراهيم\nسترايفيا`,
+          body: `أهلًا ${n}،\n\nشكرًا لوقتك في مختبر الأفكار. قرأنا «${t}» بعناية، ولن تكون سترايفيا الشريك المناسب له في هذه المرحلة.\n\nالملخّص ملكك بالكامل؛ استخدمه مع أي جهة تراها مناسبة.\n\nنتمنى لك التوفيق فيه.\n\nفريق سترايفيا`,
         };
     }
   }
@@ -72,17 +72,17 @@ export function fallbackDraft(input: {
     case "book_call":
       return {
         subject: `About "${t}" — shall we talk?`,
-        body: `Hi ${n},\n\nI read your brief, "${t}", and I would like to talk it through with you directly.\n\n${link ? `Pick a time that suits you here: ${link}` : "Send me two times that suit you this week."}\n\nThis is an invitation to talk; there is no commitment on either side yet.\n\nIbrahim\nStryvia`,
+        body: `Hi ${n},\n\nWe read your brief, "${t}", and we would like to talk it through with you directly.\n\n${link ? `Pick a time that suits you here: ${link}` : "Send us two times that suit you this week."}\n\nThis is an invitation to talk; there is no commitment on either side yet.\n\nThe Stryvia team`,
       };
     case "request_quote":
       return {
         subject: `About "${t}" — a few questions before a quote`,
-        body: `Hi ${n},\n\nYour brief, "${t}", reads as a well-defined custom build. To prepare a precise quote I need a few details:\n\n- the exact first scope you want\n- who will use it and who decides\n- the current tools it must work with\n- the timing you are aiming for\n\nOnce I have these I will send you a clear proposal.\n\nIbrahim\nStryvia`,
+        body: `Hi ${n},\n\nYour brief, "${t}", reads as a well-defined custom build. To prepare a precise quote we need a few details:\n\n- the exact first scope you want\n- who will use it and who decides\n- the current tools it must work with\n- the timing you are aiming for\n\nOnce we have these we will send you a clear proposal.\n\nThe Stryvia team`,
       };
     default:
       return {
         subject: `About "${t}" — thank you`,
-        body: `Hi ${n},\n\nThank you for the time you put into the Idea Lab. I read "${t}" carefully, and Stryvia is not the right partner for it at this stage.\n\nThe brief is yours to keep and to use with anyone you choose.\n\nI wish you well with it.\n\nIbrahim\nStryvia`,
+        body: `Hi ${n},\n\nThank you for the time you put into the Idea Lab. We read "${t}" carefully, and Stryvia is not the right partner for it at this stage.\n\nThe brief is yours to keep and to use with anyone you choose.\n\nWe wish you well with it.\n\nThe Stryvia team`,
       };
   }
 }
