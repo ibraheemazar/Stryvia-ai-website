@@ -713,7 +713,8 @@
         "bot": "We could not verify you are human. Please try again.",
         "tooMany": "You have started several sessions today. Please continue an existing one from the link in your email, or try again tomorrow.",
         "rate": "Too many attempts. Please wait a few minutes.",
-        "generic": "Something went wrong. Please try again."
+        "generic": "Something went wrong. Please try again.",
+        "paused": "The Idea Lab is paused for the moment. Please come back soon."
       }
     },
     "consent": {
