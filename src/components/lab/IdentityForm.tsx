@@ -104,6 +104,7 @@ export function IdentityForm({ turnstileSiteKey, consentVersion }: { turnstileSi
         bot_check_failed: t("errors.bot"),
         too_many_sessions: t("errors.tooMany"),
         rate_limited: t("errors.rate"),
+        paused: t("errors.paused"),
       };
       setErrors({ form: map[data.error ?? ""] ?? (status === 503 ? t("errors.generic") : t("errors.generic")) });
     } catch {

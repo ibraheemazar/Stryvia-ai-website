@@ -317,3 +317,17 @@ as $$
   );
 $$;
 revoke all on function public.lab_stats(timestamptz, timestamptz) from public, anon, authenticated;
+
+-- Visitors with no sessions left (used by the retention job).
+create or replace function public.lab_orphan_visitors()
+returns table (id uuid)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select v.id from public.lab_visitors v
+   where not exists (select 1 from public.lab_sessions s where s.visitor_id = v.id)
+     and v.created_at < now() - interval '1 day';
+$$;
+revoke all on function public.lab_orphan_visitors() from public, anon, authenticated;

@@ -3,6 +3,9 @@
   "framework": "nextjs",
   "crons": [
     { "path": "/api/cron?task=tick", "schedule": "0 * * * *" },
-    { "path": "/api/cron?task=digest", "schedule": "0 8 * * *" }
+    { "path": "/api/cron?task=digest", "schedule": "0 8 * * *" },
+    { "path": "/api/cron?task=lab_sweep", "schedule": "20 * * * *" },
+    { "path": "/api/cron?task=lab_spend_alert", "schedule": "40 * * * *" },
+    { "path": "/api/cron?task=lab_retention", "schedule": "30 3 * * *" }
   ]
 }

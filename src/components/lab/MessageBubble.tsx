@@ -44,7 +44,7 @@ export function MessageBubble({ message, onRetry }: { message: MessageView; onRe
         </div>
         {message.failed && onRetry && (
           <div className="mt-2 flex items-center gap-3 text-sv-small text-sv-text-2">
-            <span>{t("errorTurn")}</span>
+            <span>{message.failedCode === "provider" ? t("errorProvider") : t("errorTurn")}</span>
             <button type="button" onClick={onRetry} className="min-h-9 rounded-sv-sm border border-sv-line-strong px-3 text-sv-text hover:border-sv-green-line hover:text-sv-green">
               {t("retry")}
             </button>

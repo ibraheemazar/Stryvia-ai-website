@@ -31,6 +31,8 @@ export type MessageView = {
   pending?: boolean;
   /** client-only: failed turn awaiting retry */
   failed?: boolean;
+  /** client-only: server error code for the failed turn (e.g. "provider") */
+  failedCode?: string;
 };
 
 export type BriefView = {

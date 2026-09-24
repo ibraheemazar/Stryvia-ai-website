@@ -29,9 +29,12 @@ export async function sendLabMail(mail: LabMail): Promise<boolean> {
     await labEvent(`mail.sent.${mail.kind}`, "info", { sessionId: mail.sessionId ?? null, payload: { to_hash: toHash, ok: Boolean(id) } });
     return Boolean(id);
   } catch (err) {
+    // Log the provider's error CLASS and code, never the message (it can carry
+    // the recipient address).
+    const e = err as { name?: string; Code?: string; code?: string; $metadata?: { httpStatusCode?: number } };
     await labEvent(`mail.failed.${mail.kind}`, "error", {
       sessionId: mail.sessionId ?? null,
-      payload: { to_hash: toHash, error: err instanceof Error ? err.message : String(err) },
+      payload: { to_hash: toHash, code: `${e?.name ?? "Error"}${e?.Code || e?.code ? `:${e.Code ?? e.code}` : ""}${e?.$metadata?.httpStatusCode ? `:${e.$metadata.httpStatusCode}` : ""}` },
     });
     return false;
   }

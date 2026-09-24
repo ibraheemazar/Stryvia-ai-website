@@ -673,30 +673,30 @@
     },
     "eyebrow": "STRYVIA IDEA LAB",
     "code": "/ LAB",
-    "title": "Bring the idea. Leave with a brief worth reading.",
-    "lead": "A guided conversation with Stryvia's AI. It asks the questions an experienced founder would ask, helps you see what your idea could become, and writes a brief you will be proud of. Then Stryvia reads it.",
+    "title": "Bring the idea. Leave with a brief you're proud of.",
+    "lead": "A guided conversation with Stryvia's AI. It asks what an experienced builder would ask, helps you see how far the idea could go, and writes it up properly. Then Stryvia's team reads it and gets back to you.",
     "facts": {
       "time": {
         "label": "TIME",
-        "text": "About 15 to 20 minutes. Stop anytime and come back with the link we email you."
+        "text": "About 15 to 20 minutes, on your phone. Pause anytime; we email you a link to pick up where you left off."
       },
       "get": {
         "label": "WHAT YOU GET",
-        "text": "A polished brief of your idea in two parts: what you came with, and what it could become."
+        "text": "A clear brief of your idea in two parts: what exists today, and what it could become. It is yours to keep and use anywhere."
       },
       "private": {
-        "label": "PRIVATE",
-        "text": "Your information is used only to evaluate your idea. It is never shared, and you can ask us to delete it at any time."
+        "label": "YOUR IDEA STAYS YOURS",
+        "text": "Only Stryvia's team reads your brief. It is never shared, never sold, and deleted whenever you ask."
       }
     },
     "form": {
       "heading": "Start the conversation",
-      "sub": "We ask for a little about you so Stryvia can get back to the right person.",
+      "sub": "A few details so Stryvia can reach you about your idea, and nothing else.",
       "name": "Full name",
       "email": "Email",
-      "emailHint": "We send you a link to resume later, and a copy of your brief.",
+      "emailHint": "For your resume link and your copy of the brief.",
       "phone": "Phone",
-      "phoneHint": "With country code. This is how Stryvia will reach you if your idea is a fit.",
+      "phoneHint": "With country code. Used only if Stryvia gets in touch about your idea.",
       "country": "Country",
       "company": "Company or organisation",
       "role": "Your role",
@@ -713,20 +713,21 @@
         "bot": "We could not verify you are human. Please try again.",
         "tooMany": "You have started several sessions today. Please continue an existing one from the link in your email, or try again tomorrow.",
         "rate": "Too many attempts. Please wait a few minutes.",
-        "generic": "Something went wrong. Please try again."
+        "generic": "Something went wrong. Please try again.",
+        "paused": "The Idea Lab is paused for the moment. Please come back soon."
       }
     },
     "consent": {
-      "version": "2026-09-v1",
-      "label": "I have read and accept the terms.",
-      "title": "Before we start — the short version",
+      "version": "2026-09-v2",
+      "label": "I understand, and I'm happy to continue.",
+      "title": "How this works — plainly",
       "items": [
-        "You are talking to Stryvia's AI, not to Ibrahim. Ibrahim reads the finished briefs.",
-        "No obligation is created for either side. Stryvia may decline, and you may walk away.",
-        "Ideas discussed and expanded here create no ownership claim by either party over the other. Stryvia may build similar things independently; you keep your brief and your idea.",
-        "Your details and this conversation are private, used only to evaluate your idea, and deleted on request. Voice notes are transcribed by a speech service and the audio is not stored."
+        "You are talking to Stryvia's AI. It asks the questions a good partner would ask, then writes your brief. Real people at Stryvia read finished briefs; no one else does.",
+        "Your idea and your brief stay yours. Nothing you share is sold, published or passed to anyone. Stryvia's own principle applies here too: you own what gets built.",
+        "Stryvia sees many ideas, and some overlap. Sharing yours here does not give either side ownership over the other's work, and it never turns your idea into ours.",
+        "No obligation either way. You can leave at any point, and you can have everything deleted with one click. Voice notes become text you can edit; the audio itself is not kept."
       ],
-      "pdpl": "Handled in line with Saudi Arabia's Personal Data Protection Law (PDPL). Read our privacy policy or request deletion at any time."
+      "pdpl": "Handled under Saudi Arabia's Personal Data Protection Law (PDPL). You can read the privacy policy or request deletion at any time."
     },
     "session": {
       "loading": "Opening your conversation…",
@@ -751,6 +752,7 @@
       "send": "Send",
       "retry": "Retry",
       "errorTurn": "The connection dropped. Your message is saved — press Retry.",
+      "errorProvider": "Stryvia's AI is unavailable for a moment. Your message is saved — press Retry, or come back later with your link.",
       "busy": "Give me a second, I am still writing.",
       "budgetWarning": "We are close to the end of this session — one or two more answers and we will move to your brief.",
       "finish": "Finish and see my brief",
@@ -782,7 +784,7 @@
       "arabic": "Arabic",
       "submit": "Submit to Stryvia",
       "submitting": "Submitting…",
-      "submitNote": "Submitting sends your brief to Stryvia for review. You will get a copy by email.",
+      "submitNote": "Submitting shares your brief with Stryvia's team, and only them. You get a copy by email.",
       "version": "Version {n}",
       "edited": "edited by you",
       "saved": "Saved",
@@ -808,8 +810,8 @@
     },
     "confirmation": {
       "eyebrow": "SUBMITTED",
-      "title": "Thank you. Your brief is with Stryvia.",
-      "body": "Stryvia will review it and respond within {days} working days. No commitments have been made by either side — this is a reading, not a promise.",
+      "title": "Thank you. Your brief is with Stryvia's team.",
+      "body": "Stryvia's team will read it and get back to you within {days} working days. There is no obligation on either side, and your brief is yours to use anywhere.",
       "emailed": "A copy of your brief is on its way to your inbox.",
       "print": "Open printable brief",
       "home": "Back to stryvia.ai"

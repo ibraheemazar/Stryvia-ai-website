@@ -148,12 +148,12 @@ export function briefCopyEmail(input: {
     lang === "ar"
       ? {
           subject: "ملخّص فكرتك من مختبر الأفكار",
-          intro: `أهلًا ${first}. هذا ملخّص فكرتك كما صغناه معًا. ستراجعه سترايفيا وتردّ عليك خلال ${input.responseDays} أيام عمل، دون أي التزام من أي طرف.`,
+          intro: `أهلًا ${first}. هذا ملخّص فكرتك كما صغناه معًا. سيقرأه فريق سترايفيا ويردّ عليك خلال ${input.responseDays} أيام عمل. لا التزام على أي طرف، والملخّص ملكك تستخدمه أينما شئت.`,
           cta: "افتح ملخّصك",
         }
       : {
           subject: "Your idea brief from the Stryvia Idea Lab",
-          intro: `Hi ${first}. Here is your brief as we shaped it together. Stryvia will review it and respond within ${input.responseDays} working days, with no commitment from either side.`,
+          intro: `Hi ${first}. Here is your brief as we shaped it together. Stryvia's team will read it and get back to you within ${input.responseDays} working days. No obligation on either side, and the brief is yours to use anywhere.`,
           cta: "Open your brief",
         };
   // The brief HTML is a full document; embed only its body table.

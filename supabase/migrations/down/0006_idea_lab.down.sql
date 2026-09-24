@@ -1,6 +1,7 @@
 -- Reversal of 0006_idea_lab.sql. Destroys all Idea Lab data — take a backup
 -- first. The Supabase CLI does not run this folder automatically; apply by hand.
 
+drop function if exists public.lab_orphan_visitors();
 drop function if exists public.lab_stats(timestamptz, timestamptz);
 drop function if exists public.lab_acquire_turn(uuid, text, integer);
 drop function if exists public.lab_add_usage(uuid, integer, integer, integer, integer, numeric);

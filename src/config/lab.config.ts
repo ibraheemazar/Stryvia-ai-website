@@ -29,7 +29,7 @@ export const LAB_RESPONSE_DAYS = 7;
 
 /** Consent text version — bump whenever the terms wording changes (§2.1).
  *  A repo-guard test asserts the i18n key `lab.consent.version` matches. */
-export const LAB_CONSENT_VERSION = "2026-09-v1";
+export const LAB_CONSENT_VERSION = "2026-09-v2";
 
 /** Deal types Stryvia is open to (§6). The interviewer presents these
  *  neutrally and captures which one the visitor expects. */

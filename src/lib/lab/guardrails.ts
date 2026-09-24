@@ -29,7 +29,7 @@ export function sanitizeVisitorText(text: unknown, maxChars: number): string {
 }
 
 // Things the interviewer must never say (§4.6): promises, pricing, timelines,
-// "Stryvia will build", impersonating Ibrahim. English and Arabic forms.
+// "Stryvia will build", claiming to be a person. English and Arabic forms.
 const BANNED: Array<{ rule: string; re: RegExp }> = [
   {
     rule: "promise_build",
@@ -51,8 +51,8 @@ const BANNED: Array<{ rule: string; re: RegExp }> = [
     re: /\b(we|stryvia)\s+(will|can)\s+(have it|deliver( it)?|finish( it)?|launch( it)?|ship( it)?)\s+(ready\s+)?(in|within|by)\s+\d+\s*(days?|weeks?|months?)\b/i,
   },
   { rule: "timeline_commitment_ar", re: /(سننجزه|سنسلمه|سيكون جاهزًا|سيكون جاهزا)\s*(خلال|في)\s*\d+/ },
-  { rule: "impersonation", re: /\b(i am|i'm|this is)\s+ibrahim\b/i },
-  { rule: "impersonation_ar", re: /(أنا إبراهيم|انا ابراهيم|معك إبراهيم)/ },
+  { rule: "impersonation", re: /\b(i am|i'm|this is)\s+(ibrahim|the founder|stryvia's founder|a (real )?(person|human))\b/i },
+  { rule: "impersonation_ar", re: /(أنا إبراهيم|انا ابراهيم|معك إبراهيم|أنا المؤسس|أنا إنسان حقيقي)/ },
   { rule: "banned_voice", re: /\b(hire us|our team will|done for you|we deliver)\b/i },
 ];
 

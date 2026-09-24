@@ -15,6 +15,7 @@ import { clientIp, hashKey, isRateLimited } from "@/lib/lab/rate-limit";
 import { buildVisitorCookie } from "@/lib/lab/session-auth";
 import { countSessionsForEmailToday, createSession, upsertVisitor } from "@/lib/lab/store";
 import { verifyTurnstile } from "@/lib/lab/turnstile";
+import { spendCapReached } from "@/lib/lab/cron";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,6 +44,7 @@ export const POST = withLabRoute("lab.start", async (req: NextRequest, ctx) => {
   const parsed = await readJson(req, StartSchema);
   if (!parsed.ok) return parsed.res;
   const body = parsed.data;
+  if (await spendCapReached()) return json({ ok: false, error: "paused" }, 503);
 
   if (!isValidEmail(body.email)) return json({ ok: false, error: "invalid_email" }, 400);
   if (body.consentVersion !== settings.consentVersion) return json({ ok: false, error: "consent_version" }, 400);

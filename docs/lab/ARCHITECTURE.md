@@ -24,6 +24,12 @@ Brief: `STRYVIA_IDEA_LAB_CLAUDE_CODE_BRIEF.md` (the founder's spec). This docume
 
 Config: `src/config/lab.config.ts` (product), `src/config/lab-rubric.config.ts` (scoring). Prompts: `src/lib/lab/prompts/*` with `PROMPT_VERSION`.
 
+## Scheduled jobs and the harness
+
+`vercel.json` runs `lab_sweep` (hourly: resumes post-submit work `after()` left behind, clears stale turn locks), `lab_spend_alert` (hourly: monthly alert + hard cap that pauses new sessions) and `lab_retention` (daily: hard-deletes sessions past `LAB_RETENTION_MONTHS`, orphaned visitors, expired links). `/api/cron` accepts only `Authorization: Bearer $CRON_SECRET` once the secret exists; lab tasks require it unconditionally.
+
+`/api/lab-harness` (visitor-turn, judge, inspect) serves the persona harness. It is gated three ways: `LAB_HARNESS_ENABLED=true`, the cron bearer secret, and a refusal in production. It lives outside `src/app/api/lab/` so the repo-guard test that forbids assessment access from visitor code still applies to every visitor route.
+
 ## Wire protocol
 
 `POST /api/lab/session/:id/turn` streams `text/plain`: visible text, then `\x1e`, then one JSON meta frame `{phase, progress, turnId, status, options?, ended?, budgetWarning?, error?}` — the same protocol as `/api/chat`.

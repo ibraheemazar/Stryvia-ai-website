@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { MarketingDashboard } from "./marketing/MarketingDashboard";
@@ -42,6 +43,12 @@ export function AdminShell({
                 {v}
               </button>
             ))}
+            <Link
+              href="/supadmin/lab"
+              className="rounded-sv-sm px-4 py-1.5 text-sv-small text-sv-text-3 transition-colors hover:text-sv-text"
+            >
+              Idea Lab
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
