@@ -5,7 +5,10 @@ Two items block real conversations today; everything else is optional with a gra
 ## Blocking (found by the end-to-end run on the preview)
 
 1. **Anthropic API credits — none left.** Every model call returned `Your credit balance is too low to access the Anthropic API`. Go to https://console.anthropic.com → Plans & Billing → add credits (or enable auto-reload). Nothing else needs to change; the Lab uses the existing `ANTHROPIC_API_KEY`.
-2. **Amazon SES is in the sandbox.** The founder notification (to your own verified address) was delivered, but every email to a visitor was refused with `MessageRejected (400)` — the sandbox only allows verified recipients. In the AWS console → Amazon SES → *Account dashboard* → **Request production access** (use case: transactional, expected volume low). Until approved, visitors get no magic link and no brief copy; the Lab still works in the same browser session.
+
+## Parked by decision (not needed now)
+
+- **Visitor emails (SES).** SES is in the sandbox, so magic-link and brief-copy emails to visitors are refused (`MessageRejected 400`); the founder notification to your own address is delivered. Decision: leave it. The Lab works fully in the same browser session; "resume on another device" and "copy of the brief by email" switch on by themselves the day SES gets production access (AWS console → SES → Request production access). Nothing else to change.
 
 ## Already done for you (no action)
 
@@ -40,8 +43,6 @@ Two items block real conversations today; everything else is optional with a gra
 6. **WhatsApp ping on priority verdicts** (optional): needs the existing `WHATSAPP_TOKEN` + `WHATSAPP_PHONE_NUMBER_ID` (Meta Cloud API) and `LAB_NOTIFY_WHATSAPP_TO` = your number in E.164 (e.g. `+9665XXXXXXXX`).
 
 7. **Notification inbox** (optional): defaults to `LEAD_NOTIFY_TO`. Set `LAB_NOTIFY_TO` to use a different inbox.
-
-8. **SES deliverability** (after step 2): DKIM enabled on the sending domain and a DMARC record (`v=DMARC1; p=quarantine; rua=mailto:…`) so magic links do not land in spam.
 
 9. **Vercel function duration**: Project → Settings → Functions: confirm Fluid compute is on (or the plan allows ≥120 s). The brief and assessment routes declare `maxDuration = 120`.
 
