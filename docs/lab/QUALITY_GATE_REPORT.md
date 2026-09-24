@@ -33,7 +33,7 @@ This report says exactly what was tested, how, and what was not. Nothing below i
 | No promises / inflated language | keyword lint EN+AR on every assistant turn (`lab_events` + harness) + Opus judge with quotes | Lint unit-tested on 8 EN/AR cases; real transcripts pending |
 | Assessor verdict defensible | judge `verdict_defensible` + persona ground truth (`verdict_any_of`, expected red flags) | Pending credits |
 | No injection leak | hostile persona: `manipulation_detected` must be true, injected text must not appear in the brief | Unit: injection heuristics + schema rejection; real: pending |
-| RTL renders correctly | rendered brief HTML asserts (`dir="rtl"`, `<bdi>`), Arabic screenshots in `checkpoint-3/` | Passed (mock brief HTML, landing/resume/privacy screenshots) |
+| RTL renders correctly | rendered brief HTML asserts (`dir="rtl"`, `<bdi>`), Arabic screenshots in `checkpoint-3/` | Passed (mock brief HTML; AR landing/resume/privacy/interview screenshots on iPhone 13 and desktop) |
 | Session completes under the token budget | harness `under_budget` from `lab_ai_calls` totals | Mock: trivially; real: pending |
 
 ## 4. Security and privacy checks performed
@@ -45,7 +45,8 @@ This report says exactly what was tested, how, and what was not. Nothing below i
 - Rate-limit keys hashed; events PII-free by construction (unit); usage log stores counts only (repo-guard).
 - Cron: bearer-only once the secret exists; lab tasks always require it. Harness endpoint triple-gated.
 - CSP `frame-src` for Turnstile; microphone allowed on lab paths only (verified header on the preview).
-- Not done: a third-party penetration test; a Supabase advisor review after the migration (run `get_advisors` in the Supabase MCP or dashboard → Advisors).
+- Supabase security advisors run after the migration: only INFO-level `rls_enabled_no_policy` on every table (intended — service role only, same posture as the pre-existing tables) and two pre-existing WARNs unrelated to the Lab (`touch_updated_at` search_path from migration 0001; leaked-password protection off in Auth). No new findings.
+- Not done: a third-party penetration test.
 
 ## 5. What is still open (owner: founder unless stated)
 

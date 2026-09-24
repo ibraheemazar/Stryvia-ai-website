@@ -88,7 +88,7 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
         const meta = await readTurnStream(res, (text) => {
           setMessages((ms) => ms.map((m, i) => (i === assistantIndex ? { ...m, content: text } : m)));
         });
-        setMessages((ms) => ms.map((m, i) => (i === assistantIndex ? { ...m, pending: false, failed: Boolean(meta.error) } : m)));
+        setMessages((ms) => ms.map((m, i) => (i === assistantIndex ? { ...m, pending: false, failed: Boolean(meta.error), failedCode: meta.error ? meta.code : undefined } : m)));
         applyMeta(meta);
         if (meta.ended) setSubmitted(null);
         if (meta.phase === "review" && !meta.error) await finish();
@@ -98,7 +98,7 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
           setBanner(t("busy"));
           setMessages((ms) => ms.filter((_, i) => i !== assistantIndex));
         } else {
-          setMessages((ms) => ms.map((m, i) => (i === assistantIndex ? { ...m, pending: false, failed: true } : m)));
+          setMessages((ms) => ms.map((m, i) => (i === assistantIndex ? { ...m, pending: false, failed: true, failedCode: "network" } : m)));
         }
       } finally {
         setStreaming(false);
@@ -177,7 +177,7 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
   if (load.state === "denied") {
     return (
       <Container className="pt-32 pb-24">
-        <div className="mx-auto max-w-xl">
+        <div className="mx-auto max-w-xl" data-lab-state="denied">
           <h1 className="font-display text-sv-h1 text-sv-text">{t("notYours")}</h1>
           <p className="mt-4 text-sv-body-l text-sv-text-2">{t("notYoursBody")}</p>
           <div className="mt-8">
@@ -190,7 +190,7 @@ export function LabSession({ sessionId, voiceProvider }: { sessionId: string; vo
   if (load.state === "unavailable" || !session) {
     return (
       <Container className="pt-32 pb-24">
-        <div className="mx-auto max-w-xl">
+        <div className="mx-auto max-w-xl" data-lab-state="unavailable">
           <h1 className="font-display text-sv-h1 text-sv-text">{t("unavailable")}</h1>
           <p className="mt-4 text-sv-body-l text-sv-text-2">{t("unavailableBody")}</p>
           <div className="mt-8">

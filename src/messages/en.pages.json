@@ -752,6 +752,7 @@
       "send": "Send",
       "retry": "Retry",
       "errorTurn": "The connection dropped. Your message is saved — press Retry.",
+      "errorProvider": "Stryvia's AI is unavailable for a moment. Your message is saved — press Retry, or come back later with your link.",
       "busy": "Give me a second, I am still writing.",
       "budgetWarning": "We are close to the end of this session — one or two more answers and we will move to your brief.",
       "finish": "Finish and see my brief",

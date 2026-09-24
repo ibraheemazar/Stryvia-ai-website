@@ -3,7 +3,7 @@
 // (brief Phase 3 checkpoint; RTL.md §7 "open it and look"). Uses the
 // preinstalled Chromium via Playwright.
 //
-//   BASE_URL=https://<preview> node scripts/lab/screenshots.mjs [--out docs/lab/checkpoint-3]
+//   BASE_URL=https://<preview> node scripts/lab/screenshots.mjs [--out docs/lab/checkpoint-3] [--devices iphone13,desktop] [--langs en,ar]
 
 import fs from "node:fs";
 import path from "node:path";
@@ -16,13 +16,24 @@ const EMAIL = process.env.DEMO_EMAIL || "idea-lab-screens@example.com";
 const CONSENT_VERSION = process.env.CONSENT_VERSION || "2026-09-v2";
 fs.mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+// Prefer the preinstalled Chromium when Playwright's own download is absent.
+const PREINSTALLED = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+const executablePath = process.env.CHROMIUM_PATH || (fs.existsSync(PREINSTALLED) ? PREINSTALLED : undefined);
+const browser = await chromium.launch({ executablePath });
 
-async function gotoRetry(page, url, tries = 4) {
+// Navigate and retry until the page has actually hydrated (`ready` selector
+// present). A flaky network can return the HTML but drop a JS chunk, which
+// shows Next's generic "Application error" instead of the Lab page.
+async function gotoRetry(page, url, tries = 5, ready = "main") {
   for (let i = 1; i <= tries; i += 1) {
     try {
       await page.goto(url, { waitUntil: "load", timeout: 45_000 });
+      await page.locator(ready).first().waitFor({ timeout: 20_000 });
       await page.waitForTimeout(1200);
+      const body = (await page.textContent("body")) || "";
+      if (/Application error: a client-side exception/.test(body)) throw new Error("chunk load failed (Application error)");
+      const styled = await page.evaluate(() => Array.from(document.styleSheets).some((sheet) => sheet.href && sheet.href.includes("/_next/static/css")));
+      if (!styled) throw new Error("stylesheet did not load");
       return true;
     } catch (err) {
       console.log(`  retry ${i}/${tries} for ${url}: ${String(err).split("\n")[0]}`);
@@ -31,6 +42,10 @@ async function gotoRetry(page, url, tries = 4) {
   }
   return false;
 }
+
+// The interview screen is ready when the composer exists, or when the page
+// settled on an explicit unavailable/denied state (both are valid evidence).
+const INTERVIEW_READY = "textarea, [data-lab-state='unavailable'], [data-lab-state='denied']";
 
 async function shoot(ctx, url, name, opts = {}) {
   const page = await ctx.newPage();
@@ -46,8 +61,12 @@ async function shoot(ctx, url, name, opts = {}) {
   }
 }
 
-for (const [label, device] of [["iphone13", devices["iPhone 13"]], ["desktop", { viewport: { width: 1280, height: 900 } }]]) {
-  for (const lang of ["en", "ar"]) {
+// --devices iphone13,desktop (default both) lets a slow network run one pass at a time.
+const ONLY = args.includes("--devices") ? args[args.indexOf("--devices") + 1].split(",") : ["iphone13", "desktop"];
+const DEVICES = [["iphone13", devices["iPhone 13"]], ["desktop", { viewport: { width: 1280, height: 900 } }]].filter(([l]) => ONLY.includes(l));
+const LANGS = args.includes("--langs") ? args[args.indexOf("--langs") + 1].split(",") : ["en", "ar"];
+for (const [label, device] of DEVICES) {
+  for (const lang of LANGS) {
     const ctx = await browser.newContext({ ...device, locale: lang === "ar" ? "ar-SA" : "en-US", ignoreHTTPSErrors: true, colorScheme: "dark", reducedMotion: "reduce" });
     await ctx.addCookies([{ name: "NEXT_LOCALE", value: lang, url: BASE }]);
     const prefix = lang === "ar" ? "/ar" : "";
@@ -64,20 +83,20 @@ for (const [label, device] of [["iphone13", devices["iPhone 13"]], ["desktop", {
     });
     const started = await start.json();
     if (started.ok) {
-      if (!(await gotoRetry(page, `${BASE}${started.url}`))) {
-        console.log(`! ${label}-${lang}-interview skipped (navigation failed)`);
-        await page.close();
-        await ctx.close();
-        continue;
+      try {
+        if (!(await gotoRetry(page, `${BASE}${started.url}`, 6, INTERVIEW_READY))) throw new Error("navigation failed");
+        await page.screenshot({ path: path.join(OUT, `${label}-${lang}-interview-empty.png`), fullPage: false });
+        const ta = page.locator("textarea").first();
+        if ((await ta.count()) === 0) throw new Error("composer not rendered (unavailable/denied state captured instead)");
+        await ta.fill(lang === "ar" ? "أدير مكتب ترجمة صغير في الرياض والطلبات تأتي على WhatsApp ونسعّرها يدويًا." : "I run a small translation office in Riyadh; requests arrive on WhatsApp and we quote by hand.");
+        await ta.press("Enter");
+        await page.locator("[data-turn-complete='true']").waitFor({ timeout: 90_000 }).catch(() => undefined);
+        await page.waitForTimeout(800);
+        await page.screenshot({ path: path.join(OUT, `${label}-${lang}-interview.png`), fullPage: false });
+        console.log(`✓ ${label}-${lang}-interview`);
+      } catch (err) {
+        console.log(`! ${label}-${lang}-interview: ${String(err).split("\n")[0]}`);
       }
-      await page.screenshot({ path: path.join(OUT, `${label}-${lang}-interview-empty.png`), fullPage: false });
-      const ta = page.getByRole("textbox").first();
-      await ta.fill(lang === "ar" ? "أدير مكتب ترجمة صغير في الرياض والطلبات تأتي على WhatsApp ونسعّرها يدويًا." : "I run a small translation office in Riyadh; requests arrive on WhatsApp and we quote by hand.");
-      await ta.press("Enter");
-      await page.locator("[data-turn-complete='true']").waitFor({ timeout: 90_000 }).catch(() => undefined);
-      await page.waitForTimeout(800);
-      await page.screenshot({ path: path.join(OUT, `${label}-${lang}-interview.png`), fullPage: false });
-      console.log(`✓ ${label}-${lang}-interview`);
     } else {
       console.log(`! start failed for ${label}-${lang}: ${JSON.stringify(started)}`);
     }
