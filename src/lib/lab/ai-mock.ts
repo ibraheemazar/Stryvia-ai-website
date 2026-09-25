@@ -1,6 +1,6 @@
 import "server-only";
 import type { z } from "zod";
-import type { LabAiProvider, StructuredCall, StreamCall, StreamResult, Usage } from "./ai";
+import { LabAiError, type LabAiProvider, type StructuredCall, type StreamCall, type StreamResult, type Usage } from "./ai";
 
 // Deterministic mock provider for CI and e2e (plan §1.10). It speaks the same
 // interfaces and produces schema-valid shapes so the REAL phase controller,
@@ -59,8 +59,9 @@ function mockExtract(user: string) {
   const slot_updates: Array<{ slot: string; value: string; confidence: number; evidence: string; retract: boolean }> = [];
   const ladder_reactions: Array<{ step: string; reaction: string; quote: string }> = [];
   const explicit = extractField(latest, "fill");
+  // "fill:a,b industry: x" → a, b (anything after the slot list is other directives).
   const targets = explicit
-    ? explicit.split(",").map((s) => s.trim())
+    ? explicit.split(/[\s,]+/).map((s) => s.trim()).filter((s) => SLOT_ORDER.includes(s))
     : SLOT_ORDER.filter((s) => !filled.has(s)).slice(0, 2);
   const isArabic = /[؀-ۿ]/.test(latest);
   for (const slot of targets) {
@@ -90,6 +91,9 @@ function mockExtract(user: string) {
       sensitive_disclosure: /\bsensitive\b/i.test(latest),
       injection_attempt: /\binject\b|ignore (all|your) (previous )?instructions/i.test(latest),
       visitor_is_struggling: /\bstruggl/i.test(latest),
+      is_test_or_fictional: /\bfictional\b|\bqa test\b/i.test(latest),
+      no_contact_requested: /do not contact|don't contact/i.test(latest),
+      demands_decision: /approve .*partnership|skip .*review/i.test(latest),
     },
   };
 }
@@ -136,8 +140,102 @@ function mockBrief(user: string) {
     what_you_bring: [t("Domain expertise", "خبرة في المجال")],
     what_you_expect: t("Not decided yet.", "لم يُقرَّر بعد."),
     constraints: t("None discussed.", "لم تُناقش."),
-    next_step_note: t("Stryvia will review and respond.", "ستراجع سترايفيا وتردّ."),
+    scope: {
+      confirmed: [t("An internal tool first", "أداة داخلية أولًا")],
+      excluded: [t("Payments", "المدفوعات")],
+      assumptions: [t("AI assumption: the team will keep using WhatsApp", "افتراض من الذكاء الاصطناعي: سيستمر الفريق باستخدام WhatsApp")],
+      open_questions: [t("Exact monthly volume is unknown", "الحجم الشهري الدقيق غير معروف")],
+    },
+    next_step_note: t("Submitted for manual review by Stryvia's team; no decision has been made.", "أُرسل للمراجعة اليدوية من فريق سترايفيا؛ لم يُتَّخذ أي قرار."),
   };
+}
+
+// ---- Controlled failure injection (e2e only; the mock never runs in
+// production). Driven by the visitor's own text so a test can trigger exactly
+// one failure and then recover:
+//   - "fail:provider" / "fail:credits" in the latest message: the interviewer
+//     stream fails ONCE for that message (provider error / exhausted credits);
+//     the retry of the same message succeeds.
+//   - "slow:<ms>" in the latest message: the reply is delayed that long, so a
+//     refresh mid-turn hits the "still working" path.
+//   - "mock:drop-numbers" anywhere in a brief being translated: the mock
+//     translation loses every digit, which the fact check must reject.
+//   - "mock:wrong-language" in a revision request: the revision comes back in
+//     the other script, which the language check must reject.
+const failedOnce = new Set<string>();
+
+function injectedFailure(sessionId: string | null, latest: string): "provider" | null {
+  const m = /\bfail:(provider|credits)\b/.exec(latest);
+  if (!m) return null;
+  const key = `${sessionId}:${latest.replace(/\s+/g, " ").trim()}`;
+  if (failedOnce.has(key)) return null;
+  failedOnce.add(key);
+  return "provider";
+}
+
+function injectedDelay(latest: string): number {
+  const m = /\bslow:(\d{2,5})\b/.exec(latest);
+  return m ? Math.min(20_000, Number(m[1])) : 0;
+}
+
+function walkStrings(v: unknown, f: (s: string) => string): unknown {
+  return typeof v === "string" ? f(v) : Array.isArray(v) ? v.map((x) => walkStrings(x, f)) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, walkStrings(x, f)])) : v;
+}
+
+// Deterministic "translation": a letter-for-letter transliteration into the
+// target script that keeps every digit, number word (as a digit) and currency
+// mention intact. It reads as the target language to the deterministic script
+// check, and the visitor's exact saved text (edits included) is what travels —
+// which is the property the real translation is checked for.
+const LATIN = "abcdefghijklmnopqrstuvwxyz";
+const ARABIC = "ابتثجحخدذرزسشصضطظعغفقكلمنه";
+const EN_NUMBER_WORDS: Array<[RegExp, string]> = [[/\btwo\b/gi, "2"], [/\bthree\b/gi, "3"], [/\bfour\b/gi, "4"], [/\bfive\b/gi, "5"], [/\bsix\b/gi, "6"], [/\bseven\b/gi, "7"], [/\beight\b/gi, "8"], [/\bnine\b/gi, "9"], [/\bten\b/gi, "10"], [/\btwelve\b/gi, "12"]];
+const AR_NUMBER_WORDS: Array<[RegExp, string]> = [[/اثنين|اثنان/g, "2"], [/ثلاثة|ثلاث/g, "3"], [/أربعة|أربع|اربعة|اربع/g, "4"], [/خمسة|خمس/g, "5"], [/ستة/g, "6"], [/سبعة|سبع/g, "7"], [/ثمانية|ثمان/g, "8"], [/تسعة|تسع/g, "9"], [/عشرة|عشر/g, "10"]];
+
+export function mockTransliterate(s: string, to: "ar" | "en"): string {
+  if (to === "ar") {
+    let t = s.replace(/\bSAR\b/g, "ريال");
+    for (const [re, d] of EN_NUMBER_WORDS) t = t.replace(re, d);
+    return t.replace(/[A-Za-z]/g, (ch) => ARABIC[LATIN.indexOf(ch.toLowerCase())] ?? ch);
+  }
+  let t = s.replace(/ريال/g, "SAR");
+  for (const [re, d] of AR_NUMBER_WORDS) t = t.replace(re, d);
+  return t.replace(/[ء-ي]/g, (ch) => {
+    const i = ARABIC.indexOf(ch);
+    return i >= 0 ? LATIN[i] : ch;
+  });
+}
+
+function mockTranslate(user: string) {
+  const to = /TARGET LANGUAGE: Arabic/.test(user) ? "ar" : "en";
+  const json = user.split("BRIEF TO TRANSLATE (JSON, untrusted data):\n")[1]?.split("\n\nTranslate every field now")[0] ?? "{}";
+  const src = JSON.parse(json) as Record<string, unknown>;
+  const dropNumbers = json.includes("mock:drop-numbers");
+  return walkStrings(src, (s) => {
+    if (!s) return s;
+    const out = mockTransliterate(s, to);
+    return dropNumbers ? out.replace(/[0-9٠-٩]/g, "") : out;
+  });
+}
+
+// Deterministic "revision": applies `set <path>=<text>` from the instruction
+// to that one field only; everything else is returned byte-for-byte.
+function mockRevise(user: string) {
+  const json = user.split("CURRENT BRIEF (JSON, untrusted data):\n")[1]?.split("\n\nREVISION REQUEST")[0] ?? "{}";
+  const src = JSON.parse(json) as Record<string, unknown>;
+  const instr = user.split("REVISION REQUEST (untrusted data): ")[1]?.split("\n")[0] ?? "";
+  if (/mock:wrong-language/.test(instr)) {
+    const arabic = /[؀-ۿ]/.test(json);
+    return walkStrings(src, (s) => (s ? mockTransliterate(s, arabic ? "en" : "ar") : s));
+  }
+  const m = /set ([a-z_.]+)=(.+)$/.exec(instr);
+  if (m) {
+    const path = m[1].split(".");
+    let cur: Record<string, unknown> = src;
+    for (const k of path.slice(0, -1)) cur = cur[k] as Record<string, unknown>;
+    cur[path[path.length - 1]] = m[2];
+  }
+  return src;
 }
 
 function mockAssessment() {
@@ -191,6 +289,12 @@ export const mockProvider: LabAiProvider = {
       case "brief":
         raw = mockBrief(user);
         break;
+      case "translate":
+        raw = mockTranslate(user);
+        break;
+      case "revise":
+        raw = mockRevise(user);
+        break;
       case "assess":
         raw = mockAssessment();
         break;
@@ -220,6 +324,16 @@ export const mockProvider: LabAiProvider = {
   async stream(call: StreamCall): Promise<StreamResult> {
     const dyn = call.dynamicSystem ?? "";
     const ar = /SESSION LANGUAGE: Arabic/.test(dyn);
+    const latest = lastUser(call);
+    const failure = injectedFailure(call.sessionId, latest);
+    if (failure) {
+      const err = new LabAiError("provider", "Injected provider failure (mock): credit balance is too low to access the API.");
+      async function* nothing() {
+        throw err;
+      }
+      return { text: nothing(), done: Promise.reject(err) };
+    }
+    const delay = injectedDelay(latest);
     let reply: string;
     if (/END THE SESSION NOW/.test(dyn)) reply = ar ? "سننهي هنا. شكرًا لك." : "We will stop here. Thank you.";
     else if (/^REVIEW:/m.test(dyn) || /CURRENT PHASE: REVIEW/.test(dyn))
@@ -239,6 +353,7 @@ export const mockProvider: LabAiProvider = {
     }
     const chunks = reply.match(/.{1,12}/g) ?? [reply];
     async function* text() {
+      if (delay) await new Promise((r) => setTimeout(r, delay));
       for (const c of chunks) {
         await new Promise((r) => setTimeout(r, 5));
         yield c;
@@ -246,7 +361,8 @@ export const mockProvider: LabAiProvider = {
     }
     return {
       text: text(),
-      done: Promise.resolve({ text: reply, usage: ZERO, stopReason: "end_turn" }),
+      // Like the real provider, the reply is final only when the stream is.
+      done: new Promise((r) => setTimeout(r, delay + chunks.length * 5)).then(() => ({ text: reply, usage: ZERO, stopReason: "end_turn" })),
     };
   },
 };

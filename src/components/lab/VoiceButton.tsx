@@ -38,7 +38,7 @@ export function VoiceButton({
   language: "en" | "ar";
   provider: "browser" | "server";
   disabled?: boolean;
-  onTranscript: (text: string, raw: string) => void;
+  onTranscript: (text: string, raw: string, attachmentId?: string | null) => void;
 }) {
   const t = useTranslations("lab.session");
   const [recording, setRecording] = useState(false);
@@ -93,8 +93,10 @@ export function VoiceButton({
           fd.append("audio", blob, "note.webm");
           fd.append("language", language);
           const res = await fetch(`/api/lab/session/${sessionId}/transcribe`, { method: "POST", body: fd, credentials: "same-origin" });
-          const data = (await res.json()) as { ok: boolean; text?: string; raw?: string };
-          if (data.ok && data.text) onTranscript(data.text, data.raw ?? data.text);
+          const data = (await res.json()) as { ok: boolean; text?: string; raw?: string; attachmentId?: string | null };
+          if (data.ok && data.text) onTranscript(data.text, data.raw ?? data.text, data.attachmentId);
+          // Transcription failed but the recording was kept: still send it with the next message.
+          else if (data.attachmentId) onTranscript("", "", data.attachmentId);
         } catch {
           /* surfaced by composer state */
         } finally {

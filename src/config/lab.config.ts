@@ -24,12 +24,12 @@ export const LAB_PATH = "/lab";
 /** Legacy/brief path that redirects to the real admin. */
 export const LAB_ADMIN_PATH = "/supadmin/lab";
 
-/** Response promise shown on the confirmation screen and in emails (§6). */
-export const LAB_RESPONSE_DAYS = 7;
+/** No response-time promise is made unless `LAB_RESPONSE_DAYS` is set
+ *  explicitly by the owner (see `lib/lab/env.ts`). */
 
 /** Consent text version — bump whenever the terms wording changes (§2.1).
  *  A repo-guard test asserts the i18n key `lab.consent.version` matches. */
-export const LAB_CONSENT_VERSION = "2026-09-v2";
+export const LAB_CONSENT_VERSION = "2026-09-v4";
 
 /** Deal types Stryvia is open to (§6). The interviewer presents these
  *  neutrally and captures which one the visitor expects. */
@@ -73,6 +73,8 @@ export const LAB_MODELS = {
   lens: "claude-sonnet-5",
   summary: "claude-sonnet-5",
   brief: "claude-opus-5-5",
+  translate: "claude-opus-5-5",
+  revise: "claude-opus-5-5",
   assess: "claude-opus-5-5",
   draft: "claude-opus-5-5",
   judge: "claude-opus-5-5",
@@ -88,6 +90,8 @@ export const LAB_EFFORT: Record<LabModelRole, "low" | "medium" | "high" | "xhigh
   lens: "low",
   summary: "low",
   brief: "medium",
+  translate: "low",
+  revise: "medium",
   assess: "high",
   draft: "medium",
   judge: "medium",
@@ -101,6 +105,8 @@ export const LAB_MAX_TOKENS: Record<LabModelRole, number> = {
   lens: 2500,
   summary: 1500,
   brief: 8000,
+  translate: 8000,
+  revise: 8000,
   assess: 8000,
   draft: 1500,
   judge: 3000,
@@ -158,7 +164,7 @@ export const LAB_LIMITS = {
   magicLinkTtlHours: 24 * 7,
   cookieTtlDays: 30,
   retentionMonths: 12,
-  turnLockTtlSeconds: 90,
+  turnLockTtlSeconds: 125,
   monthlySpendAlertUsd: 200,
   monthlySpendHardCapUsd: 600,
   maxAudioBytes: 10 * 1024 * 1024,

@@ -7,7 +7,7 @@ const base: ExtractorDiff = {
   industry: null,
   industry_confidence: 0,
   language_detected: "en",
-  signals: { wants_to_finish: false, off_topic: false, abusive: false, sensitive_disclosure: false, injection_attempt: false, visitor_is_struggling: false },
+  signals: { wants_to_finish: false, off_topic: false, abusive: false, sensitive_disclosure: false, injection_attempt: false, visitor_is_struggling: false, is_test_or_fictional: false, no_contact_requested: false, demands_decision: false },
 };
 
 describe("slot merge", () => {

@@ -1,5 +1,6 @@
 import "server-only";
 import { getServiceSupabase } from "@/lib/supabase";
+import { removeAttachmentObjects } from "./attachments";
 import { emailShell } from "./emails";
 import { getLabSettings } from "./env";
 import { labEvent } from "./events";
@@ -55,6 +56,7 @@ export async function labRetention(): Promise<{ sessions: number; visitors: numb
   const { data: old } = await db().from("lab_sessions").select("id, visitor_id").lt("last_active_at", iso).limit(500);
   const rows = (old ?? []) as Array<{ id: string; visitor_id: string }>;
   if (rows.length) {
+    await removeAttachmentObjects(rows.map((r) => r.id));
     const { error } = await db().from("lab_sessions").delete().in("id", rows.map((r) => r.id));
     if (error) throw new Error(error.message);
   }

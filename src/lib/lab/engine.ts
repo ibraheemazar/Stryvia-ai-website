@@ -2,6 +2,8 @@ import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import { LAB_CONVERSATION, LAB_LIMITS, type LabLanguage } from "@/config/lab.config";
 import { getLabAi, LabAiError } from "./ai";
+import { attachmentLine } from "./attachment-policy";
+import { getUnlinkedAttachments, linkAttachmentsToMessage } from "./attachments";
 import { labEvent } from "./events";
 import { lintAssistantText, looksLikeInjection, wrapUntrusted } from "./guardrails";
 import { nextPhase, type PhaseDecision } from "./phase";
@@ -14,6 +16,7 @@ import { ExtractorDiffSchema, describeState, mergeSlotDiff, type ExtractorDiff, 
 import {
   acquireTurnLock,
   deleteAssistantMessagesAfter,
+  getSessionById,
   getState,
   insertMessage,
   listMessages,
@@ -200,7 +203,34 @@ export type TurnInput = {
   requestId: string;
   /** true when re-generating the assistant reply for the last visitor message */
   retry?: boolean;
+  /** Files the visitor uploaded for this message (already stored). */
+  attachmentIds?: string[];
 };
+
+const TEST_WORDS = /\b(fictional|fictitious|qa (re)?test|test (only|data|run)|not a real (lead|prospect|offer|request)|synthetic (test|data))\b|اختبار (وهمي|تجريبي)|بيانات تجريبية|ليس عرضًا حقيقيًا|ليست حالة حقيقية/i;
+const NO_CONTACT_WORDS = /\b(do not|don't|dont|please don't|never) contact\b|\bno[- ]contact\b|not to be contacted|لا تتواصل|لا تواصل|عدم التواصل|ما تتواصلون/i;
+const DECISION_WORDS = /\b(approve|accept|sign off|agree to|grant|confirm) (the |a |our |this |my )?(partnership|deal|equity|stake|funding|investment|project)\b|\bskip (the |ibrahim'?s |his |any )?(manual |human )?review\b|\b\d{1,2}\s?% (partnership|equity|stake)\b|وافق على الشراكة|اعتمد الشراكة|تخطَّ المراجعة|بدون مراجعة/i;
+
+export function mergeFlags(
+  current: import("./store").LabSessionFlags,
+  hit: { test: boolean; no_contact: boolean; demands_decision: boolean },
+): { value: import("./store").LabSessionFlags; changed: boolean; reasons: string[] } {
+  const value = { ...current };
+  const reasons: string[] = [];
+  if (hit.test && !value.test) {
+    value.test = true;
+    reasons.push("test");
+  }
+  if (hit.no_contact && !value.no_contact) {
+    value.no_contact = true;
+    reasons.push("no_contact");
+  }
+  if (hit.demands_decision) {
+    value.decision_demands = (value.decision_demands ?? 0) + 1;
+    reasons.push("decision_demand");
+  }
+  return { value, changed: reasons.length > 0, reasons };
+}
 
 export class TurnBusyError extends Error {
   constructor() {
@@ -235,14 +265,20 @@ export async function runTurn(input: TurnInput): Promise<TurnOutcome> {
     } else {
       turnCount += 1;
       turnsInPhase += 1;
+      // Files sent with this message: the transcript records them by name from
+      // the stored rows (never from client text), and each row is linked to
+      // the message so the owner sees exactly what came with what.
+      const files = await getUnlinkedAttachments(session.id, input.attachmentIds ?? []);
+      const line = attachmentLine(files.map((f) => ({ name: f.file_name, size: Number(f.size_bytes) })), session.language as LabLanguage);
       latest = await insertMessage({
         session_id: session.id,
         turn_index: turnCount,
         role: "user",
-        content: input.content,
+        content: [input.content.trim(), line].filter(Boolean).join("\n\n"),
         input_mode: input.inputMode,
         transcript_raw: input.transcriptRaw ?? null,
       });
+      if (files.length) await linkAttachmentsToMessage(session.id, files.map((f) => f.id), latest.id);
       messages = [...existing, latest];
       await updateSession(session.id, {
         turn_count: turnCount,
@@ -270,7 +306,21 @@ export async function runTurn(input: TurnInput): Promise<TurnOutcome> {
       sensitive_disclosure: false,
       injection_attempt: injection,
       visitor_is_struggling: false,
+      is_test_or_fictional: false,
+      no_contact_requested: false,
+      demands_decision: false,
     };
+    // Workflow flags: set from the extractor OR deterministic keyword checks on
+    // the visitor's own words, stored outside any generated prose, never cleared.
+    const flags = mergeFlags(session.flags ?? {}, {
+      test: signals.is_test_or_fictional || TEST_WORDS.test(latest.content),
+      no_contact: signals.no_contact_requested || NO_CONTACT_WORDS.test(latest.content),
+      demands_decision: signals.demands_decision || DECISION_WORDS.test(latest.content),
+    });
+    if (flags.changed) {
+      await updateSession(session.id, { flags: flags.value });
+      await labEvent("session.flags", "info", { sessionId: session.id, requestId: input.requestId, payload: { kind: flags.reasons.join(","), turn_index: turnCount } });
+    }
     const strikes = signals.abusive || signals.off_topic ? session.strikes + 1 : 0;
 
     // 2) Decide phase (deterministic)
@@ -352,6 +402,14 @@ export async function runTurn(input: TurnInput): Promise<TurnOutcome> {
 
     const meta: Promise<TurnMeta> = stream.done
       .then(async ({ text, usage, stopReason }) => {
+        // Late-response guard: if the lock has moved on (the visitor retried
+        // after a timeout and a newer turn owns the session), this reply is
+        // stale — never persist it, never let it interleave.
+        const owner = await getSessionById(session.id);
+        if (owner?.pending_turn_id !== input.clientTurnId) {
+          await labEvent("turn.late_discarded", "warn", { sessionId: session.id, requestId: input.requestId, payload: { turn_index: turnCount } });
+          return { phase, progress: decision.progress, turnId: latest.id, status: session.status, error: true, code: "superseded" } satisfies TurnMeta;
+        }
         const hits = lintAssistantText(text);
         await insertMessage({
           session_id: session.id,

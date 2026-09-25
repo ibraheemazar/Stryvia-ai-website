@@ -27,7 +27,8 @@ const brief: Brief = {
   what_you_bring: ["خبرة 12 سنة", "عملاء حاليون"],
   what_you_expect: "شراكة",
   constraints: "<script>alert(1)</script> اعتماد المترجمين",
-  next_step_note: "ستراجع سترايفيا وتردّ",
+  scope: { confirmed: ["أداة داخلية أولًا"], excluded: ["المدفوعات"], assumptions: [], open_questions: ["الحجم الشهري الدقيق غير معروف"] },
+  next_step_note: "أُرسل للمراجعة اليدوية؛ لم يُتَّخذ أي قرار",
 };
 
 describe("brief rendering", () => {
@@ -87,15 +88,20 @@ describe("emails", () => {
     });
     expect(f.subject).toContain("PRIORITY");
     expect(f.html).not.toContain("<img src=x");
-    expect(f.html).toContain("Nothing has been sent to the visitor");
+    expect(f.html).toContain("nothing has been sent to the visitor");
+    expect(f.html).toContain("awaiting your manual review");
+    expect(f.html).not.toMatch(/approved|rejected|go\/no-go/i);
   });
 
   it("brief copy email embeds the brief body and the session link", () => {
     const html = renderBriefHtml(brief, { language: "ar", visitorName: "نورة" });
-    const m = briefCopyEmail({ language: "ar", name: "نورة", briefHtml: html, briefText: "x", responseDays: 7, sessionUrl: "https://stryvia.ai/ar/lab/s/1" });
+    const m = briefCopyEmail({ language: "ar", name: "نورة", briefHtml: html, briefText: "x", responseDays: null, sessionUrl: "https://stryvia.ai/ar/lab/s/1" });
     expect(m.html).toContain("https://stryvia.ai/ar/lab/s/1");
     expect(m.html).toContain("ما جئت به");
-    expect(m.text).toContain("7");
+    // No response commitment unless the owner configured one.
+    expect(m.text).not.toMatch(/أيام عمل|working days/);
+    const withDays = briefCopyEmail({ language: "en", name: "Sam", briefHtml: html, briefText: "x", responseDays: 10, sessionUrl: "https://stryvia.ai/lab/s/1" });
+    expect(withDays.text).toContain("10 working days");
   });
 
   it("decision email wraps admin text as paragraphs with escaping", () => {

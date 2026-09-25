@@ -139,21 +139,29 @@ export function briefCopyEmail(input: {
   name: string;
   briefHtml: string;
   briefText: string;
-  responseDays: number;
+  responseDays: number | null;
   sessionUrl: string;
 }) {
   const lang = input.language;
   const first = input.name.split(/\s+/)[0] || "";
+  const when =
+    input.responseDays != null
+      ? lang === "ar"
+        ? ` وسيردّ عليك خلال ${input.responseDays} أيام عمل.`
+        : ` and will get back to you within ${input.responseDays} working days.`
+      : lang === "ar"
+        ? "."
+        : ".";
   const copy =
     lang === "ar"
       ? {
           subject: "ملخّص فكرتك من مختبر الأفكار",
-          intro: `أهلًا ${first}. هذا ملخّص فكرتك كما صغناه معًا. سيقرأه فريق سترايفيا ويردّ عليك خلال ${input.responseDays} أيام عمل. لا التزام على أي طرف، والملخّص ملكك تستخدمه أينما شئت.`,
+          intro: `أهلًا ${first}. هذا ملخّص فكرتك كما صغناه معًا. أُرسل للمراجعة اليدوية من سترايفيا${when} لم يُتَّخذ أي قرار بشأن شراكة أو مشروع. لا التزام على أي طرف، والملخّص ملكك تستخدمه أينما شئت.`,
           cta: "افتح ملخّصك",
         }
       : {
           subject: "Your idea brief from the Stryvia Idea Lab",
-          intro: `Hi ${first}. Here is your brief as we shaped it together. Stryvia's team will read it and get back to you within ${input.responseDays} working days. No obligation on either side, and the brief is yours to use anywhere.`,
+          intro: `Hi ${first}. Here is your brief as we shaped it together. It has been submitted for manual review by Stryvia${when} No partnership or project decision has been made. No obligation on either side, and the brief is yours to use anywhere.`,
           cta: "Open your brief",
         };
   // The brief HTML is a full document; embed only its body table.
@@ -195,8 +203,8 @@ export function founderNotifyEmail(input: {
     ["Country", input.country],
     ["Language", input.language],
     ["Industry", input.industry ?? "—"],
-    ["Verdict", input.verdict ?? "pending"],
-    ["Weighted score", input.weighted != null ? input.weighted.toFixed(2) : "—"],
+    ["AI triage (suggestion only, not a decision)", input.verdict ?? "pending"],
+    ["Triage score", input.weighted != null ? input.weighted.toFixed(2) : "—"],
   ];
   const table = `<table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.5;">${rows
     .map(([k, v]) => `<tr><td style="color:#6f7a6e;padding:2px 12px 2px 0;">${escapeHtml(k)}</td><td><bdi>${escapeHtml(v)}</bdi></td></tr>`)
@@ -210,8 +218,8 @@ export function founderNotifyEmail(input: {
   const shell = emailShell({
     language: "en",
     title,
-    bodyHtml: `${table}${why}${flags}<p style="margin:16px 0 0 0;">Nothing has been sent to the visitor. Review the packet and choose an action in the admin.</p>`,
-    bodyText: `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\nWhy:\n${input.whyLines.map((l) => `- ${l}`).join("\n")}\n\nRed flags:\n${input.redFlags.map((l) => `- ${l}`).join("\n") || "none"}\n\nNothing has been sent to the visitor.`,
+    bodyHtml: `${table}${why}${flags}<p style="margin:16px 0 0 0;">Status: awaiting your manual review. Nothing has been decided and nothing has been sent to the visitor. The triage above is an internal AI suggestion; only a decision you record in the admin counts.</p>`,
+    bodyText: `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\nWhy:\n${input.whyLines.map((l) => `- ${l}`).join("\n")}\n\nRed flags:\n${input.redFlags.map((l) => `- ${l}`).join("\n") || "none"}\n\nStatus: awaiting your manual review. Nothing has been decided and nothing has been sent to the visitor.`,
     cta: { label: "Open in admin", url: input.adminUrl },
   });
   return { subject: title, ...shell };

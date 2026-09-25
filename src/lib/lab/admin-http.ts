@@ -37,6 +37,15 @@ export function withAdminLabRoute<P = Record<string, never>>(route: string, hand
   };
 }
 
+/**
+ * Who may record or communicate a decision: every allowlisted admin, unless
+ * the owner narrowed it with LAB_REVIEWER_EMAILS. Server-side only.
+ */
+export function canDecide(adminEmail: string): boolean {
+  const list = getLabSettings().reviewerEmails;
+  return list.length === 0 || list.includes(adminEmail.toLowerCase());
+}
+
 export function adminJson(data: unknown, status = 200): NextResponse {
   return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store" } });
 }

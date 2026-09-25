@@ -6,7 +6,9 @@ import { streamTurn } from "@/lib/lab/stream";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+// Extract (≤25s) + lens (≤30s) + summary (≤30s) + interview (≤50s) can exceed
+// 60s on a first turn; the lock TTL and client timeout are aligned with this.
+export const maxDuration = 120;
 
 const Schema = z.object({ clientTurnId: z.string().min(8).max(80) });
 

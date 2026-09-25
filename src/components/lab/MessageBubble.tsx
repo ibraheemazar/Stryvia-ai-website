@@ -13,7 +13,7 @@ export function MessageBubble({ message, onRetry }: { message: MessageView; onRe
   const dir = textDir(message.content);
 
   return (
-    <div className={cn("flex", isUser ? "justify-end" : "justify-start")} data-role={message.role}>
+    <div className={cn("flex", isUser ? "justify-end" : "justify-start")} data-role={message.role} data-pending={message.pending ? "true" : undefined} data-failed={message.failed ? "true" : undefined}>
       <div className={cn("max-w-[88%] sm:max-w-[78%]", isUser ? "text-end" : "text-start")}>
         <p className={cn("sv-label mb-1.5", isUser ? "text-sv-text-3" : "sv-label--live")}>
           {isUser ? t("you") : t("ai")}
@@ -38,13 +38,23 @@ export function MessageBubble({ message, onRetry }: { message: MessageView; onRe
           ) : message.pending ? (
             <span className="flex items-center gap-2 text-sv-text-3">
               <span className="sv-live-dot" aria-hidden />
-              {t("thinking")}
+              {message.failedCode === "busy" ? t("errorBusy") : t("thinking")}
             </span>
           ) : null}
         </div>
         {message.failed && onRetry && (
           <div className="mt-2 flex items-center gap-3 text-sv-small text-sv-text-2">
-            <span>{message.failedCode === "provider" ? t("errorProvider") : t("errorTurn")}</span>
+            <span>
+              {message.failedCode === "provider"
+                ? t("errorProvider")
+                : message.failedCode === "timeout"
+                  ? t("errorTimeout")
+                  : message.failedCode === "interrupted" || message.failedCode === "superseded"
+                    ? t("errorInterrupted")
+                    : message.failedCode === "unanswered"
+                      ? t("errorUnanswered")
+                      : t("errorTurn")}
+            </span>
             <button type="button" onClick={onRetry} className="min-h-9 rounded-sv-sm border border-sv-line-strong px-3 text-sv-text hover:border-sv-green-line hover:text-sv-green">
               {t("retry")}
             </button>

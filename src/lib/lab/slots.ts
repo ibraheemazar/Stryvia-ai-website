@@ -137,6 +137,9 @@ export const ExtractorDiffSchema = z.object({
     sensitive_disclosure: z.boolean(),
     injection_attempt: z.boolean(),
     visitor_is_struggling: z.boolean(),
+    is_test_or_fictional: z.boolean(),
+    no_contact_requested: z.boolean(),
+    demands_decision: z.boolean(),
   }),
 });
 export type ExtractorDiff = z.infer<typeof ExtractorDiffSchema>;

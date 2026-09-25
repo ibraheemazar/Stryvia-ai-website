@@ -33,3 +33,7 @@ yarn-error.log*
 
 # os
 Thumbs.db
+
+# Playwright output
+test-results/
+playwright-report/

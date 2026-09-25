@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ACCENTS,
@@ -50,6 +51,9 @@ export function ThemePicker({ className }: { className?: string }) {
   // this is a first visit — avoids any hydration flash.
   const [hasSeen, setHasSeen] = useState(true);
   const [nudgeReady, setNudgeReady] = useState(false);
+  // The Idea Lab is a focused flow: never interrupt it with the coachmark.
+  const pathname = usePathname() ?? "";
+  const inFocusedFlow = /^\/(ar\/|fr\/)?lab(\/|$)/.test(pathname);
   // Open the panel upward when the trigger is low on the screen (e.g. the
   // mobile menu, where the picker sits near the bottom) so it never opens
   // off-screen and out of reach.
@@ -152,7 +156,7 @@ export function ThemePicker({ className }: { className?: string }) {
       </button>
 
       {/* First-visit coachmark — tells people the capability exists, once. */}
-      {!hasSeen && nudgeReady && !open && (
+      {!hasSeen && nudgeReady && !open && !inFocusedFlow && (
         <div
           role="status"
           className={cn(

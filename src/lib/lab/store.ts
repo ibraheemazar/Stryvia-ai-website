@@ -1,8 +1,10 @@
 import "server-only";
+import { removeAttachmentObjects } from "./attachments";
 import { getServiceSupabase } from "@/lib/supabase";
 import type { LabLanguage, LabPhase, LabStatus } from "@/config/lab.config";
 import type { SlotState } from "./slots";
 import type { IndustryLens } from "./schemas";
+import type { BriefKind } from "./brief-diff";
 
 // All database access for the Idea Lab. Service role only (RLS denies every
 // other role). Ownership is enforced by callers via `session-auth.ts`.
@@ -21,6 +23,15 @@ export type TokenUsage = {
   cache_read: number;
   cache_write: number;
   cost_usd: number;
+};
+
+export type LabSessionFlags = {
+  /** The visitor said this is a test, QA run or fictional. */
+  test?: boolean;
+  /** The visitor asked not to be contacted. */
+  no_contact?: boolean;
+  /** How many times the visitor asked the AI to decide / approve / skip review. */
+  decision_demands?: number;
 };
 
 export type LabSessionRow = {
@@ -47,6 +58,12 @@ export type LabSessionRow = {
   pending_turn_id: string | null;
   pending_started_at: string | null;
   assessment_status: "none" | "pending" | "running" | "done" | "failed";
+  /** The brief version the visitor is working on (null before the first brief). */
+  current_brief_version: number | null;
+  /** The exact version that was submitted; frozen for print, email and admin. */
+  submitted_brief_version: number | null;
+  /** Workflow facts kept outside generated prose; never cleared automatically. */
+  flags: LabSessionFlags;
   first_message_at: string | null;
   last_active_at: string;
   submitted_at: string | null;
@@ -85,6 +102,10 @@ export type LabBriefRow = {
   content: unknown;
   rendered_html: string;
   visitor_edited: boolean;
+  /** How this version was made. */
+  kind: BriefKind;
+  /** The version it was made from (null for the first generation). */
+  source_version: number | null;
   created_at: string;
 };
 
@@ -290,6 +311,7 @@ export async function saveState(sessionId: string, patch: Partial<Omit<LabStateR
 
 // ---- Briefs ----------------------------------------------------------------
 
+/** Highest version number regardless of pointers (history, admin, backfill). */
 export async function getLatestBrief(sessionId: string): Promise<LabBriefRow | null> {
   const { data } = await db()
     .from("lab_briefs")
@@ -301,9 +323,43 @@ export async function getLatestBrief(sessionId: string): Promise<LabBriefRow | n
   return (data as LabBriefRow | null) ?? null;
 }
 
+export async function getBriefVersion(sessionId: string, version: number): Promise<LabBriefRow | null> {
+  const { data } = await db().from("lab_briefs").select("*").eq("session_id", sessionId).eq("version", version).maybeSingle();
+  return (data as LabBriefRow | null) ?? null;
+}
+
+export async function listBriefVersions(sessionId: string): Promise<LabBriefRow[]> {
+  const { data, error } = await db().from("lab_briefs").select("*").eq("session_id", sessionId).order("version", { ascending: true });
+  if (error) throw new LabStoreError("listBriefVersions", error.message);
+  return (data as LabBriefRow[]) ?? [];
+}
+
+/**
+ * The version the visitor is working on. Falls back to the latest row for
+ * sessions created before the pointer existed.
+ */
+export async function getCurrentBrief(session: Pick<LabSessionRow, "id" | "current_brief_version">): Promise<LabBriefRow | null> {
+  if (session.current_brief_version != null) {
+    const row = await getBriefVersion(session.id, session.current_brief_version);
+    if (row) return row;
+  }
+  return getLatestBrief(session.id);
+}
+
+/** After submission: the exact submitted version; before: the current one. */
+export async function getSubmittedOrCurrentBrief(
+  session: Pick<LabSessionRow, "id" | "current_brief_version" | "submitted_brief_version">,
+): Promise<LabBriefRow | null> {
+  if (session.submitted_brief_version != null) {
+    const row = await getBriefVersion(session.id, session.submitted_brief_version);
+    if (row) return row;
+  }
+  return getCurrentBrief(session);
+}
+
 export async function saveBrief(
   sessionId: string,
-  b: { language: LabLanguage; content: unknown; rendered_html: string; visitor_edited: boolean },
+  b: { language: LabLanguage; content: unknown; rendered_html: string; visitor_edited: boolean; kind: BriefKind; source_version: number | null },
 ): Promise<LabBriefRow> {
   const latest = await getLatestBrief(sessionId);
   const version = (latest?.version ?? 0) + 1;
@@ -314,6 +370,19 @@ export async function saveBrief(
     .single();
   if (error || !data) throw new LabStoreError("saveBrief", error?.message ?? "no row");
   return data as LabBriefRow;
+}
+
+/**
+ * Move the current pointer, but only if it still points where the caller
+ * thinks it does (optimistic concurrency). Returns false when a newer version
+ * became current in the meantime.
+ */
+export async function setCurrentBriefVersion(sessionId: string, version: number, expectedCurrent: number | null): Promise<boolean> {
+  let q = db().from("lab_sessions").update({ current_brief_version: version }).eq("id", sessionId);
+  q = expectedCurrent == null ? q.is("current_brief_version", null) : q.eq("current_brief_version", expectedCurrent);
+  const { data, error } = await q.select("id");
+  if (error) throw new LabStoreError("setCurrentBriefVersion", error.message);
+  return (data ?? []).length === 1;
 }
 
 // ---- AI call log -----------------------------------------------------------
@@ -407,7 +476,11 @@ export async function hasEvent(sessionId: string, kind: string): Promise<boolean
 
 export async function deleteVisitorData(visitorId: string): Promise<number> {
   const sessions = await listSessionsForVisitor(visitorId);
-  // Cascades remove messages, state, briefs, assessments, decisions, notes.
+  // Stored files do not cascade with rows: remove the bytes of EVERY session
+  // of this visitor (including soft-deleted ones) before the rows go.
+  const { data: all } = await db().from("lab_sessions").select("id").eq("visitor_id", visitorId);
+  await removeAttachmentObjects(((all ?? []) as Array<{ id: string }>).map((r) => r.id));
+  // Cascades remove messages, state, briefs, attachments rows, assessments, decisions, notes.
   const { error } = await db().from("lab_visitors").delete().eq("id", visitorId);
   if (error) throw new LabStoreError("deleteVisitorData", error.message);
   return sessions.length;

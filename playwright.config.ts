@@ -16,10 +16,19 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     locale: "en-US",
+    // Containers that ship their own Chromium (no `playwright install`) point
+    // PLAYWRIGHT_CHROMIUM_PATH at the binary; everywhere else the bundled one is used.
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : undefined,
+    // Sandboxed CI/agent containers that route HTTPS through an intercepting
+    // proxy set this so the browser can reach Supabase storage; never needed
+    // on a normal machine.
+    ignoreHTTPSErrors: process.env.PLAYWRIGHT_IGNORE_HTTPS_ERRORS === "1",
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], channel: undefined } },
     { name: "mobile", use: { ...devices["iPhone 13"] } },
+    // Chromium phone emulation (Android). Used where WebKit is not installed.
+    { name: "mobile-android", use: { ...devices["Pixel 7"] } },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

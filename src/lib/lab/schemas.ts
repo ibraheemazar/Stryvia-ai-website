@@ -22,6 +22,17 @@ export const RollingSummarySchema = z.object({
   key_quotes: z.array(z.string()),
 });
 
+// "Scope at a glance": what the visitor confirmed, what they excluded, what
+// the AI assumed (labelled as such) and what remains unknown. Lets the reviewer
+// scan the boundaries of the idea without reading every section.
+export const BriefScopeSchema = z.object({
+  confirmed: z.array(z.string()),
+  excluded: z.array(z.string()),
+  assumptions: z.array(z.string()),
+  open_questions: z.array(z.string()),
+});
+export type BriefScope = z.infer<typeof BriefScopeSchema>;
+
 export const BriefSchema = z.object({
   title: z.string(),
   one_line: z.string(),
@@ -35,20 +46,35 @@ export const BriefSchema = z.object({
     tools: z.string(),
     desired_outcome: z.string(),
   }),
+  // Possibilities explored. Each ladder step is null when it was not relevant
+  // to this idea (an internal tool is not forced through productization).
+  // `honest_ceiling_note` holds neutral considerations and open questions for
+  // the reviewer — never a judgment of the opportunity.
   what_it_could_become: z.object({
     intro: z.string(),
-    automate: z.string(),
-    add_intelligence: z.string(),
-    productize: z.string(),
-    scale: z.string(),
+    automate: z.string().nullable(),
+    add_intelligence: z.string().nullable(),
+    productize: z.string().nullable(),
+    scale: z.string().nullable(),
     honest_ceiling_note: z.string(),
   }),
   what_you_bring: z.array(z.string()),
   what_you_expect: z.string(),
   constraints: z.string(),
+  scope: BriefScopeSchema,
   next_step_note: z.string(),
 });
 export type Brief = z.infer<typeof BriefSchema>;
+
+/** Briefs saved before the scope block existed have no `scope`; fill it in. */
+export const StoredBriefSchema = BriefSchema.extend({ scope: BriefScopeSchema.optional() });
+
+export const EMPTY_SCOPE: BriefScope = { confirmed: [], excluded: [], assumptions: [], open_questions: [] };
+
+export function normalizeBrief(content: unknown): Brief {
+  const parsed = StoredBriefSchema.parse(content);
+  return { ...parsed, scope: parsed.scope ?? EMPTY_SCOPE };
+}
 
 export const DimensionScoreSchema = z.object({
   score: z.number(),

@@ -47,6 +47,16 @@ describe("lab env validation", () => {
     expect(s.responseDays).toBe(10);
   });
 
+  it("makes no response-time promise unless configured, and parses the reviewer list", () => {
+    const none = getLabSettings({ ...base } as unknown as NodeJS.ProcessEnv);
+    expect(none.responseDays).toBeNull();
+    expect(none.reviewerEmails).toEqual([]);
+    const bad = getLabSettings({ ...base, LAB_RESPONSE_DAYS: "soon" } as unknown as NodeJS.ProcessEnv);
+    expect(bad.responseDays).toBeNull();
+    const list = getLabSettings({ ...base, LAB_REVIEWER_EMAILS: " Owner@Stryvia.ai, second@stryvia.ai ,, " } as unknown as NodeJS.ProcessEnv);
+    expect(list.reviewerEmails).toEqual(["owner@stryvia.ai", "second@stryvia.ai"]);
+  });
+
   it("falls back to log mail when SES is not configured", () => {
     expect(getLabSettings({ ...base } as unknown as NodeJS.ProcessEnv).mailProvider).toBe("log");
     const ses = getLabSettings({ ...base, SES_REGION: "eu-west-1", SES_ACCESS_KEY_ID: "a", SES_SECRET_ACCESS_KEY: "b", LEAD_NOTIFY_FROM: "hello@stryvia.ai" } as unknown as NodeJS.ProcessEnv);

@@ -1,8 +1,9 @@
 "use client";
 
+import { humanSize } from "@/lib/lab/attachment-policy";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { adminFetch, fmtDate, verdictTone, DIMENSION_LABEL, VERDICT_LABEL, type Detail } from "./lab-admin-client";
+import { adminFetch, fmtDate, verdictTone, DECISION_LABEL, DIMENSION_LABEL, VERDICT_LABEL, type Detail } from "./lab-admin-client";
 
 // Submission detail (brief §8): brief, scorecard with evidence, red flags,
 // proposed plan, transcript, slot state, notes, decision actions with drafted
@@ -18,6 +19,7 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ action: Action; subject: string; body: string; source: string; hint: string } | null>(null);
+  const [preview, setPreview] = useState<{ to: string; subject: string; html: string; text: string; noContact: boolean; test: boolean } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -71,13 +73,37 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
     if (data.ok && data.draft) setDraft({ ...draft, ...data.draft });
   }
 
-  async function send() {
+  // Step 1: render the exact email server-side (nothing leaves).
+  async function previewSend() {
     if (!draft) return;
-    if (!window.confirm(`Send this ${draft.action.replace("_", " ")} email to ${d?.session.email}? This is the only thing the visitor will receive.`)) return;
+    setBusy("preview");
+    const { data } = await adminFetch<{ ok: boolean; preview?: { to: string; subject: string; html: string; text: string }; noContact?: boolean; test?: boolean; error?: string }>(
+      token,
+      `/api/admin/lab/${id}/send-email`,
+      { method: "POST", body: JSON.stringify({ mode: "preview", action: draft.action, subject: draft.subject, body: draft.body }) },
+    );
+    setBusy(null);
+    if (data.ok && data.preview) setPreview({ ...data.preview, noContact: Boolean(data.noContact), test: Boolean(data.test) });
+    else flash(data.error === "not_reviewer" ? "Your account is not authorised to record decisions." : `Could not preview: ${data.error ?? "error"}`);
+  }
+
+  // Step 2: an explicit, separate confirmation actually sends and records the decision.
+  async function confirmSend(overrideNoContact: boolean) {
+    if (!draft || !preview) return;
+    if (!window.confirm(`Send this "${DECISION_LABEL[draft.action]}" email to ${preview.to} now? This is the only thing the visitor will receive, and it records your decision.`)) return;
     await act("Email", () =>
-      adminFetch(token, `/api/admin/lab/${id}/send-email`, { method: "POST", body: JSON.stringify({ action: draft.action, subject: draft.subject, body: draft.body }) }),
+      adminFetch(token, `/api/admin/lab/${id}/send-email`, {
+        method: "POST",
+        body: JSON.stringify({ mode: "send", confirmed: true, overrideNoContact, action: draft.action, subject: draft.subject, body: draft.body }),
+      }),
     );
     setDraft(null);
+    setPreview(null);
+  }
+
+  async function markHold() {
+    if (!window.confirm("Record 'on hold' for this session? Nothing is sent to the visitor.")) return;
+    await act("Hold", () => adminFetch(token, `/api/admin/lab/${id}/decision`, { method: "POST", body: JSON.stringify({ decision: "hold", confirmed: true }) }));
   }
 
   function openPacket(format: "md" | "html") {
@@ -100,9 +126,10 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
   if (!d) return <div className="mx-auto max-w-[1320px] px-6 py-10"><span className="sv-label sv-label--live">LOADING</span></div>;
 
   const { session: s, assessment: a, brief, decisions, notes } = d;
+  const files = d.attachments ?? [];
   const briefContent = brief?.content as Record<string, unknown> | undefined;
   const p1 = briefContent?.what_you_came_with as Record<string, string | string[]> | undefined;
-  const p2 = briefContent?.what_it_could_become as Record<string, string> | undefined;
+  const p2 = briefContent?.what_it_could_become as Record<string, string | null> | undefined;
   const dir = brief?.language === "ar" ? "rtl" : "ltr";
   const industry = (d.state.slots.industry as { value?: string } | undefined)?.value;
 
@@ -115,7 +142,14 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
         <div className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="sv-label">{s.status.replace("_", " ").toUpperCase()} · {s.language.toUpperCase()} · {s.turn_count} turns · ${Number(s.token_usage?.cost_usd ?? 0).toFixed(2)}</p>
+              <p className="sv-label">{s.status === "submitted" && decisions.length === 0 ? "AWAITING MANUAL REVIEW" : s.status.replace("_", " ").toUpperCase()} · conversation {s.language.toUpperCase()} · {s.turn_count} turns · ${Number(s.token_usage?.cost_usd ?? 0).toFixed(2)}</p>
+              {(s.flags?.test || s.flags?.no_contact || s.flags?.decision_demands) && (
+                <div className="mt-2 flex flex-wrap gap-2 text-sv-label-sm">
+                  {s.flags?.test && <span className="rounded-sv-pill border border-sv-danger/40 px-2 py-0.5 text-sv-danger">TEST DATA — not a real prospect</span>}
+                  {s.flags?.no_contact && <span className="rounded-sv-pill border border-sv-danger/40 px-2 py-0.5 text-sv-danger">VISITOR ASKED NOT TO BE CONTACTED</span>}
+                  {s.flags?.decision_demands ? <span className="rounded-sv-pill border border-sv-line px-2 py-0.5 text-sv-text-3">asked the AI to decide ×{s.flags.decision_demands} (declined)</span> : null}
+                </div>
+              )}
               <h1 className="mt-2 font-display text-sv-h1 text-sv-text" dir="auto"><bdi>{s.visitor_name}</bdi></h1>
               <p className="mt-1 text-sv-small text-sv-text-2" dir="auto">
                 {s.company && <><bdi>{s.company}</bdi>{s.role ? ` · ${s.role}` : ""} · </>}
@@ -126,11 +160,11 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
               <div className="text-end">
                 <span className={cn("rounded-sv-pill border px-3 py-1 text-sv-small", verdictTone(a.verdict))}>{VERDICT_LABEL[a.verdict] ?? a.verdict}</span>
                 <p className="mt-2 font-mono text-sv-h2 tabular-nums text-sv-text">{Number(a.weighted_score).toFixed(2)}<span className="text-sv-small text-sv-text-3"> / 5</span></p>
-                <p className="text-sv-label text-sv-text-3">confidence {Number(a.confidence).toFixed(2)}{a.model_verdict && a.model_verdict !== a.verdict ? ` · model said ${a.model_verdict}` : ""}</p>
+                <p className="text-sv-label text-sv-text-3">AI triage · internal suggestion, not a decision · confidence {Number(a.confidence).toFixed(2)}</p>
                 {a.manipulation_detected && <p className="mt-1 text-sv-label text-sv-danger">⚠ manipulation attempt</p>}
               </div>
             ) : (
-              <p className="text-sv-small text-sv-text-3">Assessment: {s.assessment_status}</p>
+              <p className="text-sv-small text-sv-text-3">AI triage: {s.assessment_status}</p>
             )}
           </div>
           <dl className="mt-5 grid gap-x-8 gap-y-2 text-sv-small sm:grid-cols-2">
@@ -151,12 +185,12 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
         </div>
 
         <div className="grid gap-3 rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
-          <p className="sv-label">DECISION · nothing is sent until you approve a draft</p>
+          <p className="sv-label">{decisions.length ? "DECISION RECORDED" : "AWAITING MANUAL REVIEW"} · nothing is sent until you preview and confirm</p>
           <div className="grid gap-2">
             <ActionBtn onClick={() => startDraft("book_call")} disabled={busy !== null} primary>Book a call</ActionBtn>
             <ActionBtn onClick={() => startDraft("request_quote")} disabled={busy !== null}>Request quote details</ActionBtn>
             <ActionBtn onClick={() => startDraft("decline")} disabled={busy !== null}>Polite decline</ActionBtn>
-            <ActionBtn onClick={() => act("Hold", () => adminFetch(token, `/api/admin/lab/${id}/decision`, { method: "POST", body: JSON.stringify({ decision: "hold" }) }))} disabled={busy !== null}>Mark on hold</ActionBtn>
+            <ActionBtn onClick={markHold} disabled={busy !== null}>Mark on hold</ActionBtn>
           </div>
           <div className="mt-2 grid gap-2 border-t border-sv-line pt-3">
             <ActionBtn onClick={() => openPacket("md")}>Export review packet (.md)</ActionBtn>
@@ -190,8 +224,21 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <input value={draft.hint} onChange={(e) => setDraft({ ...draft, hint: e.target.value })} placeholder="Note for the redraft (e.g. mention Thursday, keep it shorter)…" className="min-w-64 flex-1 rounded-sv-sm border border-sv-line bg-sv-surface-3 px-3 py-2 text-sv-small text-sv-text" />
             <ActionBtn onClick={redraft} disabled={busy !== null}>{busy === "draft" ? "Drafting…" : "Redraft"}</ActionBtn>
-            <ActionBtn onClick={send} disabled={busy !== null || draft.subject.trim().length < 2 || draft.body.trim().length < 10} primary>Send to visitor</ActionBtn>
+            <ActionBtn onClick={previewSend} disabled={busy !== null || draft.subject.trim().length < 2 || draft.body.trim().length < 10} primary>{busy === "preview" ? "Rendering…" : "Preview exact email"}</ActionBtn>
           </div>
+          {preview && (
+            <div className="mt-4 rounded-sv-md border border-sv-line bg-sv-surface-1 p-4" data-testid="send-preview">
+              <p className="sv-label">PREVIEW · to <bdi>{preview.to}</bdi> · subject: <span dir="auto">{preview.subject}</span></p>
+              <iframe title="Email preview" srcDoc={preview.html} sandbox="" className="mt-3 h-96 w-full rounded-sv-sm border border-sv-line bg-white" />
+              {preview.test && <p className="mt-3 text-sv-small text-sv-danger">This session is marked as TEST DATA. Sending is almost certainly a mistake.</p>}
+              {preview.noContact && <p className="mt-1 text-sv-small text-sv-danger">The visitor asked NOT to be contacted. Sending requires an explicit override.</p>}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <ActionBtn onClick={() => confirmSend(false)} disabled={busy !== null || preview.noContact} primary>Confirm and send</ActionBtn>
+                {preview.noContact && <ActionBtn onClick={() => confirmSend(true)} disabled={busy !== null} danger>Override no-contact and send</ActionBtn>}
+                <ActionBtn onClick={() => setPreview(null)}>Back to editing</ActionBtn>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -211,7 +258,10 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
           {tab === "brief" && (
             brief && p1 && p2 ? (
               <div className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5 font-ar" dir={dir}>
-                <p className="sv-label">BRIEF v{brief.version}{brief.visitor_edited ? " · edited by visitor" : ""} · {brief.language.toUpperCase()}</p>
+                <p className="sv-label">BRIEF v{brief.version} · {brief.kind}{brief.source_version ? ` from v${brief.source_version}` : ""} · document {brief.language.toUpperCase()}{s.submitted_brief_version === brief.version ? " · SUBMITTED VERSION" : s.current_brief_version === brief.version ? " · current draft" : ""}</p>
+                {d.briefVersions.length > 1 && (
+                  <p className="mt-1 text-sv-label text-sv-text-3">History: {d.briefVersions.map((v) => `v${v.version} ${v.kind} ${v.language.toUpperCase()}${v.source_version ? ` (from v${v.source_version})` : ""}`).join(" · ")}</p>
+                )}
                 <h2 className="mt-2 font-display text-sv-h2 text-sv-text">{String(briefContent?.title ?? "")}</h2>
                 <p className="mt-1 text-sv-body text-sv-text-2">{String(briefContent?.one_line ?? "")}</p>
                 <h3 className="mt-6 text-sv-h3 text-sv-text">What you came with</h3>
@@ -220,6 +270,12 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
                 <Fields obj={p2} />
                 <h3 className="mt-6 text-sv-h3 text-sv-text">Commitment</h3>
                 <Fields obj={{ what_you_bring: (briefContent?.what_you_bring as string[]) ?? [], what_you_expect: String(briefContent?.what_you_expect ?? ""), constraints: String(briefContent?.constraints ?? "") }} />
+                {briefContent?.scope ? (
+                  <>
+                    <h3 className="mt-6 text-sv-h3 text-sv-text">Scope at a glance</h3>
+                    <Fields obj={briefContent.scope as Record<string, string | string[]>} />
+                  </>
+                ) : null}
               </div>
             ) : (
               <p className="text-sv-small text-sv-text-3">No brief yet.</p>
@@ -328,13 +384,33 @@ export function LabDetail({ token, id }: { token: string; id: string }) {
               <ul className="mt-2 space-y-3 text-sv-small">
                 {decisions.map((dec) => (
                   <li key={dec.id} className="border-t border-sv-line pt-2">
-                    <p className="text-sv-text">{dec.decision.replace("_", " ")} <span className="text-sv-text-3">· {dec.decided_by} · {fmtDate(dec.decided_at)}</span></p>
+                    <p className="text-sv-text">{DECISION_LABEL[dec.decision] ?? dec.decision} <span className="text-sv-text-3">· by {dec.decided_by} · {fmtDate(dec.decided_at)}</span></p>
                     {dec.outbound_email_subject && <p className="mt-1 text-sv-text-2" dir="auto">{dec.outbound_email_sent_at ? "Sent" : "Not sent"}: “{dec.outbound_email_subject}”</p>}
                     {dec.notes && <p className="mt-1 text-sv-text-3">{dec.notes}</p>}
                   </li>
                 ))}
               </ul>
             )}
+          </div>
+          <div className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5" data-testid="admin-attachments">
+            <p className="sv-label">FILES SENT BY THE VISITOR ({files.filter((f) => f.status === "stored").length})</p>
+            {files.length === 0 ? (
+              <p className="mt-2 text-sv-small text-sv-text-3">No files or voice recordings.</p>
+            ) : (
+              <ul className="mt-2 space-y-2 text-sv-small">
+                {files.map((f) => (
+                  <li key={f.id} className="border-t border-sv-line pt-2">
+                    {f.url ? (
+                      <a href={f.url} className="text-sv-text underline-offset-4 hover:underline" dir="auto" rel="noopener">{f.kind === "voice" ? "🎙 " : "📎 "}{f.file_name}</a>
+                    ) : (
+                      <span className="text-sv-text-3" dir="auto">{f.file_name} · upload not completed</span>
+                    )}
+                    <span className="text-sv-text-3"> · {humanSize(Number(f.size_bytes))} · {f.mime_type} · {fmtDate(f.created_at)}{f.message_id ? "" : " · not attached to a sent message"}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-2 text-sv-label text-sv-text-3">Links expire after an hour; reload the page for fresh ones.</p>
           </div>
           <div className="rounded-sv-md border border-sv-line bg-sv-surface-1 p-5">
             <p className="sv-label">PRIVATE NOTES</p>
@@ -361,13 +437,13 @@ function Row({ k, children }: { k: string; children: React.ReactNode }) {
   );
 }
 
-function Fields({ obj }: { obj: Record<string, string | string[]> }) {
+function Fields({ obj }: { obj: Record<string, string | string[] | null> }) {
   return (
     <dl className="mt-2 grid gap-3">
-      {Object.entries(obj).map(([k, v]) => (
+      {Object.entries(obj).filter(([, v]) => v !== null).map(([k, v]) => (
         <div key={k} className="border-t border-sv-line pt-2">
           <dt className="sv-label text-sv-text-3">{k.replace(/_/g, " ")}</dt>
-          <dd className="mt-1 text-sv-body text-sv-text-2">{Array.isArray(v) ? <ol className="list-decimal ps-5">{v.map((x, i) => <li key={i}>{x}</li>)}</ol> : v}</dd>
+          <dd className="mt-1 text-sv-body text-sv-text-2">{Array.isArray(v) ? (v.length ? <ol className="list-decimal ps-5">{v.map((x, i) => <li key={i}>{x}</li>)}</ol> : "—") : v}</dd>
         </div>
       ))}
     </dl>
