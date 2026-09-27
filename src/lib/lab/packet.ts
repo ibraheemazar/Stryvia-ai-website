@@ -1,11 +1,12 @@
 import "server-only";
+import { humanSize } from "./attachment-policy";
 import { RED_FLAGS, RUBRIC_DIMENSIONS, VERDICT_LABELS, type Verdict } from "@/config/lab-rubric.config";
 import type { LabLanguage } from "@/config/lab.config";
 import type { SessionDetail } from "./admin";
 import { escapeHtml } from "./guardrails";
 import { lensText } from "./prompts/interviewer";
 import { renderBriefText } from "./render";
-import { BriefSchema } from "./schemas";
+import { normalizeBrief } from "./schemas";
 import { SLOT_IDS, SLOT_META, slotConfidence } from "./slots";
 
 // Review packet (brief §8): one document per submission with contact details,
@@ -32,10 +33,14 @@ export function packetMarkdown(d: SessionDetail): string {
   if (s.company) lines.push(`- Company: ${s.company}`);
   if (s.role) lines.push(`- Role: ${s.role}`);
   lines.push(`- Industry (detected): ${state.slots.industry?.value ?? "—"}`);
+  lines.push(`- Review status: ${s.status === "submitted" ? (decisions.length ? "decision recorded" : "AWAITING MANUAL REVIEW") : s.status}`);
+  if (s.flags?.test) lines.push("- ⚠ Marked by the visitor as a TEST / fictional case — not a real request.");
+  if (s.flags?.no_contact) lines.push("- ⚠ The visitor asked NOT to be contacted.");
+  if (s.flags?.decision_demands) lines.push(`- Note: the visitor asked the AI to decide/approve ${s.flags.decision_demands} time(s); the AI declined each time.`);
   lines.push("");
 
   if (a) {
-    lines.push("## Verdict");
+    lines.push("## AI triage (internal suggestion — not a decision)");
     lines.push(`**${VERDICT_LABELS[a.verdict as Verdict]}** — weighted ${Number(a.weighted_score).toFixed(2)} / 5, confidence ${Number(a.confidence).toFixed(2)}${a.model_verdict && a.model_verdict !== a.verdict ? ` (model suggested \`${a.model_verdict}\`; rubric decided)` : ""}${a.manipulation_detected ? " · ⚠ manipulation attempt detected" : ""}`);
     lines.push("");
     for (const w of a.why_lines) lines.push(`- ${w}`);
@@ -68,17 +73,22 @@ export function packetMarkdown(d: SessionDetail): string {
       lines.push("");
     }
   } else {
-    lines.push("## Verdict");
-    lines.push(`Assessment status: ${s.assessment_status}. No assessment yet.`);
+    lines.push("## AI triage (internal suggestion — not a decision)");
+    lines.push(`Assessment status: ${s.assessment_status}. No triage yet.`);
     lines.push("");
   }
 
   lines.push("## Brief");
   if (brief) {
-    const parsed = BriefSchema.safeParse(brief.content);
-    lines.push(parsed.success ? renderBriefText(parsed.data, brief.language as LabLanguage) : "(brief could not be parsed)");
+    let text = "(brief could not be parsed)";
+    try {
+      text = renderBriefText(normalizeBrief(brief.content), brief.language as LabLanguage, { flags: s.flags ?? {} });
+    } catch {
+      /* keep placeholder */
+    }
+    lines.push(text);
     lines.push("");
-    lines.push(`_Version ${brief.version}${brief.visitor_edited ? ", edited by the visitor" : ""}._`);
+    lines.push(`_Version ${brief.version} (${brief.kind}${brief.source_version ? ` from v${brief.source_version}` : ""}, ${brief.language.toUpperCase()})${s.submitted_brief_version === brief.version ? " — the submitted version" : ""}. ${d.briefVersions.length} version(s) on file: ${d.briefVersions.map((v) => `v${v.version} ${v.kind} ${v.language}`).join(", ")}._`);
   } else {
     lines.push("No brief generated.");
   }
@@ -117,6 +127,12 @@ export function packetMarkdown(d: SessionDetail): string {
     for (const n of notes) lines.push(`- ${fmtDate(n.created_at)} · note by ${n.author}: ${n.body}`);
     lines.push("");
   }
+
+  const files = d.attachments ?? [];
+  lines.push("## Files sent by the visitor");
+  if (!files.length) lines.push("None.");
+  for (const f of files) lines.push(`- ${f.kind === "voice" ? "Voice recording" : "File"}: ${f.file_name} · ${humanSize(Number(f.size_bytes))} · ${f.mime_type} · ${fmtDate(f.created_at)}${f.status === "stored" ? "" : " · upload not completed"} (download from the admin detail page)`);
+  lines.push("");
 
   lines.push("## Transcript");
   for (const m of messages) {

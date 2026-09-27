@@ -23,13 +23,23 @@ export const BRIEF_LABELS: Record<LabLanguage, Record<string, string>> = {
     intelligence: "2 · Add intelligence",
     productize: "3 · Productize it",
     scale: "4 · Scale it",
-    ceiling: "An honest note on the ceiling",
+    ceiling: "Considerations for the review",
     bring: "What you bring",
     expect: "What you expect",
     constraints: "Constraints and regulation",
+    scope: "Scope at a glance",
+    confirmed: "Confirmed by you",
+    excluded: "Excluded by you",
+    assumptions: "Assumptions (labelled, not yours)",
+    openQuestions: "Open questions for the review",
     next: "What happens next",
+    notExplored: "Not explored — not relevant to this idea.",
     preparedFor: "Prepared for",
     by: "by Stryvia's AI in the Stryvia Idea Lab",
+    status: "Status: submitted for manual review by Stryvia. No partnership or project decision has been made.",
+    flagTest: "Marked by you as a test / fictional case — not a real request.",
+    flagNoContact: "You asked not to be contacted.",
+    version: "Version",
   },
   ar: {
     part1: "ما جئت به",
@@ -47,13 +57,23 @@ export const BRIEF_LABELS: Record<LabLanguage, Record<string, string>> = {
     intelligence: "٢ · إضافة الذكاء",
     productize: "٣ · تحويله إلى منتج",
     scale: "٤ · التوسّع",
-    ceiling: "كلمة صادقة عن السقف",
+    ceiling: "اعتبارات للمراجعة",
     bring: "ما تقدّمه أنت",
     expect: "ما تتوقّعه",
     constraints: "القيود والتنظيم",
+    scope: "النطاق في لمحة",
+    confirmed: "ما أكّدته أنت",
+    excluded: "ما استبعدته أنت",
+    assumptions: "افتراضات (مُعلَّمة، ليست منك)",
+    openQuestions: "أسئلة مفتوحة للمراجعة",
     next: "ماذا بعد",
+    notExplored: "لم يُستكشف — غير ذي صلة بهذه الفكرة.",
     preparedFor: "أُعدّ لـ",
     by: "بواسطة الذكاء الاصطناعي من سترايفيا في مختبر الأفكار",
+    status: "الحالة: أُرسل للمراجعة اليدوية من سترايفيا. لم يُتَّخذ أي قرار بشأن شراكة أو مشروع.",
+    flagTest: "وضعتَ علامة أن هذه حالة اختبار / خيالية — ليست طلبًا حقيقيًا.",
+    flagNoContact: "طلبتَ عدم التواصل معك.",
+    version: "النسخة",
   },
 };
 
@@ -88,9 +108,23 @@ function list(items: string[], language: LabLanguage, ordered = false): string {
     .join("")}</${tag}>`;
 }
 
+export type RenderFlags = { test?: boolean; no_contact?: boolean };
+
+/** Fixed, non-generated lines that must survive every transformation. */
+function structuralLines(L: Record<string, string>, flags?: RenderFlags): string[] {
+  const lines: string[] = [];
+  if (flags?.test) lines.push(L.flagTest);
+  if (flags?.no_contact) lines.push(L.flagNoContact);
+  return lines;
+}
+
+function optionalStep(label: string, value: string | null, L: Record<string, string>, language: LabLanguage): string {
+  return value ? block(label, para(value, language), language) : "";
+}
+
 export function renderBriefHtml(
   brief: Brief,
-  opts: { language: LabLanguage; visitorName: string; siteUrl?: string },
+  opts: { language: LabLanguage; visitorName: string; siteUrl?: string; flags?: RenderFlags; version?: number },
 ): string {
   const L = BRIEF_LABELS[opts.language];
   const lang = opts.language;
@@ -129,18 +163,28 @@ ${block(L.outcome, para(p1.desired_outcome, lang), lang)}
   <p style="margin:0 0 12px 0;font-size:13px;color:#6f7a6e;">${escapeHtml(L.part2Note)}</p>
   <p style="margin:0 0 12px 0;font-size:16px;line-height:1.6;color:#1a1c1a;">${t(p2.intro, lang)}</p>
 </td></tr>
-${block(L.automate, para(p2.automate, lang), lang)}
-${block(L.intelligence, para(p2.add_intelligence, lang), lang)}
-${block(L.productize, para(p2.productize, lang), lang)}
-${block(L.scale, para(p2.scale, lang), lang)}
+${optionalStep(L.automate, p2.automate, L, lang)}
+${optionalStep(L.intelligence, p2.add_intelligence, L, lang)}
+${optionalStep(L.productize, p2.productize, L, lang)}
+${optionalStep(L.scale, p2.scale, L, lang)}
+${[p2.automate, p2.add_intelligence, p2.productize, p2.scale].every((v) => !v) ? `<tr><td style="padding:0 0 18px 0;font-size:14px;color:#6f7a6e;">${escapeHtml(L.notExplored)}</td></tr>` : ""}
 ${block(L.ceiling, para(p2.honest_ceiling_note, lang), lang)}
 <tr><td style="padding:8px 0 8px 0;border-top:1px solid #d9ddd8;"></td></tr>
 ${block(L.bring, list(brief.what_you_bring, lang), lang)}
 ${block(L.expect, para(brief.what_you_expect, lang), lang)}
 ${block(L.constraints, para(brief.constraints, lang), lang)}
+<tr><td style="padding:16px 0 8px 0;border-top:1px solid #d9ddd8;"><h2 style="margin:16px 0 4px 0;font-size:20px;color:#0a0b0a;font-weight:600;">${escapeHtml(L.scope)}</h2></td></tr>
+${block(L.confirmed, list(brief.scope.confirmed, lang), lang)}
+${block(L.excluded, list(brief.scope.excluded, lang), lang)}
+${block(L.assumptions, list(brief.scope.assumptions, lang), lang)}
+${block(L.openQuestions, list(brief.scope.open_questions, lang), lang)}
 ${block(L.next, para(brief.next_step_note, lang), lang)}
-<tr><td style="padding:24px 0 0 0;border-top:1px solid #d9ddd8;font-size:12px;color:#6f7a6e;line-height:1.5;">
-  <bdi>stryvia.ai</bdi>
+<tr><td style="padding:16px 0 0 0;border-top:1px solid #d9ddd8;font-size:13px;color:#3b403a;line-height:1.6;">
+  <p style="margin:0 0 6px 0;" data-structural="status">${escapeHtml(L.status)}</p>
+  ${structuralLines(L, opts.flags).map((l) => `<p style="margin:0 0 6px 0;" data-structural="flag">${escapeHtml(l)}</p>`).join("")}
+</td></tr>
+<tr><td style="padding:16px 0 0 0;font-size:12px;color:#6f7a6e;line-height:1.5;">
+  <bdi>stryvia.ai</bdi>${opts.version != null ? ` · ${escapeHtml(L.version)} <bdi>${opts.version}</bdi>` : ""}
 </td></tr>
 </table>
 </td></tr></table>
@@ -148,7 +192,7 @@ ${block(L.next, para(brief.next_step_note, lang), lang)}
 }
 
 /** Plain-text version for the email text part and the review packet. */
-export function renderBriefText(brief: Brief, language: LabLanguage): string {
+export function renderBriefText(brief: Brief, language: LabLanguage, opts: { flags?: RenderFlags } = {}): string {
   const L = BRIEF_LABELS[language];
   const p1 = brief.what_you_came_with;
   const p2 = brief.what_it_could_become;
@@ -170,17 +214,31 @@ export function renderBriefText(brief: Brief, language: LabLanguage): string {
     `== ${L.part2} ==`,
     L.part2Note,
     p2.intro,
-    `${L.automate}: ${p2.automate}`,
-    `${L.intelligence}: ${p2.add_intelligence}`,
-    `${L.productize}: ${p2.productize}`,
-    `${L.scale}: ${p2.scale}`,
+    ...(p2.automate ? [`${L.automate}: ${p2.automate}`] : []),
+    ...(p2.add_intelligence ? [`${L.intelligence}: ${p2.add_intelligence}`] : []),
+    ...(p2.productize ? [`${L.productize}: ${p2.productize}`] : []),
+    ...(p2.scale ? [`${L.scale}: ${p2.scale}`] : []),
+    ...([p2.automate, p2.add_intelligence, p2.productize, p2.scale].every((v) => !v) ? [L.notExplored] : []),
     `${L.ceiling}: ${p2.honest_ceiling_note}`,
     "",
     `${L.bring}:`,
     ...brief.what_you_bring.map((b) => `  - ${b}`),
     `${L.expect}: ${brief.what_you_expect}`,
     `${L.constraints}: ${brief.constraints}`,
+    "",
+    `== ${L.scope} ==`,
+    `${L.confirmed}:`,
+    ...brief.scope.confirmed.map((b) => `  - ${b}`),
+    `${L.excluded}:`,
+    ...brief.scope.excluded.map((b) => `  - ${b}`),
+    `${L.assumptions}:`,
+    ...brief.scope.assumptions.map((b) => `  - ${b}`),
+    `${L.openQuestions}:`,
+    ...brief.scope.open_questions.map((b) => `  - ${b}`),
+    "",
     `${L.next}: ${brief.next_step_note}`,
+    L.status,
+    ...structuralLines(L, opts.flags),
   ];
   return lines.join("\n");
 }

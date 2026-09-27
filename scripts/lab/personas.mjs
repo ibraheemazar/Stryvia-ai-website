@@ -24,7 +24,7 @@ const OUT = opt("--out", "docs/lab/harness");
 const MAX_TURNS = Number(opt("--max-turns", 18));
 const BUDGET_USD = Number(process.env.LAB_HARNESS_BUDGET_USD || 40);
 const EMAIL_BASE = process.env.HARNESS_EMAIL || "idea-lab-harness@example.com";
-const CONSENT_VERSION = process.env.CONSENT_VERSION || "2026-09-v2";
+const CONSENT_VERSION = process.env.CONSENT_VERSION || "2026-09-v4";
 
 if (!SECRET) {
   console.error("CRON_SECRET is required (matches the deployment's secret).");

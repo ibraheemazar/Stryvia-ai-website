@@ -24,6 +24,20 @@ export type ListRow = {
   has_decision: boolean;
   decision: string | null;
   awaiting_decision: boolean;
+  flags: SessionFlags;
+};
+
+export type SessionFlags = { test?: boolean; no_contact?: boolean; decision_demands?: number };
+
+export type BriefRow = {
+  version: number;
+  language: "en" | "ar";
+  content: Record<string, unknown>;
+  rendered_html: string;
+  visitor_edited: boolean;
+  kind: "generated" | "edited" | "translated" | "revised";
+  source_version: number | null;
+  created_at: string;
 };
 
 export type Stats = {
@@ -80,21 +94,36 @@ export type Detail = {
     submitted_at: string | null;
     consent_version: string;
     consent_at: string;
+    current_brief_version: number | null;
+    submitted_brief_version: number | null;
+    flags: SessionFlags;
   };
   messages: Array<{ id: string; role: string; content: string; input_mode: string; transcript_raw: string | null; created_at: string; guardrail_hits: unknown }>;
   state: { slots: Record<string, unknown>; industry_lens: Record<string, unknown> | null; rolling_summary: string | null };
-  brief: { version: number; language: "en" | "ar"; content: Record<string, unknown>; rendered_html: string; visitor_edited: boolean } | null;
+  brief: BriefRow | null;
+  briefVersions: BriefRow[];
   assessment: Assessment | null;
   assessments: Assessment[];
   decisions: Array<{ id: string; decision: string; notes: string | null; decided_by: string; decided_at: string; outbound_email_subject: string | null; outbound_email_body: string | null; outbound_email_sent_at: string | null }>;
   notes: Array<{ id: string; author: string; body: string; created_at: string }>;
+  /** Every file the visitor sent (documents, images, voice recordings), with a 1-hour download link. */
+  attachments: Array<{ id: string; message_id: string | null; kind: "file" | "voice"; file_name: string; mime_type: string; size_bytes: number; status: "pending" | "stored"; created_at: string; url: string | null }>;
 };
 
+// AI triage labels. These are internal suggestions to help order the review
+// queue; they are never a decision and never reach the visitor.
 export const VERDICT_LABEL: Record<string, string> = {
-  productize: "Productize",
-  paid_build: "Paid build",
-  priority_call: "Priority call",
-  refer_or_pass: "Refer / pass",
+  productize: "Triage: product potential",
+  paid_build: "Triage: paid build",
+  priority_call: "Triage: talk soon",
+  refer_or_pass: "Triage: needs more",
+};
+
+export const DECISION_LABEL: Record<string, string> = {
+  book_call: "Book a call",
+  request_quote: "Request quote details",
+  decline: "Polite decline",
+  hold: "On hold",
 };
 
 export const DIMENSION_LABEL: Record<string, string> = {

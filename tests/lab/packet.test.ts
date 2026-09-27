@@ -55,6 +55,8 @@ const detail = {
     version: 2,
     language: "ar",
     visitor_edited: true,
+    kind: "edited",
+    source_version: 1,
     rendered_html: "<html></html>",
     created_at: "2026-09-24T10:19:00Z",
     content: {
@@ -65,6 +67,7 @@ const detail = {
       what_you_bring: ["خبرة"],
       what_you_expect: "شراكة",
       constraints: "لا شيء",
+      scope: { confirmed: [], excluded: [], assumptions: [], open_questions: [] },
       next_step_note: "n",
     },
   },
@@ -88,6 +91,10 @@ const detail = {
     created_at: "2026-09-24T10:21:00Z",
   },
   assessments: [],
+  briefVersions: [
+    { version: 1, language: "en", kind: "generated", source_version: null, created_at: "2026-09-24T10:18:00Z" },
+    { version: 2, language: "ar", kind: "edited", source_version: 1, created_at: "2026-09-24T10:19:00Z" },
+  ],
   decisions: [{ id: "d", session_id: "s", decision: "hold", notes: "later", decided_by: "reviewer@stryvia.ai", decided_at: "2026-09-24T11:00:00Z", outbound_email_subject: null, outbound_email_body: null, outbound_email_sent_at: null }],
   notes: [{ id: "n", session_id: "s", author: "reviewer@stryvia.ai", body: "call next week", created_at: "2026-09-24T11:01:00Z" }],
 } as unknown as SessionDetail;
@@ -95,9 +102,12 @@ const detail = {
 describe("review packet", () => {
   it("markdown contains every required section (§8)", () => {
     const md = packetMarkdown(detail);
-    for (const h of ["## Contact", "## Verdict", "## Scorecard", "## Red flags", "## AI's proposed plan", "## Brief", "## Slot state", "## Decisions and notes", "## Transcript"]) {
+    for (const h of ["## Contact", "## AI triage (internal suggestion — not a decision)", "## Scorecard", "## Red flags", "## AI's proposed plan (internal)", "## Brief", "## Slot state", "## Decisions and notes", "## Transcript"]) {
       expect(md).toContain(h);
     }
+    // The packet never presents the AI's triage as a verdict or a decision.
+    expect(md).not.toMatch(/## Verdict|approved|rejected/);
+    expect(md).toContain("v2 edited ar");
     expect(md).toContain("+966500000000");
     expect(md).toContain("Priority call");
     expect(md).toContain("model suggested `productize`");

@@ -8,7 +8,7 @@ import { adminFetch, fmtDate, rowsToCsv, verdictTone, VERDICT_LABEL, type ListRo
 // Submissions list (brief §8): sorted by score, filters, stats strip,
 // contact details in the row, CSV export of what is on screen.
 type View = "all" | "awaiting" | "in_progress" | "decided";
-const VIEWS: Array<[View, string]> = [["all", "All"], ["awaiting", "Needs decision"], ["in_progress", "In progress"], ["decided", "Decided"]];
+const VIEWS: Array<[View, string]> = [["all", "All"], ["awaiting", "Awaiting manual review"], ["in_progress", "In progress"], ["decided", "Decided"]];
 
 export function LabList({ token }: { token: string }) {
   const [rows, setRows] = useState<ListRow[]>([]);
@@ -134,8 +134,8 @@ export function LabList({ token }: { token: string }) {
         <table className="w-full text-sv-small">
           <thead className="sticky top-0 bg-sv-surface-1 text-start">
             <tr className="text-sv-label text-sv-text-3">
-              {["Score", "Verdict", "Name", "Contact", "Industry", "Lang", "Country", "Turns", "Cost", "Submitted", "Status"].map((h) => (
-                <th key={h} className={cn("px-3 py-2.5 text-start font-normal", (h === "Score" || h === "Turns" || h === "Cost") && "text-end")}>{h}</th>
+              {["Triage", "AI suggestion", "Name", "Contact", "Industry", "Lang", "Country", "Turns", "Cost", "Submitted", "Status"].map((h) => (
+                <th key={h} className={cn("px-3 py-2.5 text-start font-normal", (h === "Triage" || h === "Turns" || h === "Cost") && "text-end")}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -157,7 +157,9 @@ export function LabList({ token }: { token: string }) {
                     <bdi>{r.visitor_name}</bdi>
                   </Link>
                   {r.company && <span className="ms-2 text-sv-text-3"><bdi>{r.company}</bdi>{r.role ? ` · ${r.role}` : ""}</span>}
-                  {r.awaiting_decision && <span className="ms-2 rounded-sv-pill border border-sv-green-line px-2 py-0.5 text-sv-label-sm text-sv-green">NEEDS DECISION</span>}
+                  {r.awaiting_decision && <span className="ms-2 rounded-sv-pill border border-sv-green-line px-2 py-0.5 text-sv-label-sm text-sv-green">AWAITING MANUAL REVIEW</span>}
+                  {r.flags?.test && <span className="ms-2 rounded-sv-pill border border-sv-danger/40 px-2 py-0.5 text-sv-label-sm text-sv-danger">TEST DATA</span>}
+                  {r.flags?.no_contact && <span className="ms-2 rounded-sv-pill border border-sv-danger/40 px-2 py-0.5 text-sv-label-sm text-sv-danger">NO CONTACT</span>}
                   {r.decision && <span className="ms-2 rounded-sv-pill border border-sv-line px-2 py-0.5 text-sv-label-sm text-sv-text-3">{r.decision.replace("_", " ").toUpperCase()}</span>}
                 </td>
                 <td className="px-3 py-2.5 text-sv-text-2">

@@ -44,6 +44,12 @@ Two items block real conversations today; everything else is optional with a gra
 
 7. **Notification inbox** (optional): defaults to `LEAD_NOTIFY_TO`. Set `LAB_NOTIFY_TO` to use a different inbox.
 
+8. **Decision controls** (optional, recommended):
+   - `LAB_REVIEWER_EMAILS` = the email(s) allowed to record or send a decision (comma-separated, subset of `ADMIN_EMAIL_ALLOWLIST`). Unset means every allowlisted admin may decide.
+   - `LAB_RESPONSE_DAYS` = a number of working days **only if you approve making that promise**. Unset (the default) means the confirmation screen and the brief copy email make no response-time commitment. The earlier "7 working days" default was removed.
+
+8b. **Privacy page draft notice**: `/privacy` still carries "Draft for review … to be reviewed by counsel". It was deliberately left in place: removing the label is a legal sign-off, not a code change. Once counsel has reviewed, delete the `privacy.draftNote` keys in `src/messages/{en,ar}.pages.json`.
+
 9. **Vercel function duration**: Project → Settings → Functions: confirm Fluid compute is on (or the plan allows ≥120 s). The brief and assessment routes declare `maxDuration = 120`.
 
 10. **Legal review**: the consent wording (`src/messages/{en,ar}.pages.json` → `lab.consent`) is PDPL-aware but not legal advice. If counsel changes it, bump `LAB_CONSENT_VERSION` in `src/config/lab.config.ts` and the matching `lab.consent.version` keys.

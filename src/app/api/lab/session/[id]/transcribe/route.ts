@@ -3,6 +3,7 @@ import { LAB_LIMITS } from "@/config/lab.config";
 import { labEvent } from "@/lib/lab/events";
 import { json, ownerOr, withLabRoute } from "@/lib/lab/http";
 import { hashKey, isRateLimited } from "@/lib/lab/rate-limit";
+import { storeServerAttachment } from "@/lib/lab/attachments";
 import { logAiCall } from "@/lib/lab/store";
 import { ACCEPTED_AUDIO, SttError, getSttProvider } from "@/lib/lab/voice";
 
@@ -10,9 +11,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Voice note → text (brief §2 UX). Audio is forwarded to the configured
-// provider and discarded; only the transcript returns, and only after the
-// visitor has corrected and sent it does it get stored with the message.
+// Voice note → text (brief §2 UX). The recording itself is kept in private
+// storage as an attachment (owner requirement: keep everything the visitor
+// sends), then forwarded to the configured provider. The transcript returns
+// to the composer for the visitor to correct; the attachment id travels with
+// the message so the owner sees the recording next to the words.
 export const POST = withLabRoute<{ id: string }>("lab.session.transcribe", async (req: NextRequest, { params, requestId }) => {
   const owner = await ownerOr(req, params.id);
   if (!owner.ok) return owner.res!;
@@ -38,6 +41,9 @@ export const POST = withLabRoute<{ id: string }>("lab.session.transcribe", async
   if (file.size > LAB_LIMITS.maxAudioBytes) return json({ ok: false, error: "too_large" }, 413);
 
   const audio = Buffer.from(await file.arrayBuffer());
+  const ext = mime.includes("mp4") || mime.includes("m4a") ? "m4a" : mime.includes("wav") ? "wav" : mime.includes("mpeg") ? "mp3" : "webm";
+  const stored = await storeServerAttachment(session.id, { name: `voice-note-${new Date().toISOString().replace(/[:.]/g, "-")}.${ext}`, mime, bytes: audio, kind: "voice" }).catch(() => null);
+  if (!stored) await labEvent("attachment.voice_store_failed", "warn", { sessionId: session.id, requestId, payload: { kind: "voice" } });
   const started = Date.now();
   try {
     const result = await provider.transcribe({ audio, mime, language, country: session.country });
@@ -54,11 +60,12 @@ export const POST = withLabRoute<{ id: string }>("lab.session.transcribe", async
       cost_usd: 0,
       ok: true,
     });
-    return json({ ok: true, text: result.text.slice(0, 4000), raw: result.raw.slice(0, 4000), provider: result.provider, detectedLanguage: result.detectedLanguage ?? null });
+    return json({ ok: true, text: result.text.slice(0, 4000), raw: result.raw.slice(0, 4000), provider: result.provider, detectedLanguage: result.detectedLanguage ?? null, attachmentId: stored?.id ?? null });
   } catch (err) {
     const code = err instanceof SttError ? err.code : "unknown";
     await logAiCall({ session_id: session.id, purpose: "transcribe", actor: "visitor", model: provider.id, input_tokens: 0, output_tokens: 0, cache_read_tokens: 0, cache_write_tokens: 0, latency_ms: Date.now() - started, cost_usd: 0, ok: false, error_code: code });
     await labEvent("transcribe.failed", "warn", { sessionId: session.id, requestId, payload: { provider: provider.id, code } });
-    return json({ ok: false, error: "transcribe_failed", code }, 502);
+    // The recording is kept even when transcription fails.
+    return json({ ok: false, error: "transcribe_failed", code, attachmentId: stored?.id ?? null }, 502);
   }
 });

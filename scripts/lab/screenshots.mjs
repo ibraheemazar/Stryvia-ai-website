@@ -13,7 +13,7 @@ const args = process.argv.slice(2);
 const OUT = args.includes("--out") ? args[args.indexOf("--out") + 1] : "docs/lab/checkpoint-3";
 const BASE = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, "");
 const EMAIL = process.env.DEMO_EMAIL || "idea-lab-screens@example.com";
-const CONSENT_VERSION = process.env.CONSENT_VERSION || "2026-09-v2";
+const CONSENT_VERSION = process.env.CONSENT_VERSION || "2026-09-v4";
 fs.mkdirSync(OUT, { recursive: true });
 
 // Prefer the preinstalled Chromium when Playwright's own download is absent.

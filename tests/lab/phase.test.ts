@@ -10,6 +10,9 @@ const quiet = {
   sensitive_disclosure: false,
   injection_attempt: false,
   visitor_is_struggling: false,
+  is_test_or_fictional: false,
+  no_contact_requested: false,
+  demands_decision: false,
 };
 
 function filled(ids: string[], confidence = 0.9): SlotState {
@@ -116,6 +119,21 @@ describe("phase controller", () => {
     expect(p0).toBeLessThan(p1);
     expect(p1).toBeLessThan(p2);
     expect(p2).toBeLessThanOrEqual(1);
+  });
+
+  it("progress cannot jump from the opening to near-complete on one detailed answer", () => {
+    // Each phase owns a band; a fully covered understand phase tops out at 40%.
+    expect(computeProgress("intro", {})).toBeLessThanOrEqual(0.08);
+    expect(computeProgress("understand", filled(understandSlots))).toBeLessThanOrEqual(0.4);
+    expect(computeProgress("understand", filled(understandSlots.slice(0, 3)))).toBeLessThan(computeProgress("understand", filled(understandSlots)));
+    // Within a phase progress moves with covered required slots, in bounded steps.
+    let prev = computeProgress("understand", {});
+    for (let i = 1; i <= understandSlots.length; i += 1) {
+      const p = computeProgress("understand", filled(understandSlots.slice(0, i)));
+      expect(p - prev).toBeLessThanOrEqual(0.31);
+      expect(p).toBeGreaterThanOrEqual(prev);
+      prev = p;
+    }
   });
 
   it("focus never includes a filled slot (never ask twice)", () => {

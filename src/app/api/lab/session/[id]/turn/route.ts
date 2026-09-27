@@ -9,13 +9,16 @@ import { hashKey, isRateLimited } from "@/lib/lab/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+// Extract (≤25s) + lens (≤30s) + summary (≤30s) + interview (≤50s) can exceed
+// 60s on a first turn; the lock TTL and client timeout are aligned with this.
+export const maxDuration = 120;
 
 const TurnSchema = z.object({
-  content: z.string().min(1).max(LAB_CONVERSATION.maxMessageChars + 200),
+  content: z.string().max(LAB_CONVERSATION.maxMessageChars + 200).default(""),
   inputMode: z.enum(["text", "voice"]).default("text"),
   transcriptRaw: z.string().max(LAB_CONVERSATION.maxMessageChars).optional().nullable(),
   clientTurnId: z.string().min(8).max(80),
+  attachmentIds: z.array(z.string().uuid()).max(10).optional(),
 });
 
 export const POST = withLabRoute<{ id: string }>("lab.session.turn", async (req: NextRequest, { params, requestId }) => {
@@ -30,7 +33,8 @@ export const POST = withLabRoute<{ id: string }>("lab.session.turn", async (req:
   const parsed = await readJson(req, TurnSchema);
   if (!parsed.ok) return parsed.res;
   const content = sanitizeVisitorText(parsed.data.content, LAB_CONVERSATION.maxMessageChars);
-  if (!content) return json({ ok: false, error: "empty" }, 400);
+  const attachmentIds = parsed.data.attachmentIds ?? [];
+  if (!content && attachmentIds.length === 0) return json({ ok: false, error: "empty" }, 400);
 
   const outcome = await runTurn({
     session,
@@ -39,6 +43,7 @@ export const POST = withLabRoute<{ id: string }>("lab.session.turn", async (req:
     transcriptRaw: parsed.data.transcriptRaw ?? null,
     clientTurnId: parsed.data.clientTurnId,
     requestId,
+    attachmentIds,
   });
   return streamTurn(outcome);
 });

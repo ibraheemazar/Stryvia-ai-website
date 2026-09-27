@@ -9,8 +9,8 @@ import { labUrl } from "./http";
 import { sendLabMail } from "./mail";
 import { notifyFounder } from "./notify";
 import { renderBriefText } from "./render";
-import { BriefSchema } from "./schemas";
-import { getLatestBrief, getSessionById, hasEvent, type LabSessionRow } from "./store";
+import { normalizeBrief } from "./schemas";
+import { getSessionById, getSubmittedOrCurrentBrief, hasEvent, type LabSessionRow } from "./store";
 
 // Everything that happens after the visitor presses Submit (brief §2.7, §4.5,
 // §6). Each step is idempotent so the cron sweep / admin re-run can safely
@@ -18,15 +18,15 @@ import { getLatestBrief, getSessionById, hasEvent, type LabSessionRow } from "./
 
 export async function emailBriefCopy(session: LabSessionRow): Promise<void> {
   if (await hasEvent(session.id, "mail.sent.brief_copy")) return;
-  const brief = await getLatestBrief(session.id);
+  const brief = await getSubmittedOrCurrentBrief(session);
   if (!brief) return;
   const settings = getLabSettings();
-  const content = BriefSchema.parse(brief.content);
+  const content = normalizeBrief(brief.content);
   const mail = briefCopyEmail({
     language: brief.language as LabLanguage,
     name: session.visitor_name,
     briefHtml: brief.rendered_html,
-    briefText: renderBriefText(content, brief.language as LabLanguage),
+    briefText: renderBriefText(content, brief.language as LabLanguage, { flags: session.flags ?? {} }),
     responseDays: settings.responseDays,
     sessionUrl: labUrl(`${LAB_PATH}/s/${session.id}`, brief.language as LabLanguage),
   });

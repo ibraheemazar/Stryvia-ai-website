@@ -16,13 +16,25 @@ Brief: `STRYVIA_IDEA_LAB_CLAUDE_CODE_BRIEF.md` (the founder's spec). This docume
 | `extractor` (in `engine.ts`) | `claude-sonnet-5` structured output → `ExtractorDiffSchema` (zod) → merge. |
 | `engine.ts` | One visitor turn: lock → persist user msg → extract → phase → lens/summary → stream interviewer → persist reply → meta frame. |
 | `ai.ts` / `ai-mock.ts` | The only model boundary: caching (frozen system block), structured outputs, timeouts, bounded retry, refusal/max_tokens handling, usage → `lab_ai_calls` + cost. Mock is refused in production. |
-| `brief.ts`, `render.ts` | `claude-opus-5-5` structured brief; HTML/text rendering (RTL-correct, bidi-isolated, escaped). |
+| `brief.ts`, `render.ts` | `claude-opus-5-5` structured brief; HTML/text rendering (RTL-correct, bidi-isolated, escaped). `translateBrief` / `reviseBrief` read ONE saved version (never the transcript) and save the result as a *proposal* that becomes current only when the visitor accepts it; `acceptBriefVersion` refuses a proposal whose source is no longer current (stale). |
+| `brief-check.ts` | Deterministic guards run on every model-generated version: number/currency/percent preservation (Western and Arabic-Indic digits, number words, Arabic duals) and a script-share language check. A failing translation is never saved (422 `facts_lost` / `language_mismatch`; the source stays intact). Pure. |
+| `brief-diff.ts`, `brief-view.ts` | Field-level diff shown to the visitor before accepting a proposal; version statuses (current / submitted / proposed / superseded); the visitor-facing view of a version (kind, source version, document language). Pure. |
+| `locks.ts` | One lock per session (`lab_sessions.pending_turn_id`, TTL 125 s) shared by turns, retries, finish, edits, translations, revisions and submit, so no two operations can overwrite each other. |
+| Session `flags` | `test`, `no_contact`, `decision_demands` on `lab_sessions.flags`, set from extractor signals OR keyword checks on the visitor's words, never cleared, rendered structurally in brief/print/packet and enforced by the admin send route. |
 | `assessor.ts` | Private scoring; verdict recomputed in code (`lab-rubric.config.ts`), model verdict stored for comparison. Never reachable from visitor routes (repo-guard). |
 | `notify.ts`, `submit.ts`, `mail.ts`, `emails.ts` | Founder email/WhatsApp, visitor brief copy, idempotent post-submit pipeline (`after()` + hourly `lab_sweep`). |
 | `guardrails.ts` | Untrusted wrapping, output lint (EN/AR banned claims), injection heuristics, escaping/bidi helpers. |
 | `events.ts`, `log.ts` | PII-free append-only events + structured JSON logs with request ids. |
 
 Config: `src/config/lab.config.ts` (product), `src/config/lab-rubric.config.ts` (scoring). Prompts: `src/lib/lab/prompts/*` with `PROMPT_VERSION`.
+
+## Brief version model
+
+`lab_briefs` rows carry `kind` (`generated` | `edited` | `translated` | `revised`) and `source_version`. `lab_sessions.current_brief_version` points at what the visitor sees; `lab_sessions.submitted_brief_version` is frozen at submission and is the only version print, the brief-copy email, the admin detail and the review packet show afterwards. Every mutating call names the version it starts from (`baseVersion`); a mismatch is a 409 `stale`. Document language is a property of the version, not of the page URL or the conversation language: it drives labels, direction, the translate target and print headings.
+
+## Manual review controls (server-side)
+
+Submission sets `status=submitted` and never anything else; the assessor writes only its own table and `assessment_status`. `POST /api/admin/lab/[id]/decision` requires `confirmed: true`, a reviewer (`canDecide`: `LAB_REVIEWER_EMAILS` ⊆ admin allowlist) and a submitted session. `POST …/send-email` is two steps: `mode: "preview"` (renders, sends nothing) then `mode: "send", confirmed: true` (+ `overrideNoContact: true` for a visitor who asked not to be contacted). Refusals and sends are audited in `lab_events` with the reviewer's identity. A repo-guard test asserts no visitor, AI or cron module references the decision table or the sender.
 
 ## Scheduled jobs and the harness
 

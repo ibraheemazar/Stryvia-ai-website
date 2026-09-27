@@ -118,7 +118,7 @@ const start = await fetch(`${BASE}/api/lab/start`, {
     role: persona.role,
     language: persona.language,
     consent: true,
-    consentVersion: process.env.CONSENT_VERSION || "2026-09-v2",
+    consentVersion: process.env.CONSENT_VERSION || "2026-09-v4",
     turnstileToken: null,
     website: "",
   }),

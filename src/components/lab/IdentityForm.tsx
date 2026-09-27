@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { getCountries, getCountryCallingCode, parsePhoneNumberFromString, type CountryCode } from "libphonenumber-js";
 import { Button } from "@/components/ui/Button";
@@ -45,15 +45,22 @@ export function IdentityForm({ turnstileSiteKey, consentVersion }: { turnstileSi
 
   const onToken = useCallback((tok: string | null) => setToken(tok), []);
 
+  // Country names come from the runtime's ICU data, which differs between the
+  // server (Node) and the browser. Sorting by those names made the server HTML
+  // and the first client render disagree, React threw away the tree, and a
+  // tap on "Start" during that window was lost. The first render therefore
+  // orders by ISO code (identical everywhere); names sort after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const countries = useMemo(() => {
     const names = new Intl.DisplayNames([locale], { type: "region" });
     const all = getCountries()
       .map((code) => ({ code, name: names.of(code) ?? code, dial: getCountryCallingCode(code) }))
-      .sort((a, b) => a.name.localeCompare(b.name, locale));
+      .sort((a, b) => (mounted ? a.name.localeCompare(b.name, locale) : a.code.localeCompare(b.code)));
     const first = GCC_FIRST.map((c) => all.find((x) => x.code === c)).filter(Boolean) as typeof all;
     const rest = all.filter((x) => !GCC_FIRST.includes(x.code));
     return { first, rest };
-  }, [locale]);
+  }, [locale, mounted]);
 
   const dial = country ? `+${getCountryCallingCode(country)}` : "";
 
@@ -125,7 +132,9 @@ export function IdentityForm({ turnstileSiteKey, consentVersion }: { turnstileSi
   );
 
   return (
-    <form onSubmit={onSubmit} noValidate className="sv-card rounded-sv-lg border border-sv-line bg-sv-surface-2 p-5 sm:p-8" aria-describedby={errors.form ? "lab-form-error" : undefined}>
+    // method="post" with no action: a tap before the script has loaded must
+    // never do a GET, which would put name, email and phone in the URL.
+    <form onSubmit={onSubmit} method="post" noValidate data-ready={mounted ? "true" : "false"} className="sv-card rounded-sv-lg border border-sv-line bg-sv-surface-2 p-5 sm:p-8" aria-describedby={errors.form ? "lab-form-error" : undefined}>
       <div className="mb-6">
         <h2 className="font-display text-sv-h2 text-sv-text">{t("heading")}</h2>
         <p className="mt-2 text-sv-small text-sv-text-2">{t("sub")}</p>
@@ -150,12 +159,12 @@ export function IdentityForm({ turnstileSiteKey, consentVersion }: { turnstileSi
             <option value="">—</option>
             <optgroup label="GCC & MENA">
               {countries.first.map((c) => (
-                <option key={c.code} value={c.code}>{c.name}</option>
+                <option key={c.code} value={c.code} suppressHydrationWarning>{c.name}</option>
               ))}
             </optgroup>
             <optgroup label="—">
               {countries.rest.map((c) => (
-                <option key={c.code} value={c.code}>{c.name}</option>
+                <option key={c.code} value={c.code} suppressHydrationWarning>{c.name}</option>
               ))}
             </optgroup>
           </select>
@@ -239,7 +248,7 @@ export function IdentityForm({ turnstileSiteKey, consentVersion }: { turnstileSi
         )}
 
         <div className="flex items-center justify-between gap-4 pt-1">
-          <Button type="submit" variant="primary" disabled={submitting || (Boolean(turnstileSiteKey) && !token)} arrow>
+          <Button type="submit" variant="primary" disabled={!mounted || submitting || (Boolean(turnstileSiteKey) && !token)} arrow>
             {submitting ? t("starting") : t("start")}
           </Button>
         </div>

@@ -4,6 +4,9 @@
 
 import { LAB_CONVERSATION, type LabPhase } from "@/config/lab.config";
 import {
+  SLOT_IDS,
+  SLOT_META,
+  isSlotFilled,
   missingLadderSteps,
   missingSlots,
   requiredCoverage,
@@ -50,20 +53,28 @@ export type PhaseDecision = {
   reasons: string[];
 };
 
-const PHASE_WEIGHT: Record<LabPhase, number> = {
-  intro: 0,
-  understand: 0.1,
-  expand: 0.55,
-  commit: 0.75,
-  review: 0.95,
-  done: 1,
+// Progress is a rough guide, not a measurement: each phase owns a band and
+// coverage of that phase's required slots moves the needle inside the band.
+// A detailed first answer therefore fills phase A, not the whole bar.
+const PHASE_BAND: Record<LabPhase, [number, number]> = {
+  intro: [0.02, 0.08],
+  understand: [0.1, 0.4],
+  expand: [0.45, 0.65],
+  commit: [0.7, 0.9],
+  review: [0.95, 0.95],
+  done: [1, 1],
 };
 
 export function computeProgress(phase: LabPhase, slots: SlotState): number {
-  const coverage = requiredCoverage(slots);
-  // Coverage contributes up to 0.9; the phase floor makes sure the bar always
-  // moves forward when a phase changes even if slots are weak.
-  const p = Math.max(PHASE_WEIGHT[phase], 0.05 + coverage * 0.9);
+  const [lo, hi] = PHASE_BAND[phase];
+  const inPhase = SLOT_IDS.filter((id) => SLOT_META[id].phase === phase && SLOT_META[id].required);
+  const coverage =
+    phase === "expand"
+      ? 1 - missingLadderSteps(slots).length / 4
+      : inPhase.length
+        ? inPhase.filter((id) => isSlotFilled(slots, id)).length / inPhase.length
+        : 0;
+  const p = lo + (hi - lo) * Math.min(1, Math.max(0, coverage));
   return Math.min(1, Math.round(p * 100) / 100);
 }
 

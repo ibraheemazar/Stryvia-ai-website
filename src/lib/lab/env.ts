@@ -5,7 +5,6 @@ import {
   LAB_EFFORT,
   LAB_LIMITS,
   LAB_MODELS,
-  LAB_RESPONSE_DAYS,
   type LabModelRole,
 } from "@/config/lab.config";
 
@@ -63,7 +62,17 @@ export const LabEnvSchema = z.object({
   LAB_NOTIFY_TO: optStr,
   LAB_NOTIFY_WHATSAPP_TO: optStr,
   LAB_SCHEDULING_URL: optStr,
-  LAB_RESPONSE_DAYS: intOr(LAB_RESPONSE_DAYS),
+  // A response-time commitment is shown to visitors ONLY when the owner sets
+  // this explicitly. Unset = no promise is made anywhere.
+  LAB_RESPONSE_DAYS: z
+    .string()
+    .optional()
+    .transform((v) => {
+      const n = v ? Number.parseInt(v, 10) : NaN;
+      return Number.isFinite(n) && n > 0 ? n : null;
+    }),
+  // Optional narrower list of who may record decisions (defaults to the admin allowlist).
+  LAB_REVIEWER_EMAILS: optStr,
   LAB_RETENTION_MONTHS: intOr(LAB_LIMITS.retentionMonths),
   LAB_MAX_SESSIONS_PER_EMAIL_PER_DAY: intOr(LAB_LIMITS.startPerEmailPerDay),
   LAB_MONTHLY_SPEND_ALERT_USD: numOr(LAB_LIMITS.monthlySpendAlertUsd),
@@ -101,7 +110,10 @@ export type LabSettings = {
   notifyTo: string | undefined;
   notifyWhatsAppTo: string | undefined;
   schedulingUrl: string | undefined;
-  responseDays: number;
+  /** Owner-approved response commitment in working days, or null (no promise). */
+  responseDays: number | null;
+  /** Emails allowed to record decisions; empty = every allowlisted admin. */
+  reviewerEmails: string[];
   retentionMonths: number;
   maxSessionsPerEmailPerDay: number;
   monthlySpendAlertUsd: number;
@@ -197,6 +209,7 @@ export function getLabSettings(env: NodeJS.ProcessEnv = process.env): LabSetting
     notifyWhatsAppTo: e.LAB_NOTIFY_WHATSAPP_TO,
     schedulingUrl: e.LAB_SCHEDULING_URL,
     responseDays: e.LAB_RESPONSE_DAYS,
+    reviewerEmails: (e.LAB_REVIEWER_EMAILS ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean),
     retentionMonths: e.LAB_RETENTION_MONTHS,
     maxSessionsPerEmailPerDay: e.LAB_MAX_SESSIONS_PER_EMAIL_PER_DAY,
     monthlySpendAlertUsd: e.LAB_MONTHLY_SPEND_ALERT_USD,

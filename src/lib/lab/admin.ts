@@ -1,13 +1,15 @@
 import "server-only";
 import { getServiceSupabase } from "@/lib/supabase";
+import { listAttachments, removeAttachmentObjects, signedDownloads, type LabAttachmentRow } from "./attachments";
 import type { LabAssessmentRow } from "./assessor";
 import { getLatestAssessment } from "./assessor";
 import { labEvent } from "./events";
 import {
   bumpVisitorGeneration,
-  getLatestBrief,
   getSessionById,
   getState,
+  getSubmittedOrCurrentBrief,
+  listBriefVersions,
   listMessages,
   type LabBriefRow,
   type LabMessageRow,
@@ -72,12 +74,13 @@ export type ListRow = {
   /** Latest decision kind, when one exists. */
   decision: string | null;
   awaiting_decision: boolean;
+  flags: { test?: boolean; no_contact?: boolean; decision_demands?: number };
 };
 
 export async function listSessions(f: ListFilters): Promise<ListRow[]> {
   let q = db()
     .from("lab_sessions")
-    .select("id, created_at, submitted_at, status, phase, language, visitor_name, email, phone_e164, company, role, country, turn_count, token_usage, assessment_status")
+    .select("id, created_at, submitted_at, status, phase, language, visitor_name, email, phone_e164, company, role, country, turn_count, token_usage, assessment_status, flags")
     .neq("status", "deleted")
     .order("created_at", { ascending: false })
     .limit(Math.min(f.limit ?? 200, 500));
@@ -88,7 +91,7 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
   if (f.q) q = q.or(`visitor_name.ilike.%${f.q}%,email.ilike.%${f.q}%,company.ilike.%${f.q}%`);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
-  const sessions = (data ?? []) as Array<Pick<LabSessionRow, "id" | "created_at" | "submitted_at" | "status" | "phase" | "language" | "visitor_name" | "email" | "phone_e164" | "company" | "role" | "country" | "turn_count" | "token_usage" | "assessment_status">>;
+  const sessions = (data ?? []) as Array<Pick<LabSessionRow, "id" | "created_at" | "submitted_at" | "status" | "phase" | "language" | "visitor_name" | "email" | "phone_e164" | "company" | "role" | "country" | "turn_count" | "token_usage" | "assessment_status" | "flags">>;
   if (sessions.length === 0) return [];
   const ids = sessions.map((s) => s.id);
 
@@ -134,6 +137,7 @@ export async function listSessions(f: ListFilters): Promise<ListRow[]> {
       has_decision: latestDecision.has(s.id),
       decision: latestDecision.get(s.id) ?? null,
       awaiting_decision: s.status === "submitted" && !latestDecision.has(s.id),
+      flags: s.flags ?? {},
     };
   });
   if (f.verdict) rows = rows.filter((r) => r.verdict === f.verdict);
@@ -147,34 +151,43 @@ export type SessionDetail = {
   session: LabSessionRow;
   messages: LabMessageRow[];
   state: LabStateRow;
+  /** The submitted version (frozen) or, before submission, the current one. */
   brief: LabBriefRow | null;
+  /** Every version with its lineage, oldest first. */
+  briefVersions: LabBriefRow[];
   assessment: LabAssessmentRow | null;
   assessments: LabAssessmentRow[];
   decisions: LabDecisionRow[];
   notes: LabNoteRow[];
+  /** Every file the visitor sent, with a short-lived download link (owner only). */
+  attachments: Array<LabAttachmentRow & { url: string | null }>;
 };
 
 export async function getSessionDetail(id: string): Promise<SessionDetail | null> {
   const session = await getSessionById(id);
   if (!session || session.status === "deleted") return null;
-  const [messages, state, brief, assessment, assessmentsRes, decisionsRes, notesRes] = await Promise.all([
+  const [messages, state, brief, briefVersions, assessment, assessmentsRes, decisionsRes, notesRes, attachmentRows] = await Promise.all([
     listMessages(id),
     getState(id),
-    getLatestBrief(id),
+    getSubmittedOrCurrentBrief(session),
+    listBriefVersions(id),
     getLatestAssessment(id),
     db().from("lab_assessments").select("*").eq("session_id", id).order("created_at", { ascending: false }),
     db().from("lab_decisions").select("*").eq("session_id", id).order("decided_at", { ascending: false }),
     db().from("lab_admin_notes").select("*").eq("session_id", id).order("created_at", { ascending: false }),
+    listAttachments(id),
   ]);
   return {
     session,
     messages,
     state,
     brief,
+    briefVersions,
     assessment,
     assessments: (assessmentsRes.data ?? []) as LabAssessmentRow[],
     decisions: (decisionsRes.data ?? []) as LabDecisionRow[],
     notes: (notesRes.data ?? []) as LabNoteRow[],
+    attachments: await signedDownloads(attachmentRows),
   };
 }
 
@@ -197,7 +210,10 @@ export async function recordDecision(row: {
   if (error || !data) throw new Error(error?.message ?? "decision insert failed");
   const status = row.decision === "hold" ? "reviewed" : row.decision === "decline" ? "closed" : "reviewed";
   await db().from("lab_sessions").update({ status }).eq("id", row.session_id).neq("status", "deleted");
-  await labEvent("decision.recorded", "info", { sessionId: row.session_id, payload: { kind: row.decision, actor: "admin" } });
+  await labEvent("decision.recorded", "info", {
+    sessionId: row.session_id,
+    payload: { kind: row.decision, actor: "admin", status, channel: row.outbound_email_sent_at ? "email" : "none" },
+  });
   return data as LabDecisionRow;
 }
 
@@ -205,6 +221,7 @@ export async function adminDeleteSession(sessionId: string): Promise<boolean> {
   const session = await getSessionById(sessionId);
   if (!session) return false;
   await bumpVisitorGeneration(session.visitor_id);
+  await removeAttachmentObjects([sessionId]);
   const { error } = await db().from("lab_sessions").delete().eq("id", sessionId);
   if (error) throw new Error(error.message);
   await labEvent("session.admin_deleted", "info", { sessionId: null, payload: { actor: "admin" } });
