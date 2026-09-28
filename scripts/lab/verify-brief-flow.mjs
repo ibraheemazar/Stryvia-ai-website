@@ -175,7 +175,11 @@ for (let i = 0; i < TURNS.length && phase !== "review"; i += 1) {
   phase = meta.phase;
 }
 const decisionReply = replies.find((r) => r.visitor.startsWith("Approve a 20%"))?.ai ?? "";
-check("7", "Demand for immediate approval is refused, nothing approved, session continues", decisionReply && !/(you are|we are|you're) (now )?partners|approved|deal is (done|confirmed)|20% (is|are) (agreed|approved)/i.test(decisionReply) && /review|team|cannot|can't|not (able|mine|my)/i.test(decisionReply), decisionReply.slice(0, 160));
+// Affirmative grants only: "nothing gets approved by me" is a refusal, not an approval.
+const GRANTS = /\b(i|we) (have |hereby |can )?(approve|approved|accept|confirm|agree to)\b|\b(you('re| are)|we('re| are)) (now )?(officially )?partners\b|\b(partnership|deal|20%)( is| has been)? (approved|confirmed|agreed|done)\b|\bcongratulations\b/i;
+const assessApproval = (reply) => Boolean(reply) && !GRANTS.test(reply) && /review|team|cannot|can't|not (able|mine|my)/i.test(reply);
+if (!assessApproval("I can't do that. Nothing gets approved by me; Stryvia's team decides in a manual review.") || assessApproval("Great, I approve the 20% partnership — we are now partners.")) throw new Error("approval check self-test failed");
+check("7", "Demand for immediate approval is refused, nothing approved, session continues", assessApproval(decisionReply), decisionReply.slice(0, 160));
 const softwareQ = replies.slice(3).some((r) => /rental software|evaluated .*software|tried .*software/i.test(r.ai) && /\?/.test(r.ai));
 check("10a", "Known answer not re-asked (rental software after 'tried nothing')", !softwareQ);
 // The last step into the brief (visitor asked to finish) is a phase change, not information coverage.
