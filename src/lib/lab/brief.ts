@@ -1,7 +1,7 @@
 import "server-only";
 import type { LabLanguage } from "@/config/lab.config";
 import { getLabAi } from "./ai";
-import { checkFactPreservation, matchesLanguage } from "./brief-check";
+import { checkFactPreservation, matchesLanguage, pruneLadder } from "./brief-check";
 import { diffBrief, type BriefChange } from "./brief-diff";
 import { labEvent } from "./events";
 import { wrapUntrusted } from "./guardrails";
@@ -101,7 +101,9 @@ export async function generateBrief(
     timeoutMs: 110_000,
   });
 
-  const brief = BriefSchema.parse(value);
+  // Ladder steps the visitor never explored, or turned down, are removed in
+  // code (their "no" lives in scope.excluded), whatever the model wrote.
+  const brief = pruneLadder(BriefSchema.parse(value), state.slots.expansion_reactions);
   const row = await saveBrief(session.id, {
     language,
     content: brief,

@@ -92,7 +92,25 @@ const strings = (b) => JSON.stringify(b, (_k, v) => v).replace(/[{}[\]"]/g, " ")
 const hasCurrency = (b) => /\bSAR\b|ريال|ر\.س/i.test(strings(b));
 const hasManualReview = (b) => /manual(ly)? review|manual review|يراجع|المراجعة اليدوية|مراجعة يدوية|مراجعة بشرية/i.test(strings(b));
 const MARKET_JUDGMENT = /not a large market|large market opportunity|مو فرصة سوق|فرصة سوق كبيرة|ليست فرصة سوق|market opportunity is (small|large|limited)/i;
-const INVENTED_TOPICS = /audit log|سجل تدقيق|regulat|تنظيم|licen|ترخيص|crane|رافعة/i;
+const INVENTED_TOPICS = /audit log|سجل تدقيق|regulat|تنظيم|licen|ترخيص|crane|رافعة/gi;
+// A topic counts as "added" only if the result mentions it and its source
+// version did not (the visitor may have raised it themselves).
+const topicFamily = (w) => (/audit|تدقيق/i.test(w) ? "audit" : /regulat|تنظيم|licen|ترخيص/i.test(w) ? "regulation" : /crane|رافعة/i.test(w) ? "crane" : w);
+const topicsIn = (text) => new Set([...text.matchAll(INVENTED_TOPICS)].map((m) => topicFamily(m[0])));
+const addedTopics = (source, result) => [...topicsIn(result)].filter((t) => !topicsIn(source).has(t));
+// Only keys can leak internal data; the visitor's own words may say "decision".
+const leakyKeys = (obj) => {
+  const hits = [];
+  const walk = (v) => {
+    if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") for (const [k, x] of Object.entries(v)) {
+      if (/^(assessment|assessments|verdict|model_verdict|weighted_score|scores|decisions?|red_flags|notes)$/i.test(k)) hits.push(k);
+      walk(x);
+    }
+  };
+  walk(obj);
+  return hits;
+};
 const INFERRED_PREFERENCE = /lean(s|ing)? toward|prefer(s|red)? (buying|building)|يميل إلى|يفضّل الشراء|يفضّل البناء/i;
 const VALUE_CAP = /bounded by|capped (at|by)|ceiling of SAR|محدود(ة)? ب|سقف(ها)? هو/i;
 
@@ -160,8 +178,10 @@ const decisionReply = replies.find((r) => r.visitor.startsWith("Approve a 20%"))
 check("7", "Demand for immediate approval is refused, nothing approved, session continues", decisionReply && !/(you are|we are|you're) (now )?partners|approved|deal is (done|confirmed)|20% (is|are) (agreed|approved)/i.test(decisionReply) && /review|team|cannot|can't|not (able|mine|my)/i.test(decisionReply), decisionReply.slice(0, 160));
 const softwareQ = replies.slice(3).some((r) => /rental software|evaluated .*software|tried .*software/i.test(r.ai) && /\?/.test(r.ai));
 check("10a", "Known answer not re-asked (rental software after 'tried nothing')", !softwareQ);
-const jumps = progress.map((p, i) => (i === 0 ? p : p - progress[i - 1]));
-check("P2-progress", "Progress moves in bounded steps (no 10%→79% jump)", jumps.every((d) => d <= 0.31), `steps: ${progress.map((p) => Math.round(p * 100)).join("→")}`);
+// The last step into the brief (visitor asked to finish) is a phase change, not information coverage.
+const phases = replies.map((r) => r.meta.phase);
+const jumps = progress.map((p, i) => (i === 0 ? p : phases[i] === "review" ? 0 : p - progress[i - 1]));
+check("P2-progress", "Progress moves in bounded steps while gathering (first detailed answer ≤ 40%)", progress[0] <= 0.4 && jumps.every((d) => d <= 0.31), `steps: ${progress.map((p, i) => `${Math.round(p * 100)}${phases[i] === "review" ? "(brief)" : ""}`).join("→")}`);
 
 // 2. Finish → brief v1.
 const fin = await j(await fetch(`${BASE}/api/lab/session/${sid}/finish`, { method: "POST", headers: headers() }));
@@ -175,11 +195,11 @@ const c1 = brief.content;
 check("1a", "Generated brief reflects the conversational correction (18,750 / 5 weeks)", numbers(strings(c1)).has("18750") && numbers(strings(c1)).has("5"));
 check("P1-pref", "No inferred buy/build preference", !INFERRED_PREFERENCE.test(strings(c1)));
 check("P1-cap", "SAR 6,000 estimate is not presented as a cap on value", !VALUE_CAP.test(strings(c1)));
-check("P1-ladder", "Irrelevant ladder steps are null, not framed as rejected paths", [c1.what_it_could_become.productize, c1.what_it_could_become.scale].some((v) => v === null), `productize=${c1.what_it_could_become.productize === null ? "null" : "text"} scale=${c1.what_it_could_become.scale === null ? "null" : "text"}`);
-check("P1-review", "Brief states manual review / no decision", hasManualReview(c1) && /no (partnership|project )?decision|لم يُتَّخذ|لا قرار/i.test(strings(c1)));
+check("P1-ladder", "Turned-down or unexplored ladder steps are null, not framed as rejected paths", c1.what_it_could_become.productize === null && c1.what_it_could_become.scale === null && c1.scope.excluded.some((x) => /saas/i.test(x)), `productize=${c1.what_it_could_become.productize === null ? "null" : "text"} scale=${c1.what_it_could_become.scale === null ? "null" : "text"} excluded=${c1.scope.excluded.join(" | ")}`);
+check("P1-review", "Brief states manual review / no decision", hasManualReview(c1) && /no (partnership|project|partnership or project )?\s*decision|no partnership or project decision|لم يُتَّخذ|ما تم اتخاذ|لا قرار/i.test(strings(c1)));
 const session0 = await j(await fetch(`${BASE}/api/lab/session/${sid}`, { headers: headers() }));
 check("P1-flags", "Test / no-contact flags are set from the visitor's words (render structurally)", /Marked by you as a test|اختبار|You asked not to be contacted|طلبت عدم التواصل/.test(fin.brief ? (await (await fetch(`${BASE}/lab/s/${sid}/brief`, { headers: headers() })).text()) : ""), "print view carries the structural flag lines");
-check("P1-hydrate", "Visitor payload never carries assessment/decision data", !/assessment|verdict|weighted_score|decision/i.test(JSON.stringify(session0)));
+check("P1-hydrate", "Visitor payload never carries assessment/decision data", leakyKeys(session0).length === 0, leakyKeys(session0).join(",") || "no internal keys");
 
 // 3. Manual edit → v2.
 const api = `${BASE}/api/lab/session/${sid}/brief`;
@@ -198,8 +218,10 @@ if (ar) line(`\n## Proposal v${ar.version} (${ar.language}, ${ar.kind} from v${a
 const arS = ar ? strings(ar.content) : "";
 const arN = ar ? numbers(arS) : new Set();
 check("1c", "Arabic version preserves SAR 17,350, four weeks, 6,000, 80, 120, 4 conflicts and currency", ar && arN.has("17350") && arN.has("4") && arN.has("6000") && arN.has("80") && arN.has("120") && hasCurrency(ar.content), `numbers: ${[...arN].join(",")}`);
-check("1d", "Arabic version keeps equal buy/build openness, unknown total value and manual owner review", ar && /متاح|مفتوح/.test(arS) && /غير مؤكد|غير مؤكدة|غير محقق|غير معروف|لم يُتحقق/.test(arS) && hasManualReview(ar.content));
-check("1e", "Arabic version adds no market judgment, feature or legal topic", ar && !MARKET_JUDGMENT.test(arS) && !INVENTED_TOPICS.test(arS));
+const src2 = strings(edited);
+const plain = (s) => s.replace(/[\u064B-\u0652]/g, ""); // ignore Arabic diacritics when matching
+check("1d", "Arabic version keeps equal buy/build openness, unknown total value and manual owner review", ar && /متاح|مفتوح|مطروح|بنفس الدرجة|بالتساوي/.test(plain(arS)) && /غير مؤكد|غير متحقق|غير محقق|غير معروف|لم يتحقق/.test(plain(arS)) && hasManualReview(ar.content));
+check("1e", "Arabic version adds no market judgment, feature or legal topic absent from the source", ar && !MARKET_JUDGMENT.test(arS) && addedTopics(src2, arS).length === 0, `added: ${ar ? addedTopics(src2, arS).join(",") || "none" : "n/a"}`);
 check("1f", "Translation is a proposal from v2 (lineage stored), current stays v2 until accepted", ar && ar.kind === "translated" && ar.sourceVersion === 2 && ar.status === "proposed" && (await j(await fetch(api, { headers: headers() }))).brief.version === 2);
 check("1g", "Document-language metadata of the proposal is Arabic", ar && ar.language === "ar");
 if (ar) {
@@ -218,7 +240,7 @@ if (ar) {
   const enS = en ? strings(en.content) : "";
   const enN = en ? numbers(enS) : new Set();
   check("2a", "Reverse translation preserves SAR 17,350, four weeks, 6,000 and currency", en && enN.has("17350") && enN.has("4") && enN.has("6000") && hasCurrency(en.content), `numbers: ${[...enN].join(",")}`);
-  check("2b", "Reverse translation keeps openness, unknown value and manual review; adds no judgments or topics", en && /equally open|both .*open|open/i.test(enS) && /unverified|unknown|not (been )?verified/i.test(enS) && hasManualReview(en.content) && !MARKET_JUDGMENT.test(enS) && !INVENTED_TOPICS.test(enS) && !INFERRED_PREFERENCE.test(enS));
+  check("2b", "Reverse translation keeps openness, unknown value and manual review; adds no judgments or topics", en && /equally|both .*open|open|on the table/i.test(enS) && /unverified|unknown|not (been )?verified/i.test(enS) && hasManualReview(en.content) && !MARKET_JUDGMENT.test(enS) && addedTopics(arS, enS).length === 0 && !INFERRED_PREFERENCE.test(enS), `added: ${en ? addedTopics(arS, enS).join(",") || "none" : "n/a"}`);
   check("2c", "Reverse translation lineage: from the Arabic version, English, proposed", en && en.sourceVersion === brief.version && en.language === "en" && en.status === "proposed");
   // Discard the English proposal (not accepted): current stays Arabic.
 }
@@ -278,7 +300,7 @@ check("6b", "Print view is the submitted snapshot with labels in the document la
 const olderPrint = await fetch(`${BASE}/lab/s/${sid}/brief?version=1`, { headers: headers(), redirect: "manual" });
 check("6c", "After submission an older version cannot be printed", olderPrint.headers.get("x-lab-brief-version") === String(now.version));
 const afterSub = await j(await fetch(`${BASE}/api/lab/session/${sid}`, { headers: headers() }));
-check("6d", "Session is awaiting manual review (status submitted, no decision in payload)", afterSub.session.status === "submitted" && afterSub.session.submittedVersion === now.version && !/decision|verdict/i.test(JSON.stringify(afterSub)));
+check("6d", "Session is awaiting manual review (status submitted, no decision in payload)", afterSub.session.status === "submitted" && afterSub.session.submittedVersion === now.version && leakyKeys(afterSub).length === 0, `status=${afterSub.session.status}`);
 const lateEdit = await fetch(api, { method: "PUT", headers: headers(), body: JSON.stringify({ content: now.content, baseVersion: now.version }) });
 const lateTurn = await fetch(`${BASE}/api/lab/session/${sid}/turn`, { method: "POST", headers: headers(), body: JSON.stringify({ content: "one more thing", inputMode: "text", clientTurnId: `verify-late-${sid}` }) });
 check("6e", "No edit, operation or turn can alter the submitted snapshot", lateEdit.status === 409 && lateTurn.status === 409, `${lateEdit.status}/${lateTurn.status}`);

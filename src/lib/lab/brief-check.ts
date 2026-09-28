@@ -115,3 +115,30 @@ export function matchesLanguage(b: Brief, language: LabLanguage): boolean {
 export function unexpectedChanges(changes: Array<{ path: string }>, allowedPrefixes: string[]): string[] {
   return changes.map((c) => c.path).filter((p) => !allowedPrefixes.some((a) => p === a || p.startsWith(`${a}.`)));
 }
+
+type LadderReactions = Partial<Record<"automate" | "intelligence" | "productize" | "scale", { reaction: string } | null>> | undefined;
+
+/**
+ * Keep only the ladder steps the visitor actually explored and did not turn
+ * down. A step with no recorded reaction was never discussed; a rejected step
+ * is recorded as an exclusion in the scope block, not written up as a path
+ * they "ruled out". Applied in code after generation so the brief cannot
+ * frame an irrelevant expansion as a rejected opportunity. Pure.
+ */
+export function pruneLadder(brief: Brief, reactions: LadderReactions): Brief {
+  const keep = (step: "automate" | "intelligence" | "productize" | "scale") => {
+    const r = reactions?.[step];
+    return Boolean(r && r.reaction !== "rejected");
+  };
+  const w = brief.what_it_could_become;
+  return {
+    ...brief,
+    what_it_could_become: {
+      ...w,
+      automate: keep("automate") ? w.automate : null,
+      add_intelligence: keep("intelligence") ? w.add_intelligence : null,
+      productize: keep("productize") ? w.productize : null,
+      scale: keep("scale") ? w.scale : null,
+    },
+  };
+}
