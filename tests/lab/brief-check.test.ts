@@ -174,3 +174,19 @@ describe("diff and version status", () => {
     expect(st.find((s) => s.version === 3)?.status).toBe("submitted");
   });
 });
+
+describe("ladder pruning", () => {
+  it("keeps only explored, non-rejected ladder steps", async () => {
+    const { pruneLadder } = await import("@/lib/lab/brief-check");
+    const b: Brief = JSON.parse(JSON.stringify(base));
+    b.what_it_could_become = { ...b.what_it_could_become, automate: "A", add_intelligence: "B", productize: "You ruled this out.", scale: "D" };
+    const out = pruneLadder(b, {
+      automate: { reaction: "interested" },
+      intelligence: null,
+      productize: { reaction: "rejected" },
+    });
+    expect(out.what_it_could_become).toMatchObject({ automate: "A", add_intelligence: null, productize: null, scale: null });
+    expect(out.what_it_could_become.honest_ceiling_note).toBe(b.what_it_could_become.honest_ceiling_note);
+    expect(pruneLadder(b, undefined).what_it_could_become.automate).toBeNull();
+  });
+});
